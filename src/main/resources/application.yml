@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: coulson-assistant
+  servlet:
+    multipart:
+      max-file-size: 4GB
+      max-request-size: 4GB
+
+webhook:
+  base-url: ${WEBHOOK_BASE_URL:http://n8n:5678}
+  extract-sound-path: ${WEBHOOK_EXTRACT_SOUND_PATH:/webhook/extractsound}
+  transcribe-path: ${WEBHOOK_TRANSCRIBE_PATH:/webhook/transcribe}
+  token: ${WEBHOOK_TOKEN:80797061-413c-47cf-a60c-bcc43a23d703}
+  connect-timeout-seconds: ${WEBHOOK_CONNECT_TIMEOUT:30}
+  read-timeout-seconds: ${WEBHOOK_READ_TIMEOUT:300}
+  transcription-parallelism: ${WEBHOOK_TRANSCRIPTION_PARALLELISM:4}
+
+video:
+  max-chunk-size-mb: ${VIDEO_MAX_CHUNK_SIZE_MB:200}
+  max-audio-chunk-seconds: ${VIDEO_MAX_AUDIO_CHUNK_SECONDS:400}
+  temp-dir: ${VIDEO_TEMP_DIR:/tmp/coulson-videos}
+
+ffmpeg:
+  path: ${FFMPEG_PATH:/usr/bin/ffmpeg}
+  ffprobe-path: ${FFPROBE_PATH:/usr/bin/ffprobe}
+  audio-sample-rate: ${FFMPEG_AUDIO_SAMPLE_RATE:16000}
+  audio-channels: ${FFMPEG_AUDIO_CHANNELS:1}
+  audio-bitrate: ${FFMPEG_AUDIO_BITRATE:32k}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    display-request-duration: true
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.yellowleaf.coulson: INFO
