@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WebhookProperties {
 
     private String baseUrl;
-    private String extractSoundPath;
     private String transcribePath;
     private String token;
     private int connectTimeoutSeconds = 30;
@@ -19,14 +18,6 @@ public class WebhookProperties {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
-    }
-
-    public String getExtractSoundPath() {
-        return extractSoundPath;
-    }
-
-    public void setExtractSoundPath(String extractSoundPath) {
-        this.extractSoundPath = extractSoundPath;
     }
 
     public String getTranscribePath() {
@@ -61,19 +52,15 @@ public class WebhookProperties {
         this.readTimeoutSeconds = readTimeoutSeconds;
     }
 
-    public String getExtractSoundUrl() {
-        return baseUrl + extractSoundPath;
-    }
-
-    public String getTranscribeUrl() {
-        return baseUrl + transcribePath;
-    }
-
     public int getTranscriptionParallelism() {
         return transcriptionParallelism;
     }
 
     public void setTranscriptionParallelism(int transcriptionParallelism) {
         this.transcriptionParallelism = transcriptionParallelism;
+    }
+
+    public String getTranscribeUrl() {
+        return baseUrl + transcribePath;
     }
 }

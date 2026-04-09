@@ -40,37 +40,12 @@ public class FfmpegAudioMergerAdapter implements AudioMergerPort {
         Path outputPath = Paths.get(videoProperties.getTempDir()).resolve(videoId + "-merged.mp3");
 
         if (sorted.size() == 1) {
-            log.info("Single audio chunk, applying compression only [videoId={}]", videoId);
-            compressSingleChunk(sorted.get(0).getFilePath(), outputPath);
-        } else {
-            log.info("Merging and compressing {} audio chunks [videoId={}]", sorted.size(), videoId);
-            mergeAndCompress(videoId, sorted, outputPath);
+            log.info("Single audio chunk, no merge needed [videoId={}]", videoId);
+            return new AudioChunk(-1, videoId, sorted.get(0).getFilePath(), 0.0);
         }
 
-        long outputSizeKb = fileSizeKb(outputPath);
-        log.info("Audio ready [videoId={}] size={}KB bitrate={} sampleRate={}Hz channels={}",
-                videoId, outputSizeKb,
-                ffmpegProperties.getAudioBitrate(),
-                ffmpegProperties.getAudioSampleRate(),
-                ffmpegProperties.getAudioChannels());
+        log.info("Merging {} audio chunks [videoId={}]", sorted.size(), videoId);
 
-        return new AudioChunk(-1, videoId, outputPath, 0.0);
-    }
-
-    private void compressSingleChunk(Path input, Path output) {
-        List<String> command = List.of(
-                ffmpegProperties.getPath(),
-                "-i", input.toString(),
-                "-ar", String.valueOf(ffmpegProperties.getAudioSampleRate()),
-                "-ac", String.valueOf(ffmpegProperties.getAudioChannels()),
-                "-b:a", ffmpegProperties.getAudioBitrate(),
-                "-y",
-                output.toString()
-        );
-        executeCommand(command);
-    }
-
-    private void mergeAndCompress(String videoId, List<AudioChunk> sorted, Path output) {
         Path concatListPath = writeConcatList(videoId, sorted);
         try {
             List<String> command = List.of(
@@ -78,13 +53,17 @@ public class FfmpegAudioMergerAdapter implements AudioMergerPort {
                     "-f", "concat",
                     "-safe", "0",
                     "-i", concatListPath.toString(),
-                    "-ar", String.valueOf(ffmpegProperties.getAudioSampleRate()),
-                    "-ac", String.valueOf(ffmpegProperties.getAudioChannels()),
-                    "-b:a", ffmpegProperties.getAudioBitrate(),
+                    "-c", "copy",
                     "-y",
-                    output.toString()
+                    outputPath.toString()
             );
+
             executeCommand(command);
+
+            long sizeKb = fileSizeKb(outputPath);
+            log.info("Audio merge complete [videoId={}] size={}KB", videoId, sizeKb);
+
+            return new AudioChunk(-1, videoId, outputPath, 0.0);
         } finally {
             deleteQuietly(concatListPath);
         }
@@ -121,13 +100,13 @@ public class FfmpegAudioMergerAdapter implements AudioMergerPort {
 
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                throw new IllegalStateException("FFmpeg audio processing failed with exit code " + exitCode + ": " + output);
+                throw new IllegalStateException("FFmpeg audio merge failed with exit code " + exitCode + ": " + output);
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to execute FFmpeg audio processing", e);
+            throw new IllegalStateException("Failed to execute FFmpeg audio merge", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Interrupted while executing FFmpeg audio processing", e);
+            throw new IllegalStateException("Interrupted while executing FFmpeg audio merge", e);
         }
     }
 

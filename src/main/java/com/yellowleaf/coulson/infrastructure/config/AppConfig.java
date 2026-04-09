@@ -1,17 +1,17 @@
 package com.yellowleaf.coulson.infrastructure.config;
 
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
-import com.yellowleaf.coulson.domain.port.AudioExtractorWebhookPort;
+import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
 import com.yellowleaf.coulson.domain.service.VideoSplitPlanService;
+import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioExtractorAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioMergerAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
-import com.yellowleaf.coulson.infrastructure.adapter.HttpAudioExtractorWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +37,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ExecutorService transcriptionExecutor(WebhookProperties webhookProperties) {
+    public ExecutorService processingExecutor(WebhookProperties webhookProperties) {
         return Executors.newFixedThreadPool(webhookProperties.getTranscriptionParallelism());
     }
 
@@ -60,11 +60,10 @@ public class AppConfig {
     }
 
     @Bean
-    public AudioExtractorWebhookPort audioExtractorWebhookPort(
-            RestTemplate webhookRestTemplate,
-            WebhookProperties webhookProperties,
+    public AudioExtractorPort audioExtractorPort(
+            FfmpegProperties ffmpegProperties,
             VideoProperties videoProperties) {
-        return new HttpAudioExtractorWebhookAdapter(webhookRestTemplate, webhookProperties, videoProperties);
+        return new FfmpegAudioExtractorAdapter(ffmpegProperties, videoProperties);
     }
 
     @Bean
@@ -93,20 +92,20 @@ public class AppConfig {
     public ProcessVideoUseCase processVideoUseCase(
             VideoStoragePort videoStoragePort,
             VideoSplitterPort videoSplitterPort,
-            AudioExtractorWebhookPort audioExtractorWebhookPort,
+            AudioExtractorPort audioExtractorPort,
             AudioMergerPort audioMergerPort,
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
-            ExecutorService transcriptionExecutor,
+            ExecutorService processingExecutor,
             VideoProperties videoProperties) {
         return new ProcessVideoUseCase(
                 videoStoragePort,
                 videoSplitterPort,
-                audioExtractorWebhookPort,
+                audioExtractorPort,
                 audioMergerPort,
                 audioSplitterPort,
                 transcriptionWebhookPort,
-                transcriptionExecutor,
+                processingExecutor,
                 videoProperties.getMaxAudioChunkSeconds());
     }
 }

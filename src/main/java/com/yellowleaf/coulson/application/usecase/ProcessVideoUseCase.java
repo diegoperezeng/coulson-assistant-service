@@ -7,7 +7,7 @@ import com.yellowleaf.coulson.domain.model.Transcription;
 import com.yellowleaf.coulson.domain.model.TranscriptionSegment;
 import com.yellowleaf.coulson.domain.model.Video;
 import com.yellowleaf.coulson.domain.model.VideoChunk;
-import com.yellowleaf.coulson.domain.port.AudioExtractorWebhookPort;
+import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
@@ -33,21 +33,21 @@ public class ProcessVideoUseCase {
 
     private final VideoStoragePort storagePort;
     private final VideoSplitterPort splitterPort;
-    private final AudioExtractorWebhookPort audioExtractorPort;
+    private final AudioExtractorPort audioExtractorPort;
     private final AudioMergerPort audioMergerPort;
     private final AudioSplitterPort audioSplitterPort;
     private final TranscriptionWebhookPort transcriptionWebhookPort;
-    private final ExecutorService transcriptionExecutor;
+    private final ExecutorService executor;
     private final double maxAudioChunkSeconds;
 
     public ProcessVideoUseCase(
             VideoStoragePort storagePort,
             VideoSplitterPort splitterPort,
-            AudioExtractorWebhookPort audioExtractorPort,
+            AudioExtractorPort audioExtractorPort,
             AudioMergerPort audioMergerPort,
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
-            ExecutorService transcriptionExecutor,
+            ExecutorService executor,
             double maxAudioChunkSeconds) {
         this.storagePort = storagePort;
         this.splitterPort = splitterPort;
@@ -55,7 +55,7 @@ public class ProcessVideoUseCase {
         this.audioMergerPort = audioMergerPort;
         this.audioSplitterPort = audioSplitterPort;
         this.transcriptionWebhookPort = transcriptionWebhookPort;
-        this.transcriptionExecutor = transcriptionExecutor;
+        this.executor = executor;
         this.maxAudioChunkSeconds = maxAudioChunkSeconds;
     }
 
@@ -76,14 +76,33 @@ public class ProcessVideoUseCase {
                 videoChunks.forEach(c -> filesToCleanup.add(c.getFilePath()));
             }
 
-            List<AudioChunk> extractedAudioChunks = new ArrayList<>();
-            for (VideoChunk videoChunk : videoChunks) {
-                log.info("Extracting audio from chunk {}/{} [videoId={}]",
-                        videoChunk.getIndex() + 1, videoChunks.size(), video.getId());
-                AudioChunk audioChunk = audioExtractorPort.extract(videoChunk);
-                extractedAudioChunks.add(audioChunk);
-                filesToCleanup.add(audioChunk.getFilePath());
+            log.info("Extracting audio from {} chunk(s) in parallel [videoId={}]",
+                    videoChunks.size(), video.getId());
+
+            List<CompletableFuture<AudioChunk>> extractionFutures = videoChunks.stream()
+                    .map(videoChunk -> CompletableFuture.supplyAsync(
+                            () -> {
+                                log.info("Extracting audio chunk {} [videoId={}]",
+                                        videoChunk.getIndex(), video.getId());
+                                return audioExtractorPort.extract(videoChunk);
+                            },
+                            executor
+                    ))
+                    .toList();
+
+            List<AudioChunk> extractedAudioChunks;
+            try {
+                extractedAudioChunks = extractionFutures.stream()
+                        .map(CompletableFuture::join)
+                        .sorted(Comparator.comparingInt(AudioChunk::getIndex))
+                        .toList();
+            } catch (CompletionException ex) {
+                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                throw new IllegalStateException("Audio extraction failed: " + cause.getMessage(), cause);
             }
+
+            extractedAudioChunks.forEach(c -> filesToCleanup.add(c.getFilePath()));
+            log.info("All {} audio chunk(s) extracted [videoId={}]", extractedAudioChunks.size(), video.getId());
 
             AudioChunk mergedAudio = audioMergerPort.merge(video.getId(), extractedAudioChunks);
             if (mergedAudio.getIndex() == -1) {
@@ -116,7 +135,7 @@ public class ProcessVideoUseCase {
                 audioChunksForTranscription.forEach(c -> filesToCleanup.add(c.getFilePath()));
             }
 
-            List<CompletableFuture<ChunkTranscription>> futures = audioChunksForTranscription.stream()
+            List<CompletableFuture<ChunkTranscription>> transcriptionFutures = audioChunksForTranscription.stream()
                     .map(chunk -> CompletableFuture.supplyAsync(
                             () -> {
                                 log.info("Transcribing chunk {} offset={}s [videoId={}]",
@@ -126,13 +145,13 @@ public class ProcessVideoUseCase {
                                         chunk.getIndex(), transcription.getSegments().size(), video.getId());
                                 return new ChunkTranscription(chunk, transcription);
                             },
-                            transcriptionExecutor
+                            executor
                     ))
                     .toList();
 
-            List<ChunkTranscription> results;
+            List<ChunkTranscription> transcriptionResults;
             try {
-                results = futures.stream()
+                transcriptionResults = transcriptionFutures.stream()
                         .map(CompletableFuture::join)
                         .sorted(Comparator.comparingDouble(ct -> ct.chunk().getStartOffsetSeconds()))
                         .toList();
@@ -144,7 +163,7 @@ public class ProcessVideoUseCase {
             List<TranscriptionSegment> allSegments = new ArrayList<>();
             StringBuilder combinedText = new StringBuilder();
 
-            for (ChunkTranscription ct : results) {
+            for (ChunkTranscription ct : transcriptionResults) {
                 double offset = ct.chunk().getStartOffsetSeconds();
 
                 if (!combinedText.isEmpty()) {
@@ -165,7 +184,8 @@ public class ProcessVideoUseCase {
             log.info("Transcription complete [videoId={}] videoChunks={} audioChunks={} segments={}",
                     video.getId(), videoChunks.size(), audioChunksForTranscription.size(), allSegments.size());
 
-            return new TranscriptionResult(video.getId(), combinedText.toString().trim(), videoChunks.size(), allSegments);
+            return new TranscriptionResult(
+                    video.getId(), combinedText.toString().trim(), videoChunks.size(), allSegments);
 
         } finally {
             filesToCleanup.forEach(this::deleteQuietly);
