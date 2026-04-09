@@ -90,16 +90,11 @@ public class ProcessVideoUseCase {
                     ))
                     .toList();
 
-            List<AudioChunk> extractedAudioChunks;
-            try {
-                extractedAudioChunks = extractionFutures.stream()
-                        .map(CompletableFuture::join)
-                        .sorted(Comparator.comparingInt(AudioChunk::getIndex))
-                        .toList();
-            } catch (CompletionException ex) {
-                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-                throw new IllegalStateException("Audio extraction failed: " + cause.getMessage(), cause);
-            }
+            List<AudioChunk> extractedAudioChunks = joinAllOrCancel(
+                    extractionFutures, "Audio extraction failed", video.getId())
+                    .stream()
+                    .sorted(Comparator.comparingInt(AudioChunk::getIndex))
+                    .toList();
 
             extractedAudioChunks.forEach(c -> filesToCleanup.add(c.getFilePath()));
             log.info("All {} audio chunk(s) extracted [videoId={}]", extractedAudioChunks.size(), video.getId());
@@ -149,16 +144,11 @@ public class ProcessVideoUseCase {
                     ))
                     .toList();
 
-            List<ChunkTranscription> transcriptionResults;
-            try {
-                transcriptionResults = transcriptionFutures.stream()
-                        .map(CompletableFuture::join)
-                        .sorted(Comparator.comparingDouble(ct -> ct.chunk().getStartOffsetSeconds()))
-                        .toList();
-            } catch (CompletionException ex) {
-                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-                throw new IllegalStateException("Transcription failed for one or more chunks: " + cause.getMessage(), cause);
-            }
+            List<ChunkTranscription> transcriptionResults = joinAllOrCancel(
+                    transcriptionFutures, "Transcription failed for one or more chunks", video.getId())
+                    .stream()
+                    .sorted(Comparator.comparingDouble(ct -> ct.chunk().getStartOffsetSeconds()))
+                    .toList();
 
             List<TranscriptionSegment> allSegments = new ArrayList<>();
             StringBuilder combinedText = new StringBuilder();
@@ -190,6 +180,19 @@ public class ProcessVideoUseCase {
         } finally {
             filesToCleanup.forEach(this::deleteQuietly);
         }
+    }
+
+    private <T> List<T> joinAllOrCancel(List<CompletableFuture<T>> futures, String errorMessage, String videoId) {
+        CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        try {
+            all.join();
+        } catch (CompletionException ex) {
+            log.warn("Task failed, cancelling {} remaining future(s) [videoId={}]", futures.size(), videoId);
+            futures.forEach(f -> f.cancel(true));
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+            throw new IllegalStateException(errorMessage + ": " + cause.getMessage(), cause);
+        }
+        return futures.stream().map(CompletableFuture::join).toList();
     }
 
     private void deleteQuietly(Path path) {
