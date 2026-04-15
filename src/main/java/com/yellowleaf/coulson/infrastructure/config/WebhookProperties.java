@@ -7,6 +7,7 @@ public class WebhookProperties {
 
     private String baseUrl;
     private String transcribePath;
+    private String speakersPath;
     private String token;
     private int connectTimeoutSeconds = 30;
     private int readTimeoutSeconds = 300;
@@ -60,7 +61,19 @@ public class WebhookProperties {
         this.transcriptionParallelism = transcriptionParallelism;
     }
 
+    public String getSpeakersPath() {
+        return speakersPath;
+    }
+
+    public void setSpeakersPath(String speakersPath) {
+        this.speakersPath = speakersPath;
+    }
+
     public String getTranscribeUrl() {
         return baseUrl + transcribePath;
+    }
+
+    public String getSpeakersUrl() {
+        return baseUrl + speakersPath;
     }
 }

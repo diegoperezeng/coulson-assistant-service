@@ -7,9 +7,11 @@ import com.yellowleaf.coulson.domain.model.Transcription;
 import com.yellowleaf.coulson.domain.model.TranscriptionSegment;
 import com.yellowleaf.coulson.domain.model.Video;
 import com.yellowleaf.coulson.domain.model.VideoChunk;
+import com.yellowleaf.coulson.domain.model.SpeakerMapping;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
+import com.yellowleaf.coulson.domain.port.SpeakerResolutionPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
@@ -23,9 +25,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 public class ProcessVideoUseCase {
 
@@ -37,6 +41,7 @@ public class ProcessVideoUseCase {
     private final AudioMergerPort audioMergerPort;
     private final AudioSplitterPort audioSplitterPort;
     private final TranscriptionWebhookPort transcriptionWebhookPort;
+    private final SpeakerResolutionPort speakerResolutionPort;
     private final ExecutorService executor;
     private final double maxAudioChunkSeconds;
 
@@ -47,6 +52,7 @@ public class ProcessVideoUseCase {
             AudioMergerPort audioMergerPort,
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
+            SpeakerResolutionPort speakerResolutionPort,
             ExecutorService executor,
             double maxAudioChunkSeconds) {
         this.storagePort = storagePort;
@@ -55,6 +61,7 @@ public class ProcessVideoUseCase {
         this.audioMergerPort = audioMergerPort;
         this.audioSplitterPort = audioSplitterPort;
         this.transcriptionWebhookPort = transcriptionWebhookPort;
+        this.speakerResolutionPort = speakerResolutionPort;
         this.executor = executor;
         this.maxAudioChunkSeconds = maxAudioChunkSeconds;
     }
@@ -171,11 +178,15 @@ public class ProcessVideoUseCase {
                 }
             }
 
+            log.info("Resolving speaker names [videoId={}] segments={}", video.getId(), allSegments.size());
+            List<SpeakerMapping> speakerMappings = speakerResolutionPort.resolve(allSegments);
+            List<TranscriptionSegment> resolvedSegments = applySpeakerNames(allSegments, speakerMappings);
+
             log.info("Transcription complete [videoId={}] videoChunks={} audioChunks={} segments={}",
-                    video.getId(), videoChunks.size(), audioChunksForTranscription.size(), allSegments.size());
+                    video.getId(), videoChunks.size(), audioChunksForTranscription.size(), resolvedSegments.size());
 
             return new TranscriptionResult(
-                    video.getId(), combinedText.toString().trim(), videoChunks.size(), allSegments);
+                    video.getId(), combinedText.toString().trim(), videoChunks.size(), resolvedSegments);
 
         } finally {
             filesToCleanup.forEach(this::deleteQuietly);
@@ -201,6 +212,27 @@ public class ProcessVideoUseCase {
         } catch (IOException e) {
             log.warn("Failed to delete temp file: {}", path);
         }
+    }
+
+    private List<TranscriptionSegment> applySpeakerNames(
+            List<TranscriptionSegment> segments,
+            List<SpeakerMapping> mappings) {
+
+        if (mappings.isEmpty()) {
+            return segments;
+        }
+
+        Map<String, String> nameMap = mappings.stream()
+                .collect(Collectors.toMap(SpeakerMapping::getSpeaker, SpeakerMapping::getName));
+
+        return segments.stream()
+                .map(s -> new TranscriptionSegment(
+                        nameMap.getOrDefault(s.getSpeaker(), s.getSpeaker()),
+                        s.getStart(),
+                        s.getEnd(),
+                        s.getText()
+                ))
+                .toList();
     }
 
     private record ChunkTranscription(AudioChunk chunk, Transcription transcription) {}

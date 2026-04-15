@@ -12,6 +12,7 @@ spring:
 webhook:
   base-url: ${WEBHOOK_BASE_URL:http://n8n:5678}
   transcribe-path: ${WEBHOOK_TRANSCRIBE_PATH:/webhook/transcribe}
+  speakers-path: ${WEBHOOK_SPEAKERS_PATH:/webhook/speakers}
   token: ${WEBHOOK_TOKEN:80797061-413c-47cf-a60c-bcc43a23d703}
   connect-timeout-seconds: ${WEBHOOK_CONNECT_TIMEOUT:30}
   read-timeout-seconds: ${WEBHOOK_READ_TIMEOUT:300}

@@ -4,6 +4,7 @@ import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
+import com.yellowleaf.coulson.domain.port.SpeakerResolutionPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
@@ -12,6 +13,7 @@ import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioExtractorAdapter
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioMergerAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.HttpSpeakerResolutionAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,6 +91,14 @@ public class AppConfig {
     }
 
     @Bean
+    public SpeakerResolutionPort speakerResolutionPort(
+            RestTemplate webhookRestTemplate,
+            WebhookProperties webhookProperties,
+            ObjectMapper objectMapper) {
+        return new HttpSpeakerResolutionAdapter(webhookRestTemplate, webhookProperties, objectMapper);
+    }
+
+    @Bean
     public ProcessVideoUseCase processVideoUseCase(
             VideoStoragePort videoStoragePort,
             VideoSplitterPort videoSplitterPort,
@@ -96,6 +106,7 @@ public class AppConfig {
             AudioMergerPort audioMergerPort,
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
+            SpeakerResolutionPort speakerResolutionPort,
             ExecutorService processingExecutor,
             VideoProperties videoProperties) {
         return new ProcessVideoUseCase(
@@ -105,6 +116,7 @@ public class AppConfig {
                 audioMergerPort,
                 audioSplitterPort,
                 transcriptionWebhookPort,
+                speakerResolutionPort,
                 processingExecutor,
                 videoProperties.getMaxAudioChunkSeconds());
     }
