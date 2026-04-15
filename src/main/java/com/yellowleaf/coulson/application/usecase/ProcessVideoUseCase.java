@@ -11,7 +11,7 @@ import com.yellowleaf.coulson.domain.model.SpeakerMapping;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
-import com.yellowleaf.coulson.domain.port.SpeakerResolutionPort;
+import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 public class ProcessVideoUseCase {
 
@@ -41,7 +40,7 @@ public class ProcessVideoUseCase {
     private final AudioMergerPort audioMergerPort;
     private final AudioSplitterPort audioSplitterPort;
     private final TranscriptionWebhookPort transcriptionWebhookPort;
-    private final SpeakerResolutionPort speakerResolutionPort;
+    private final SpeakerResolutionWebhookPort speakerResolutionWebhookPort;
     private final ExecutorService executor;
     private final double maxAudioChunkSeconds;
 
@@ -52,7 +51,7 @@ public class ProcessVideoUseCase {
             AudioMergerPort audioMergerPort,
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
-            SpeakerResolutionPort speakerResolutionPort,
+            SpeakerResolutionWebhookPort speakerResolutionWebhookPort,
             ExecutorService executor,
             double maxAudioChunkSeconds) {
         this.storagePort = storagePort;
@@ -61,7 +60,7 @@ public class ProcessVideoUseCase {
         this.audioMergerPort = audioMergerPort;
         this.audioSplitterPort = audioSplitterPort;
         this.transcriptionWebhookPort = transcriptionWebhookPort;
-        this.speakerResolutionPort = speakerResolutionPort;
+        this.speakerResolutionWebhookPort = speakerResolutionWebhookPort;
         this.executor = executor;
         this.maxAudioChunkSeconds = maxAudioChunkSeconds;
     }
@@ -145,7 +144,11 @@ public class ProcessVideoUseCase {
                                 Transcription transcription = transcriptionWebhookPort.transcribe(chunk);
                                 log.info("Chunk {} transcribed segments={} [videoId={}]",
                                         chunk.getIndex(), transcription.getSegments().size(), video.getId());
-                                return new ChunkTranscription(chunk, transcription);
+
+                                List<TranscriptionSegment> resolvedSegments = resolveSegmentSpeakers(
+                                        transcription.getSegments(), video.getId(), chunk.getIndex());
+
+                                return new ChunkTranscription(chunk, transcription.getText(), resolvedSegments);
                             },
                             executor
                     ))
@@ -166,9 +169,9 @@ public class ProcessVideoUseCase {
                 if (!combinedText.isEmpty()) {
                     combinedText.append(" ");
                 }
-                combinedText.append(ct.transcription().getText());
+                combinedText.append(ct.text());
 
-                for (TranscriptionSegment segment : ct.transcription().getSegments()) {
+                for (TranscriptionSegment segment : ct.resolvedSegments()) {
                     allSegments.add(new TranscriptionSegment(
                             segment.getSpeaker(),
                             segment.getStart() + offset,
@@ -178,15 +181,11 @@ public class ProcessVideoUseCase {
                 }
             }
 
-            log.info("Resolving speaker names [videoId={}] segments={}", video.getId(), allSegments.size());
-            List<SpeakerMapping> speakerMappings = speakerResolutionPort.resolve(allSegments);
-            List<TranscriptionSegment> resolvedSegments = applySpeakerNames(allSegments, speakerMappings);
-
             log.info("Transcription complete [videoId={}] videoChunks={} audioChunks={} segments={}",
-                    video.getId(), videoChunks.size(), audioChunksForTranscription.size(), resolvedSegments.size());
+                    video.getId(), videoChunks.size(), audioChunksForTranscription.size(), allSegments.size());
 
             return new TranscriptionResult(
-                    video.getId(), combinedText.toString().trim(), videoChunks.size(), resolvedSegments);
+                    video.getId(), combinedText.toString().trim(), videoChunks.size(), allSegments);
 
         } finally {
             filesToCleanup.forEach(this::deleteQuietly);
@@ -214,20 +213,38 @@ public class ProcessVideoUseCase {
         }
     }
 
-    private List<TranscriptionSegment> applySpeakerNames(
-            List<TranscriptionSegment> segments,
-            List<SpeakerMapping> mappings) {
+    private List<TranscriptionSegment> resolveSegmentSpeakers(
+            List<TranscriptionSegment> segments, String videoId, int chunkIndex) {
 
-        if (mappings.isEmpty()) {
+        if (segments.isEmpty()) {
             return segments;
         }
 
-        Map<String, String> nameMap = mappings.stream()
-                .collect(Collectors.toMap(SpeakerMapping::getSpeaker, SpeakerMapping::getName));
+        log.info("Resolving speaker names for chunk {} [videoId={}]", chunkIndex, videoId);
+        List<SpeakerMapping> mappings = speakerResolutionWebhookPort.resolve(segments);
+
+        if (mappings.isEmpty()) {
+            log.warn("No speaker mappings returned for chunk {} [videoId={}], keeping original codes",
+                    chunkIndex, videoId);
+            return segments;
+        }
+
+        return applyMappings(segments, mappings);
+    }
+
+    private List<TranscriptionSegment> applyMappings(
+            List<TranscriptionSegment> segments, List<SpeakerMapping> mappings) {
+
+        Map<String, String> speakerToName = mappings.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        SpeakerMapping::getSpeaker,
+                        SpeakerMapping::getName,
+                        (existing, replacement) -> existing
+                ));
 
         return segments.stream()
                 .map(s -> new TranscriptionSegment(
-                        nameMap.getOrDefault(s.getSpeaker(), s.getSpeaker()),
+                        speakerToName.getOrDefault(s.getSpeaker(), s.getSpeaker()),
                         s.getStart(),
                         s.getEnd(),
                         s.getText()
@@ -235,5 +252,5 @@ public class ProcessVideoUseCase {
                 .toList();
     }
 
-    private record ChunkTranscription(AudioChunk chunk, Transcription transcription) {}
+    private record ChunkTranscription(AudioChunk chunk, String text, List<TranscriptionSegment> resolvedSegments) {}
 }

@@ -1,0 +1,4117 @@
+{
+  "videoId": "8ef16bba-4907-4dcd-ae11-075e031a07ba",
+  "transcription": "Bem-axi. Exato, e aí não pega nem no local e nem pega no ambiente, porque o local ele reproduz no ambiente o desenvolvimento da autenticação. Aí é isso, Júlio, aí eu já resolvi agora, vou subir e vou aguardar a Amanda testar agora para saber se vai repetir.\nEntão a gente deve estar com tudo hoje disponível para ela testar. Você falou que o Marcos está subindo a dele. O Marcos vai falar ainda, mas as histórias do P.O.A. estão todas já foram testadas, voltou com bugs e está subindo de novo, não é isso? Isso, ela acabou de mandar mais alguma coisa aqui. É assim, a dinâmica. A coisa é dinâmica. Marcos. Bom dia, Marcos.\nBom dia, eu finalizei a última história da sprint e é como o Matheus disse, já pediu merge para a turma de arquitetura. Já também pontuei o tempo ali no board. Já vi também. É isso. Para todos é uma meia, né, de exclusão do campo, não é isso, Marcos?\nNão, Não, isso é não foi usado na minha festa. a 65, 67, 67. Essa é para poder colocar as regras no campo, as regras em alguns campos, né, que está listado ali na atividade, baseado nesse novo pedido aí que o Matheus fez essa funcionalidade.\nutilizei a funcionalidade que ele fez, por isso de ter esperado ele terminar e corrigir, e adicionei aos campos que foram citados na atividade e também teve uma troca de título de campo. Essa, em resumo, foi essa atividade. Tá. Amanda.\nBom dia, gente. Estou aqui correndo ainda na área do carência porque eu estou testando a regra inteira, né? Estou testando tudo de novo para a gente ver a correção dos perfeitos e as alterações do histórico. Aí já consegui passar, passei os bancos para o Matheus, agora estou terminando de passar as duas histórias do carência.\nE aí eu vou esperar o Adilson subir para eu já fazer a mesma coisa do CPT. Entendeu? Que aí a gente vai ficar trabalhando com as histórias e com aquelas validações dos bancos para a gente entregar o formulário certinho, né? Será, Porque eu fiquei será. com esse teste só eu mesmo. Porque eu tenho que fazer tudo de novo. Enfim.\nEntão hoje que eu estou entendendo o maior problema que a gente tem é essa questão de ambiente ainda de algumas ações do Gustavo, é isso? exatamente tem alguns erros que estão acontecendo e aí eu vejo até com o Matheus eu reproduzo aqui e faço o vídeo para ele e aí ele faz a máquina dele estar ok entendeu? então o ambiente não está só aquele pontilhado lá tem algumas outras coisas que estão dando erro agora mesmo eu gerei um PDF\nque estava vindo outra operadora outra operadora e não tinha nada a ver aí na hora que eu gerei de novo veio com a operadora certa do atendimento então alguma coisa ainda não está bom nesse ambiente ainda É esse esse é o tipo de problema que pode ter a ver também com um toque\nPorque como foi, como o dado da operadora agora é gerado dentro do toque, pode ter algum erro de lógica na função, alguma coisa que esteja se perdendo aí desde aquela mudança do Gustavo, porque hoje a gente não está passando mais código operadora, ela está vindo direto do toque, exatamente. Então é um ponto a observar.\nE aí, realmente, o que aconteceu? Eu saí Você da operadora, gerou, você gerou, deu o PDF, outra operadora, diferente de que você estava de hoje. outra operadora. Aí eu falei, gente, mas isso está errado, isso aqui estava funcionando. Aí Você eu saio, reparou, reparou peguei outra que você é operadora. operadora. Oi? Você reparou que você é operadora, você tem acesso a ela também? Tenho. São as operadoras que eu tenho acesso. Eu gerei, era uma da Faluca.\nE ele me gerou um PDF escrito aliança. Então, aí... Aí eu falei, vou gerar no Bradesco para ver se o Bradesco vai vir errado.\nAí deu certo. Aí depois eu gerei um mês aberto, o mesmo treinamento. E deu certo. Pode ter a ver com isso. Ele checou se o usuário tem permissão, mas entrou na operadora errada. Então alguma lógica pode estar com algum conflito aí, em algum lugar. Aí a gente vai ter que observar isso ao longo de tudo, né? Eu acho que você vai dar problema na hora da homologação. Júlio, o ambiente, desde aquela mudança da arquitetura lá...\nbom enfim do problema de Ori Maia e tal tá muito e não está confiável eu até porque eles estão muito ocupados o pessoal da aqui mas eu precisaria uma passagem completa assim deste Leandro ou Amanda ou o que pudesse para fazer e anotado todos os problemas visíveis e a gente entender cada um deles novamente aqueles regressivos de novo repassar as regras para a gente entender aonde quebrou\nEntendeu? Porque algumas coisas não acontecem na minha máquina e eu não posso, inclusive, eu estou de mãos atadas que eu não posso nem baixar o ambiente com risco de isso acontecer e a gente não conseguir nem entregar. Entendeu? Então é algo assim, eu gostaria que vocês puderem fazer esse regressivo geral assim, é interessante porque eu não estou confiando, estou sendo bem sério, não estou com confiança. Ele não é mais como era antes, não.\nNão realmente tem muita coisa diferente. Então, mas a dúvida que eu fico, Mateus e Amanda e pessoal, é o seguinte. A gente não tem ou tem certeza que é alguma coisa do ambiente ou do código mesmo. A gente pode afirmar que é coisa de ambiente porque não funciona lá e funciona na tua máquina? Então, aí os erros pontuam. A escala to abigerando eu faço essa avaliação aqui interna. Então, de a cada cinco erros.\ntalvez quatro quatro realmente acontecem aqui e a gente corrige aqui na hora mas por exemplo alguns problemas de comportamento por exemplo ela citou que o ambiente estava mais lento ao carregar um atendimento são coisas que a gente não não está acontecendo na nossa máquina entendeu e aí a gente não consegue eu não por exemplo não consigo reproduzir isso entendeu mas assim o ambiente do gov\nAinda existe a linguagem componente, ele tem um comportamento um pouco peculiar quando você lida com um dom dentro de uma máquina e quando você lida dentro de uma máquina virtual, dentro de um ambiente de desenvolvimento onde as coisas são um pouco mais...\ncontroladas do que um computador, que é menor, menos memória, gasta menos ali, local, enfim. Então pode gerar alguns comportamentos, que é o que está gerando. E aí a gente precisa entender por que esse problema de dependência é um outro. Enfim, são vários problemas pontuais que aí a gente só ela pontuando realmente o que está acontecendo e a gente fazendo um mutirão, um a um, para entender se esse problema realmente é de código, entendeu? Até porque...\nQuando foi feita essas correções do ambiente lá,\nEu não me lembro se eles testaram se quebrou alguma coisa dentro do código. Então, eles restabeleceram ambiente, alteraram algumas coisas dentro do código, o problema de tipagem, enfim, algumas outras coisas. Porém, eu não sei se eles testaram se quebrou algum lugar que deveria estar funcionando, entendeu? Então, como eles fizeram essa mudança e talvez não fizeram um teste.\ntalvez não fizeram teste pode ser que é quebrado em outro lugar eu estou tomando cuidado com a minha de palavras aqui que é para não afirmar coisas que eu não sei mas é preciso ter feito esse teste simulado esse teste enfim é isso entendi tá bom Então resumindo, semana que vem vou ter que fazer o reteste de novo no SGE, que vai ser a semana mais tranquila para mim, vai ter que ser o G.\nÉ, agora esse negócio de trocar operadora, quer dizer, você ter uma andar gerar um PDF e ele gerar uma operadora diferente, eu acho que praticamente com certeza é alguma coisa da autenticação, eu não diria nem de...\nde ambiente, eu diria, do processo utilizado para certificar a autenticação mesmo, porque pelo que o Gustavo mostrou para a gente lá naquela época, ele carrega várias operadoras, quando você se loga, o seu usuário, a partir do momento que você escolhe uma, ele vai dar um tipo um refresh lá no token, e coloca só aquela operadora que você escolheu.\nna hora de gerar o pdf quer dizer só trocou operadora na hora de gerar o pdf né na verdade quando você entrou lá os atendimentos era tudo da operadora que você se logou só era mas na hora de gerar o pdf lá na petição lá de gerar o pdf é que você que ele mostrou uma operadora diferente não é isso então é assim eu vou anotar tudo que a gente está vendo experiência estou anotando\nSó com o Matheus, eu estou passando para o Matheus só o que eu achei no formulário de carência, entendeu? Tá. Que eu estou testando o carência. Até o fim da nossa entrega, o foco vai ser o carência e o CPT, que é o que a gente precisa entregar. De qualquer forma, o que eu achar diferente, estou anotando. Estou anotando se eu consigo reproduzir para a gente ver depois, entendeu? Porque agora...\nNão tem muito o que fazer, a gente tem que sair entregando. Isso não vai acabar. Se for parar para resolver tudo que a gente estava falando de diferente, foi o que eu mostrei para o Matheus. Se eu pesquiso, se eu entro na pesquisa de atendimento, eu vou pesquisar um atendimento que na listagem principal está lá na página 12, nunca rega, entendeu? Não aparece para mim, a pesquisa não está funcionando.\nnas primeiras páginas aparece. Então eu estou anotando e a gente vê semana que vem para ver o que é que vai fazer. Entendeu? Porque não está igual, isso eu posso afirmar, não está igual o que estava antes dessa mudança. Eu não estou falando em questão de regra, estou falando em questão de comportamento. Entendeu? Não era a mesma coisa que não acontecia, principalmente o que eu passei com a máquina de teste na máquina dele.\nNão aconteceu que era para eu marcar outra votação recente, porque eu careço do CPT. É recente, é recente, essas alterações. Então a gente tem que descobrir o que é. Amanda, eu vi que você criou um novo card lá de geração de PDF com bugs. Eu só retornei o que já estava, eu adicionei os bugs e retornei. É porque aquele caso, campos...\ntem casos que eu não estava conseguindo preencher no formulário e aí agora que eu consegui preencher eu tinha que adicionar os novos planos entendeu aí Então aumentou a lista de bugs a serem corrigidos, o Júlio. Beleza. Então aumentou a lista de bugs a serem corrigidos, o Júlio.\nE com certeza semana que vem vai aumentar mais. É, por enquanto eu estou tranquilo aqui, o carência era um dos formulários que a gente não tinha feito total regressivo dele, né? E o que vai me assustar é se começar a mudar, por exemplo, 8 e 22.\ncomeçar a mudar coisa de lá nesses outros formulários que cara não foi assim já estava ok estava tudo certo tá tudo testado a gente não mexeu mais nada lá e começar a gerar alguns comportamentos porque eu sei que vários desses campos foram mudados tipagens dele e isso pode ter quebrado algum use effect alguma coisa pode ter acontecido entendeu e aí eu eu não consigo\nPor que é essa tipagem? Pela parte da arquitetura, porque desde aquela mudança do OSLint, aí o OSLint ficou acusando umas paradas. Aí ele corrigiu, ele Ele botou uma genérica lá, não foi? Botou uma... foi isso que ele fez? botou uma versão mais atualizada e atualizou o pack.js, o NodeMod, toda a dependência e aí quebrou tudo.\nNão sei se lembrou se foi o Tony Silva que conseguiu restabelecer, porém ainda não estava passando na build, não passava de jeito nenhum e aí ele ficava acusando esses erros de tipagem no TypeScript, coisas que não acusavam anteriormente, se vocês lembram disso. E aí o que acontece? Eles corrigiam esse erro onde estava acusando.\nSó que hoje eu falo, eu não sei se eles foram no formulário e viu se quebrou alguma coisa, fizeram uma passagem completa no formulário e viu se quebrou. Aí eles corrigiam, viu que rodou na build, resolveu o problema. Aí acusou em outro lugar, resolveu o problema, entendeu? Então eu não sei se eles chegaram a ver se quebrou, enfim, não sei. Provavelmente não, né? Para ir no formulário, para ver se estava lá funcionando.\nEntão, Júlio, não pode mexer nas dependências sem avisar. Nossa, o que estamos desenvolvendo, né? Tem Não, que deixar... mas ele falou, né? Ele falou que ia mexer naquilo que estava mexendo. Ele até mostrou para a gente. Não, não, é outra coisa daí, por favor.\nÉ outra coisa. É, o Gustavo tentou apagar Eu a minha me agenda, lembro que tá? ele falou dos tipos. Ele até mostrou, abriu o código e tal. Ele falou que estava dando aquelas, não sei se era warning ou se era erro para valer nos tipos. Ele falou que ele ia lá e botava um genérico. Você lembra disso ou não? Sim, sim, sim, sim. Ele falou assim, ah, ele está dando isso aqui porque aqui não tem. Você tem que garantir que está tipado e tal, que não sei lá o quê. Então, aí a gente aborta.\no robôctô é isso porque não deu certo e a gente removeu a regra do s20 aí o s20 Ah, parou removeu exatamente a regra. aí o s20 voltou a aceitar porque o que acontece ele não é igual sonar que avisa todo lugar dá um relatório de todo lugar que tá ruim ele avisa assim ó tá ruim aqui aí você resolve aqui ele vai acusar em outro lugar e nisso a gente tinha um risco de ficar num loop que a gente não sabe\nAté centenas, pode ser centenas, pode ser milhares de pontos que talvez ele tenha identificado um erro de tipo, por exemplo, Aí entendeu? vocês já moveram a regra do S -Link para ele não acusar mais isso. Para ele não gerar mais esse erro, tendo em vista que não quebrava nada da aplicação, entendeu? Era só... Mas então não mudou a tipagem, se tirou a regra lá do Aí S-Link. após isso, após isso, na build, começou a acusar... Após isso não, Também antes disso também.\nAh, A começou a acusar alguns problemas pontuais e aí foi feita essas correções pontuais dentro de alguns códigos e possa ser foi nós que através ou pela arquitetura? Ou pelo Gustavo? pela arquitetura, eu não lembro se foi Gustavo ou foi o Antônio que mexeu nessas chipagens e aí qual que é o maior problema de todos?\nE se for problema do código, aí é de boa, a gente resolve que acusou erro, a gente resolve se reproduzir nosso armário acusou. O problema foi dependências que foram baixadas de dependência para o código, foram atualizadas no Node Modules lá, no Package Json, e aí causou aquele problema lá. Aí é pior para a gente, entendeu? Porque aí a gente vai ter que fazer um depare e esses arquivos são imensos, enfim.\nAí esse é o pior de tudo, porque se for código, se a gente fazer uma passagem e a gente identifica, a gente vai resolver. Agora, quando passa disso, aí é um pouco mais complicado. Entendi. O Gustavo continua fora, cara. Estou chamando ele desde de manhã. Sabe do Gustavo? O Diego conseguiu falar com ele hoje ou não? Cara, ainda não consegui falar.\nPois Só Zeca que aquele daí é de que imagina aparecer mais. Ele deve estar com algum problema em casa, provavelmente. É, provavelmente Depois eu vou perguntar a Sheila, a Sheila deve saber de alguma coisa Sim. É, só salientando que essa subida de diversão de dependências aí não pode ser feita assim. Outra vez foi feita na CGR e o Adilson penou para poder corrigir também. Então qualquer inserção Algo salvo, Gustavo entrou aqui tem que...\nVamos Fazer lá. com muito cuidado. Gustavo, está ouvindo? Se estiver falando, está mutado aí teu microfone. Está ouvindo, Gustavo? Estou te ouvindo. Bom dia. Está podendo falar ou está com algum problema aí?\nTô com um probleminha aqui. É? Depois que tu olha a mensagem, eu falo, ih, caramba. Teu filho é? Eu meio te Meio que deu erro. eu tô online. Tá, Tá. Depois que tu olha a mensagem que eu deixei lá pra você, então, quando tu estiver em casa. meio que eu tô online. Tá bom, então. Valeu.\nFilho dele, eu pergunto.\nEntão tá bom, Leandro. Quer acrescentar alguma coisa, Leandro? Oi, Júlia. Boa. Só antes de... Fala, Matheus. Então, eu vou solicitar para eles essa passagem para a gente conseguir ter a certeza de que, por exemplo, se os problemas, só a arquitetura vai resolver ou a gente consegue resolver ou a gente vai ter que resolver em conjunto para a gente ter tipo um dossiê para entender o que está acontecendo. Então, entender aonde está acontecendo, a gente reproduzir, nos reunimos.\nNo momento de entender onde está acontecendo, se está acontecendo, local, se acontece desenvolvimento. Tendo essa massa de testes e a gente conseguir confirmar, aí a gente consegue passar essa demanda se for para eles, entendeu? Se for deles. Entendi. Tá bom. Beleza.\nBom, com relação à sprint atual, eu queria só confirmar com o Marcos se tem alguma pendência ainda nessa história de desenvolvimento, nessa história 166, no caso na task da história 166. Se tiver concluído, Marcos, faz a gentileza, entra na task e marca ela lá como closed, finalizado. E daí pega a história. e daí você pode empurrar ela para teste ds qualquer dúvida me chama eu te auxilio aí beleza e aí julho com relação a sprint a próxima sprint\nBeleza, sabemos que a gente tem somente sete dias úteis. Cara, é insano dizer que a gente vai levar mais do que dois dias para fazer a inclusão daqueles dados lá para a classificação dos motivos. E aí tem que combinar o que a gente vai apresentar para o usuário, no caso na segunda-feira.\nqual que vai ser o objetivo dessa próxima sprint mesmo sendo ela mais curta né conteúdo que eu tenho aprovado aqui nem tá aprovado ainda né mas é Tá exatamente para 70 sprint 70 que você tá falando próxima sprint sprint 70 que inicia o desenvolvimento dela inicia dia 13 e a gente finaliza o desenvolvimento no dia 24\nUh para -huh. entregar ela no dia 27 e aí para a gente combinar o que se vai colocar lá na apresentação do dia 13 segunda -feira agora o planejamento que a gente teoricamente tem que trazer pronto por enquanto eu tenho só essa história uma única história que a classificação para incluir as novas classificações dos anexos de documentos e verificar se a gente vai fazer alguma coisa o que a gente vai acrescentar lá para eles dessas atividades agora que a gente vai entrar para fechar\nTchau, então todo o projeto SGR, o peticionamento vai entregar, vai começar a trabalhar nesse fechamento para entrega desses projetos e na sequência as atividades para o novo projeto que é a do análise em monte.\nAchei esses praticinhos aí. Vamos fazer uma conversa depois, Leandro? A hora que precisar, Eu te chamo aí, a gente faz uma conversa sobre isso, tá? Tá? E depois chamamos Devs pra gente fechar. Isso. Aí só, então, nesse caso, a minha ideia seria fazer a planning, então segunda-feira ou hoje, se for o caso, no final da tarde, até o final da tarde, se a gente tiver já uma definição, a gente faz a planning dessa história que vai entrar na sprint seguinte.\nse não der hoje a gente faz na segunda-feira provavelmente depois do almoço né é que eu acho que vai ser e antes da entrega daí a gente já vai com isso tudo maturado é aí só a questão dos testes né da Amanda que é o risco né para entre as coisas essa sprint para ela criar as evidências fazer todos os testes e a gente fechar ela de forma correta ali porque todas as tasks de testes estão pendentes aqui no meu board aqui ainda beleza\nTá. Conseguiu Conseguiu, Sol? marcar ainda, né? Mas ele pelo menos já fez, né? Marquei lá, consegui Ah, marcar. conseguiu marcar? Sim, Beleza. fechei tudo, desloguei, loguei de novo e foi. Boa, boa. Aí tem que ver só nesse caso dos bugs que a gente tem por o momento.\né deixa eu voltar aqui tem pelo menos três cards de bugs ali né que eu acho que voltou aquela correção dos pdfs lá que acho que o marcos tinha atuado já aí tem que ver só esse do cpt se tá pronto a gente empurra e aí tem o último bug aí ó correções franquias ou co participação campos de valores numéricos se o bug tá em aberto aqui ainda não sei se ele ele não corresponde a seis print assim como do É, dos pdf então. pdf\nEsse aí, a gente vai deixar ele aí, que é o seguinte, esse aí eu acho que foi um comportamento que surgiu depois da operação. Eu acho que eu vou pegar esse card aqui, já está aí, e vou fazer um card só, por motivo desses comportamentos que não existiam antes dessa alteração que teve. Eu acho mais seguro.\npara a gente conseguir rastrear, não sei o que vocês acham, o que vocês acham. Olha, Amanda, quanto mais granular, eu acho que dependendo assim, eu acho que fica até melhor. A gente consegue ter uma visibilidade maior e consegue dar vazão, consegue ver o negócio andando, né? Mas vai, acho que muito da gestão aqui interna nossa do time, se achar Porque que vale a pena a gente quebra, se não, dá para tratar num só. assim, eu acho que se for coisa assim de regra\né tranquilo só que esse cara vai ter que passar pelo mateus para ele chegar e falar assim olha no meu ambiente que é o ambiente que está pertinho ele vai ter que olhar e falar assim aqui não funciona então provavelmente isso é um erro de depois dessa alteração aí a gente tem que ver o que fica melhor ou eu crio vários casos vários bugs\nOu eu crio um carro só, com todas as coisas que provavelmente é por causa dessa alteração que tem, que a gente vai ter que resolver. Eu acho difícil a gente tomar uma decisão agora porque ainda tá com essa questão da instabilidade dos ambientes. Eu sei se a gente... Durante que a gente não tenha previsibilidade da estabilidade dos ambientes para a gente poder botar a mão, literalmente, no sistema ali e dizer, ó, dá para fazer, não dá para fazer, quebra ou não quebra.\nEntão, Aí você eu estou falando considera que, tipo assim, uma correção, ah, se estabilizar o ambiente, se resolver, às vezes não vai resolver todos os bugs que estão ali, Exato, entendeu? entendo perfeitamente. E às vezes não. Exato. você pode, Amanda. aqui, Matheus, com o Gustavo, eu pedi para ele nos procurar, ele disse que vai nos procurar depois para a gente ver se a gente passa um pente fino nessas questões aí com ele.\nTá, é Ah, mas aí qual questão que você está se referindo? esse negócio que mudou lá o usuário, lá mudou a operadora, que tudo indica que é para dar autenticação, né? Entendeu? Porque isso daí, isso daí eu acho difícil do código, entendeu? É de cara, Amanda, se puder, se você conseguir reproduzir esse teste aí, tirar a massa, enviar ou criar um card.\nque é o que simplesmente Beleza, vou reproduzir deixar para acontecer eles. novamente. Vou continuar testando aqui e vou ver se acontece novamente. Por exemplo, nesse teu negócio do atendimento aqui, é bizarro, né? Eu fui lá na 12ª página, voltei e pesquisei atendimento. E pegou. Não havia desenvolvimento. Aí é difícil, assim, porque na hora que acontece, na hora que não está acontecendo, Exatamente. é uma coisa de maluco, assim.\nMas é isso. Aí, mano, se puder, assim que achar esses erros, documenta, Três por favor, palavras. e quando você terminar de passar ali o motivo todo, completo, aí a gente se reúne, pode ser qualquer horário durante o dia, a gente se reúne na prioridade pra esse aí. A gente pensa, ou hoje ou hoje para amanhã, hoje ou hoje para segunda, a única coisa que dá para fazer é o careço e o CPT. Então é isso que vai ter que corrigir. A partir de terça-feira a gente vai sair. Então tem que ver se até terça -feira o Gustavo vai conseguir estabilizar esse ambiente.\nEntendeu? Olha, estabilizar, então, o que acontece? Estabilizar é uma coisa, resolver os bugs é outra. O ambiente está estável, está funcionando. Agora a gente precisa pegar esses problemas que estão acontecendo e entender caso a caso, infelizmente. Não dá para colocar todos no mesmo balaio e falar assim, é esse o problema. A gente precisa entender agora caso a caso, infelizmente.\nEntão vai ter que ser isso, ter PT e carência, E se a CPTI que é para ser na terceira, carece, o que apresenta? Vamos focar isso nesses daí para a gente... aí a partir de terça a gente vê os outros motivos.\nE aí, a partir de tese, o que eu vou fazer? Eu acho melhor eu vou colocar lá no título uma especificação dessa alteração. A gente vê o que a gente vai bolar, a gente bota uma label, alguma coisa para dizer que esses bugs parecem que surgiram depois dessa alteração. E aí eu vou criar um card por motivo, entendeu? Que eu vou ter que passar por todos, vou ter que fazer o reteste de novo de todos, né?\nO que me dói, principalmente por causa do motivo hoje. Mas fora isso, tudo bem. A gente faz semana que vem, a partir de terça. Mais alguma coisa, pessoal? Não? A parte está tranquila. Sheila, eu estava tentando falar com o Gustavo, mas eu consegui contato agora com ele. Ele está lá no hospital com o filho, né?\nCaralho. É, menino, ele parece que tem uma urucubaca na cabeça dele lá da família, porque ele foi lá trocar o gesso do pequenininho e o outro filho dele mais velho, um que há pouco tempo tinha operado a perna, quebrou o joelho. Caralho. Aí ele tá com os dois filhos lá com ele.\nMas é normal Eu de físico, eles botam o filho em luta ali, ultimate fight, alguma coisa de praticar. ia até perguntar isso para ele porque o garoto há pouco tempo, você lembra que teve um filho que estava com o pé torto? Que quebrou o pé, sei lá, Sim. teve um problema na perna, né?\naí teve que operar botou ali um negócio na perna então agora quebrou o joelho ele estava com os dois lá É, aí eu achei que ele foi falou que aí. vai é ele falou que vai trabalhar agora tarde isso É, ele me falou. só que eu estava até preocupada Júlio porque eu tinha pedido para ele priorizar uma situação lá do sistema de pagamentos que tem que entregar hoje à tarde aí eu estava até pensando aqui como é que ele vai conseguir falar com Matheus e fazer essa parada mas enfim\nsim É, tem um problema no Sib também, que ele tem que, mas o Sib acho que é tranquilo, é questão de token, tá dando problema na geração de um token e a gente ficou empacado por causa disso, porque não gerava esse token nem a pau até sexta-feira, até mas no pior caso ontem do token no pior caso do token talvez se for assim muito crítico eu posso pedir para o Max tentar ajudar\nÉ Entendeu? porque a gente está dependendo disso para encerrar uma tarefa que a gente precisa demonstrar para o usuário lá. Já Então, foi talvez entregue... eu possa pedir para o Marcos. Tá, aí a gente pode ver. Tá, vamos falar com o Gustavo. Quando você conseguiu falar com ele aqui, Ele ele falou que ele... só vai estar online à tarde. Que horas que ele falou para você? Não, ele falou à tarde, mas ele está me respondendo aqui. Entendeu?\nEle Isso, tá me respondendo ele está respondendo. aqui. Ele tá até verdinho aqui agora. É, não, ele consegue responder, ele só não vai conseguir atuar, né? É, isso. Porque eu acho que num pior caso, se ele tiver essas três atividades, talvez o Max, dependendo do que seja, o Max consegue atuar, porque quem está atuando no Kiklo, quem está atuando nessas questões é o Max. Mas ele está dedicado lá nas reais.\nMas ele pode vir aqui eventualmente, se for crítico, eu mando ele largar lá e vir aqui ajudar, entendeu? Perguntando dele aqui. Aí você pergunta, porque talvez esse token, eu acho que não me parece ser uma coisa que ele tenha que ter, vai precisar codificar alguma coisa, Matheus? Não, acho que não. Não é pra cá Não, não. né? É lá pros 5. Ah, pro outro? Acho que não. Ah, É. tá.\nÉ preciso. Aqui pode ser que seja código ou pode ser que seja keycloak, aí a gente vai precisar da evidência para a gente investigar primeiro. É, porque se for que cloque, o Max consegue atuar ajudando o Gustavo, né? Se for código, só não vai dar porque ele tá, ele Se não tem nada, for código, não tem, teoricamente é para a gente aqui mesmo, para a equipe aqui, né? então... É, teoricamente sim, teoricamente sim.\nTá bom então. Se precisarem dele, por acaso, se vocês acharem que está demorando muito, aí vocês me falam, que aí eu tento dar uma deslocada no Max. Ele ficou aqui, ele falou que ia procurar o Mateus aqui para ver com ele isso daí e disse que ia falar com a Matheus também, mas só que se ele tiver ocupado a tarde inteira lá com o cifre por causa da entrega, ele não vai conseguir.\nVamos a nossa entrega segunda-feira. é na verdade ele precisa finalizar ele tem que programar ele precisa finalizar uma atividade lá do do pagamento que eu falei para ele que é a homologação da Deise termina hoje aí eu expliquei para ele falei Gustavo não tenho mais tempo para esperar preciso entregar hoje aí ele falou que até as quatro horas da tarde ele me entregava o Max ó o Max ele só tem reunião às duas\ne três e meia então se precisar dele ele também tem uma reunião agora às 11 e 30 do Cora mas essa reunião do Cora essa reunião do Cora dura 15 minutos então assim se precisar vocês me falam aí a gente muda aqui o que tiver que mudar tá bom\nBeleza Tá bom, pessoal. Bom dia a todos aí. Pô, só um segundinho, eu queria ver, o Adilson me encaminhou um invite aqui de uma reunião com o pessoal de sustentação do SGR, só queria entender qual que vai ser o assunto tratado lá para eu chegar preparado. Adilson! Bom vou deixar vocês aí, boa reunião Obrigado, Boa obrigado. reunião ou não, Beleza. né? Bom trabalho Boa sexta -feira, fique com Deus. Tchau, tchau. Me chamou aqui, cara. Chamei, desculpa, cara. Não, você me mandou o invite ali, eu queria só que você me desse um overview de qual que é o assunto que vai rolar nessa reunião de apresentação daqui a Eu pouco. acho que a conversa é sobre o SDR. Tudo bem, mas sabe qual que é o ponto, um tema específico ou não? Acho que eles querem implementar alguma melhoria lá. Entendi, mas...\nBeleza, conversamos lá. Beleza, tranquilo. É, vamos conversar com ele lá. Vamos lá, Vamos quem... tentar jogar isso pra eles mesmo, pra eles atualizarem. Quem foi que passou? Ah, o pessoal da sustentação que ficou. É, eles querem conversar com a gente hoje sobre o S.R. Ah, mas é que eles querem sincronizar alguma coisa com a gente, que não é para a gente fazer, né? Provavelmente, Não, eles querem é. sincronizar alguma correndo de atuar lá. Então, justamente... eles querem sincronizar alguma coisa com a gente, provavelmente.\nClaro, beleza. Vamos lá ver qualquer coisa e qualquer coisa a gente traz o problema Né? aqui para segunda-feira. Falou, pessoal. Bom Valeu, dia. obrigado. Valeu, Até Bom, gente. gente. a semana. Tchau. Até amanhã. Tchau, gente. Tchau. Tchau.",
+  "totalChunks": 4,
+  "segments": [
+    {
+      "speaker": "A",
+      "start": 0,
+      "end": 0.3500000000000001,
+      "text": " Bem-axi."
+    },
+    {
+      "speaker": "B",
+      "start": 1.4500000000000004,
+      "end": 5,
+      "text": " Exato, e aí não pega nem no local e nem pega no ambiente,"
+    },
+    {
+      "speaker": "B",
+      "start": 5.2,
+      "end": 8.600000000000001,
+      "text": " porque o local ele reproduz no ambiente o desenvolvimento da autenticação."
+    },
+    {
+      "speaker": "B",
+      "start": 9.950000000000001,
+      "end": 12.600000000000001,
+      "text": " Aí é isso, Júlio, aí eu já resolvi agora,"
+    },
+    {
+      "speaker": "B",
+      "start": 12.850000000000001,
+      "end": 18.900000000000002,
+      "text": " vou subir e vou aguardar a Amanda testar agora para saber se vai repetir."
+    },
+    {
+      "speaker": "C",
+      "start": 19.636,
+      "end": 27.086,
+      "text": " Então a gente deve estar com tudo hoje disponível para ela testar. Você falou que o Marcos está subindo a dele. O Marcos vai falar ainda,"
+    },
+    {
+      "speaker": "C",
+      "start": 27.136,
+      "end": 34.536,
+      "text": " mas as histórias do P.O.A. estão todas já foram testadas, voltou com bugs e está subindo de novo,"
+    },
+    {
+      "speaker": "C",
+      "start": 34.636,
+      "end": 34.93600000000001,
+      "text": " não é isso?"
+    },
+    {
+      "speaker": "B",
+      "start": 35.386,
+      "end": 37.386,
+      "text": " Isso, ela acabou de mandar mais alguma coisa aqui."
+    },
+    {
+      "speaker": "C",
+      "start": 38.93600000000001,
+      "end": 39.636,
+      "text": " É assim,"
+    },
+    {
+      "speaker": "C",
+      "start": 39.68600000000001,
+      "end": 41.136,
+      "text": " a dinâmica. A coisa é dinâmica."
+    },
+    {
+      "speaker": "C",
+      "start": 42.636,
+      "end": 43.286,
+      "text": " Marcos."
+    },
+    {
+      "speaker": "C",
+      "start": 43.486000000000004,
+      "end": 44.635999999999996,
+      "text": " Bom dia, Marcos."
+    },
+    {
+      "speaker": "D",
+      "start": 46.388,
+      "end": 47.088,
+      "text": " Bom dia,"
+    },
+    {
+      "speaker": "D",
+      "start": 47.288,
+      "end": 53.588,
+      "text": " eu finalizei a última história da sprint e é como o Matheus disse,"
+    },
+    {
+      "speaker": "D",
+      "start": 53.638,
+      "end": 59.888,
+      "text": " já pediu merge para a turma de arquitetura."
+    },
+    {
+      "speaker": "D",
+      "start": 61.438,
+      "end": 65.988,
+      "text": " Já também pontuei o tempo ali no board."
+    },
+    {
+      "speaker": "E",
+      "start": 66.238,
+      "end": 67.088,
+      "text": " Já vi também."
+    },
+    {
+      "speaker": "D",
+      "start": 68.138,
+      "end": 68.638,
+      "text": " É isso."
+    },
+    {
+      "speaker": "C",
+      "start": 71.738,
+      "end": 73.488,
+      "text": " Para todos é uma meia,"
+    },
+    {
+      "speaker": "C",
+      "start": 73.53800000000001,
+      "end": 74.488,
+      "text": " né, de exclusão do campo,"
+    },
+    {
+      "speaker": "C",
+      "start": 74.53800000000001,
+      "end": 75.08800000000001,
+      "text": " não é isso, Marcos?"
+    },
+    {
+      "speaker": "D",
+      "start": 75.956,
+      "end": 75.956,
+      "text": " Não,"
+    },
+    {
+      "speaker": "C",
+      "start": 75.956,
+      "end": 76.456,
+      "text": " Não, isso"
+    },
+    {
+      "speaker": "D",
+      "start": 76.456,
+      "end": 76.506,
+      "text": " é"
+    },
+    {
+      "speaker": "C",
+      "start": 76.506,
+      "end": 77.85600000000001,
+      "text": " não foi usado na minha festa."
+    },
+    {
+      "speaker": "D",
+      "start": 77.85600000000001,
+      "end": 79.756,
+      "text": " a 65, 67,"
+    },
+    {
+      "speaker": "D",
+      "start": 80.206,
+      "end": 80.706,
+      "text": " 67."
+    },
+    {
+      "speaker": "D",
+      "start": 81.656,
+      "end": 87.006,
+      "text": " Essa é para poder colocar as regras no campo,"
+    },
+    {
+      "speaker": "D",
+      "start": 87.05600000000001,
+      "end": 91.156,
+      "text": " as regras em alguns campos, né, que está listado ali na atividade,"
+    },
+    {
+      "speaker": "D",
+      "start": 91.506,
+      "end": 98.60600000000001,
+      "text": " baseado nesse novo pedido aí que o Matheus fez essa funcionalidade."
+    },
+    {
+      "speaker": "D",
+      "start": 100.884,
+      "end": 102.884,
+      "text": " utilizei a funcionalidade que ele fez,"
+    },
+    {
+      "speaker": "D",
+      "start": 102.984,
+      "end": 106.284,
+      "text": " por isso de ter esperado ele terminar e corrigir,"
+    },
+    {
+      "speaker": "D",
+      "start": 107.384,
+      "end": 116.384,
+      "text": " e adicionei aos campos que foram citados na atividade e também teve uma troca de título de campo."
+    },
+    {
+      "speaker": "D",
+      "start": 116.534,
+      "end": 118.934,
+      "text": " Essa, em resumo, foi essa atividade."
+    },
+    {
+      "speaker": "C",
+      "start": 119.884,
+      "end": 120.28399999999999,
+      "text": " Tá."
+    },
+    {
+      "speaker": "C",
+      "start": 121.884,
+      "end": 122.684,
+      "text": " Amanda."
+    },
+    {
+      "speaker": "F",
+      "start": 125.844,
+      "end": 127.14399999999999,
+      "text": " Bom dia, gente."
+    },
+    {
+      "speaker": "F",
+      "start": 127.39399999999999,
+      "end": 142.694,
+      "text": " Estou aqui correndo ainda na área do carência porque eu estou testando a regra inteira, né? Estou testando tudo de novo para a gente ver a correção dos perfeitos e as alterações do histórico."
+    },
+    {
+      "speaker": "F",
+      "start": 143.894,
+      "end": 145.744,
+      "text": " Aí já consegui passar,"
+    },
+    {
+      "speaker": "F",
+      "start": 145.944,
+      "end": 148.04399999999998,
+      "text": " passei os bancos para o Matheus,"
+    },
+    {
+      "speaker": "F",
+      "start": 148.194,
+      "end": 151.144,
+      "text": " agora estou terminando de passar as duas histórias do carência."
+    },
+    {
+      "speaker": "F",
+      "start": 152.372,
+      "end": 157.572,
+      "text": " E aí eu vou esperar o Adilson subir para eu já fazer a mesma coisa do CPT."
+    },
+    {
+      "speaker": "F",
+      "start": 158.322,
+      "end": 168.02200000000002,
+      "text": " Entendeu? Que aí a gente vai ficar trabalhando com as histórias e com aquelas validações dos bancos para a gente entregar o formulário certinho, né?"
+    },
+    {
+      "speaker": "C",
+      "start": 168.02200000000002,
+      "end": 168.27200000000002,
+      "text": " Será,"
+    },
+    {
+      "speaker": "F",
+      "start": 168.27200000000002,
+      "end": 168.722,
+      "text": " Porque eu fiquei"
+    },
+    {
+      "speaker": "C",
+      "start": 168.722,
+      "end": 168.872,
+      "text": " será."
+    },
+    {
+      "speaker": "F",
+      "start": 168.872,
+      "end": 170.77200000000002,
+      "text": " com esse teste só eu mesmo."
+    },
+    {
+      "speaker": "F",
+      "start": 171.322,
+      "end": 173.072,
+      "text": " Porque eu tenho que fazer tudo de novo."
+    },
+    {
+      "speaker": "F",
+      "start": 174.472,
+      "end": 175.27200000000002,
+      "text": " Enfim."
+    },
+    {
+      "speaker": "C",
+      "start": 177.332,
+      "end": 184.832,
+      "text": " Então hoje que eu estou entendendo o maior problema que a gente tem é essa questão de ambiente ainda de algumas ações do Gustavo, é isso?"
+    },
+    {
+      "speaker": "F",
+      "start": 185.632,
+      "end": 188.132,
+      "text": " exatamente tem alguns erros que estão acontecendo"
+    },
+    {
+      "speaker": "F",
+      "start": 188.932,
+      "end": 197.232,
+      "text": " e aí eu vejo até com o Matheus eu reproduzo aqui e faço o vídeo para ele e aí ele faz a máquina dele estar ok entendeu?"
+    },
+    {
+      "speaker": "F",
+      "start": 197.28199999999998,
+      "end": 206.28199999999998,
+      "text": " então o ambiente não está só aquele pontilhado lá tem algumas outras coisas que estão dando erro agora mesmo eu gerei um PDF"
+    },
+    {
+      "speaker": "F",
+      "start": 207.668,
+      "end": 223.868,
+      "text": " que estava vindo outra operadora outra operadora e não tinha nada a ver aí na hora que eu gerei de novo veio com a operadora certa do atendimento então alguma coisa ainda não está bom nesse ambiente ainda"
+    },
+    {
+      "speaker": "B",
+      "start": 223.868,
+      "end": 229.768,
+      "text": " É esse esse é o tipo de problema que pode ter a ver também com um toque"
+    },
+    {
+      "speaker": "B",
+      "start": 230.164,
+      "end": 239.26399999999998,
+      "text": " Porque como foi, como o dado da operadora agora é gerado dentro do toque, pode ter algum erro de lógica na função,"
+    },
+    {
+      "speaker": "B",
+      "start": 239.414,
+      "end": 246.51399999999998,
+      "text": " alguma coisa que esteja se perdendo aí desde aquela mudança do Gustavo, porque hoje a gente não está passando mais código operadora,"
+    },
+    {
+      "speaker": "B",
+      "start": 246.664,
+      "end": 250.36399999999998,
+      "text": " ela está vindo direto do toque,"
+    },
+    {
+      "speaker": "B",
+      "start": 250.414,
+      "end": 250.61399999999998,
+      "text": " exatamente."
+    },
+    {
+      "speaker": "B",
+      "start": 250.76399999999998,
+      "end": 253.11399999999998,
+      "text": " Então é um ponto a observar."
+    },
+    {
+      "speaker": "F",
+      "start": 253.94,
+      "end": 254.39,
+      "text": " E aí,"
+    },
+    {
+      "speaker": "F",
+      "start": 254.44,
+      "end": 254.79,
+      "text": " realmente,"
+    },
+    {
+      "speaker": "F",
+      "start": 254.94,
+      "end": 255.49,
+      "text": " o que aconteceu?"
+    },
+    {
+      "speaker": "F",
+      "start": 255.69,
+      "end": 256.59,
+      "text": " Eu saí"
+    },
+    {
+      "speaker": "C",
+      "start": 256.59,
+      "end": 256.79,
+      "text": " Você"
+    },
+    {
+      "speaker": "F",
+      "start": 256.79,
+      "end": 257.04,
+      "text": " da operadora,"
+    },
+    {
+      "speaker": "C",
+      "start": 257.04,
+      "end": 259.29,
+      "text": " gerou, você gerou, deu o PDF,"
+    },
+    {
+      "speaker": "C",
+      "start": 259.59,
+      "end": 262.74,
+      "text": " outra operadora, diferente de que você estava"
+    },
+    {
+      "speaker": "F",
+      "start": 262.74,
+      "end": 262.84,
+      "text": " de"
+    },
+    {
+      "speaker": "C",
+      "start": 262.84,
+      "end": 262.99,
+      "text": " hoje."
+    },
+    {
+      "speaker": "F",
+      "start": 262.99,
+      "end": 263.69,
+      "text": " outra operadora."
+    },
+    {
+      "speaker": "F",
+      "start": 263.94,
+      "end": 264.89,
+      "text": " Aí eu falei,"
+    },
+    {
+      "speaker": "F",
+      "start": 264.94,
+      "end": 265.74,
+      "text": " gente, mas isso está errado,"
+    },
+    {
+      "speaker": "F",
+      "start": 265.84,
+      "end": 266.64,
+      "text": " isso aqui estava funcionando."
+    },
+    {
+      "speaker": "F",
+      "start": 266.94,
+      "end": 267.29,
+      "text": " Aí"
+    },
+    {
+      "speaker": "B",
+      "start": 267.29,
+      "end": 267.44,
+      "text": " Você"
+    },
+    {
+      "speaker": "F",
+      "start": 267.44,
+      "end": 267.69,
+      "text": " eu saio,"
+    },
+    {
+      "speaker": "B",
+      "start": 267.69,
+      "end": 268.24,
+      "text": " reparou, reparou"
+    },
+    {
+      "speaker": "F",
+      "start": 268.24,
+      "end": 269.14,
+      "text": " peguei outra"
+    },
+    {
+      "speaker": "B",
+      "start": 269.14,
+      "end": 269.39,
+      "text": " que você é operadora."
+    },
+    {
+      "speaker": "F",
+      "start": 269.39,
+      "end": 270.29,
+      "text": " operadora."
+    },
+    {
+      "speaker": "F",
+      "start": 270.59,
+      "end": 271.09,
+      "text": " Oi?"
+    },
+    {
+      "speaker": "B",
+      "start": 271.49,
+      "end": 275.74,
+      "text": " Você reparou que você é operadora, você tem acesso a ela também?"
+    },
+    {
+      "speaker": "F",
+      "start": 276.24,
+      "end": 280.79,
+      "text": " Tenho. São as operadoras que eu tenho acesso. Eu gerei, era uma da Faluca."
+    },
+    {
+      "speaker": "F",
+      "start": 281.428,
+      "end": 283.428,
+      "text": " E ele me gerou um PDF escrito aliança."
+    },
+    {
+      "speaker": "B",
+      "start": 283.428,
+      "end": 284.228,
+      "text": " Então, aí..."
+    },
+    {
+      "speaker": "F",
+      "start": 284.228,
+      "end": 288.678,
+      "text": " Aí eu falei, vou gerar no Bradesco para ver se o Bradesco vai vir errado."
+    },
+    {
+      "speaker": "F",
+      "start": 289.524,
+      "end": 290.274,
+      "text": " Aí deu certo."
+    },
+    {
+      "speaker": "F",
+      "start": 290.324,
+      "end": 293.124,
+      "text": " Aí depois eu gerei um mês aberto, o mesmo treinamento."
+    },
+    {
+      "speaker": "F",
+      "start": 293.324,
+      "end": 294.224,
+      "text": " E deu certo."
+    },
+    {
+      "speaker": "B",
+      "start": 294.274,
+      "end": 295.524,
+      "text": " Pode ter a ver com isso."
+    },
+    {
+      "speaker": "B",
+      "start": 295.574,
+      "end": 300.024,
+      "text": " Ele checou se o usuário tem permissão, mas entrou na operadora errada."
+    },
+    {
+      "speaker": "B",
+      "start": 300.074,
+      "end": 303.374,
+      "text": " Então alguma lógica pode estar com algum conflito aí,"
+    },
+    {
+      "speaker": "B",
+      "start": 303.474,
+      "end": 304.224,
+      "text": " em algum lugar."
+    },
+    {
+      "speaker": "F",
+      "start": 304.224,
+      "end": 307.724,
+      "text": " Aí a gente vai ter que observar isso ao longo de tudo,"
+    },
+    {
+      "speaker": "F",
+      "start": 307.874,
+      "end": 308.024,
+      "text": " né?"
+    },
+    {
+      "speaker": "F",
+      "start": 308.224,
+      "end": 311.624,
+      "text": " Eu acho que você vai dar problema na hora da homologação."
+    },
+    {
+      "speaker": "B",
+      "start": 312.274,
+      "end": 316.624,
+      "text": " Júlio, o ambiente, desde aquela mudança da arquitetura lá..."
+    },
+    {
+      "speaker": "B",
+      "start": 317.204,
+      "end": 323.55400000000003,
+      "text": " bom enfim do problema de Ori Maia e tal tá muito e não está confiável eu até"
+    },
+    {
+      "speaker": "B",
+      "start": 324.204,
+      "end": 344.30400000000003,
+      "text": " porque eles estão muito ocupados o pessoal da aqui mas eu precisaria uma passagem completa assim deste Leandro ou Amanda ou o que pudesse para fazer e anotado todos os problemas visíveis e a gente entender cada um deles novamente aqueles regressivos de novo repassar as regras para a gente entender aonde quebrou"
+    },
+    {
+      "speaker": "B",
+      "start": 345.044,
+      "end": 357.144,
+      "text": " Entendeu? Porque algumas coisas não acontecem na minha máquina e eu não posso, inclusive, eu estou de mãos atadas que eu não posso nem baixar o ambiente com risco de isso acontecer e a gente não conseguir nem entregar."
+    },
+    {
+      "speaker": "B",
+      "start": 357.294,
+      "end": 357.74399999999997,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "B",
+      "start": 358.344,
+      "end": 359.99399999999997,
+      "text": " Então é algo assim,"
+    },
+    {
+      "speaker": "B",
+      "start": 360.094,
+      "end": 363.544,
+      "text": " eu gostaria que vocês puderem fazer esse regressivo geral assim,"
+    },
+    {
+      "speaker": "B",
+      "start": 363.644,
+      "end": 368.49399999999997,
+      "text": " é interessante porque eu não estou confiando, estou sendo bem sério, não estou com confiança."
+    },
+    {
+      "speaker": "F",
+      "start": 368.94399999999996,
+      "end": 371.094,
+      "text": " Ele não é mais como era antes, não."
+    },
+    {
+      "speaker": "F",
+      "start": 371.668,
+      "end": 376.068,
+      "text": " Não realmente tem muita coisa diferente."
+    },
+    {
+      "speaker": "C",
+      "start": 376.068,
+      "end": 380.668,
+      "text": " Então, mas a dúvida que eu fico, Mateus e Amanda e pessoal,"
+    },
+    {
+      "speaker": "C",
+      "start": 380.818,
+      "end": 381.668,
+      "text": " é o seguinte."
+    },
+    {
+      "speaker": "C",
+      "start": 383.568,
+      "end": 390.618,
+      "text": " A gente não tem ou tem certeza que é alguma coisa do ambiente ou do código mesmo."
+    },
+    {
+      "speaker": "C",
+      "start": 391.218,
+      "end": 395.568,
+      "text": " A gente pode afirmar que é coisa de ambiente porque não funciona lá e funciona na tua máquina?"
+    },
+    {
+      "speaker": "B",
+      "start": 396.468,
+      "end": 397.118,
+      "text": " Então,"
+    },
+    {
+      "speaker": "B",
+      "start": 397.218,
+      "end": 399.968,
+      "text": " aí os erros pontuam."
+    },
+    {
+      "speaker": "A",
+      "start": 400,
+      "end": 403.55,
+      "text": " A escala to abigerando eu faço essa avaliação aqui interna."
+    },
+    {
+      "speaker": "A",
+      "start": 403.75,
+      "end": 406.95,
+      "text": " Então, de a cada cinco erros."
+    },
+    {
+      "speaker": "A",
+      "start": 407.572,
+      "end": 431.772,
+      "text": " talvez quatro quatro realmente acontecem aqui e a gente corrige aqui na hora mas por exemplo alguns problemas de comportamento por exemplo ela citou que o ambiente estava mais lento ao carregar um atendimento são coisas que a gente não não está acontecendo na nossa máquina entendeu e aí a gente não consegue eu não por exemplo não consigo reproduzir isso entendeu mas assim o ambiente do gov"
+    },
+    {
+      "speaker": "A",
+      "start": 433.396,
+      "end": 444.946,
+      "text": " Ainda existe a linguagem componente, ele tem um comportamento um pouco peculiar quando você lida com um dom dentro de uma máquina e quando você lida dentro de uma máquina virtual,"
+    },
+    {
+      "speaker": "A",
+      "start": 445.046,
+      "end": 449.446,
+      "text": " dentro de um ambiente de desenvolvimento onde as coisas são um pouco mais..."
+    },
+    {
+      "speaker": "A",
+      "start": 449.972,
+      "end": 452.572,
+      "text": " controladas do que um computador, que é menor,"
+    },
+    {
+      "speaker": "A",
+      "start": 452.672,
+      "end": 454.522,
+      "text": " menos memória, gasta menos ali, local,"
+    },
+    {
+      "speaker": "A",
+      "start": 454.672,
+      "end": 454.872,
+      "text": " enfim."
+    },
+    {
+      "speaker": "A",
+      "start": 455.272,
+      "end": 458.772,
+      "text": " Então pode gerar alguns comportamentos, que é o que está gerando."
+    },
+    {
+      "speaker": "A",
+      "start": 458.872,
+      "end": 463.072,
+      "text": " E aí a gente precisa entender por que esse problema de dependência é um outro."
+    },
+    {
+      "speaker": "A",
+      "start": 463.372,
+      "end": 474.522,
+      "text": " Enfim, são vários problemas pontuais que aí a gente só ela pontuando realmente o que está acontecendo e a gente fazendo um mutirão, um a um, para entender se esse problema realmente é de código,"
+    },
+    {
+      "speaker": "A",
+      "start": 474.672,
+      "end": 476.372,
+      "text": " entendeu? Até porque..."
+    },
+    {
+      "speaker": "A",
+      "start": 477.012,
+      "end": 481.262,
+      "text": " Quando foi feita essas correções do ambiente lá,"
+    },
+    {
+      "speaker": "A",
+      "start": 482.29200000000003,
+      "end": 487.692,
+      "text": " Eu não me lembro se eles testaram se quebrou alguma coisa dentro do código."
+    },
+    {
+      "speaker": "A",
+      "start": 487.892,
+      "end": 490.54200000000003,
+      "text": " Então, eles restabeleceram ambiente,"
+    },
+    {
+      "speaker": "A",
+      "start": 491.342,
+      "end": 494.942,
+      "text": " alteraram algumas coisas dentro do código, o problema de tipagem, enfim,"
+    },
+    {
+      "speaker": "A",
+      "start": 495.04200000000003,
+      "end": 496.092,
+      "text": " algumas outras coisas."
+    },
+    {
+      "speaker": "A",
+      "start": 496.142,
+      "end": 502.192,
+      "text": " Porém, eu não sei se eles testaram se quebrou algum lugar que deveria estar funcionando,"
+    },
+    {
+      "speaker": "A",
+      "start": 502.29200000000003,
+      "end": 502.492,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 502.79200000000003,
+      "end": 508.392,
+      "text": " Então, como eles fizeram essa mudança e talvez não fizeram um teste."
+    },
+    {
+      "speaker": "A",
+      "start": 508.532,
+      "end": 523.782,
+      "text": " talvez não fizeram teste pode ser que é quebrado em outro lugar eu estou tomando cuidado com a minha de palavras aqui que é para não afirmar coisas que eu não sei mas é preciso ter feito esse teste simulado esse teste enfim é isso"
+    },
+    {
+      "speaker": "B",
+      "start": 524.832,
+      "end": 527.582,
+      "text": " entendi tá bom"
+    },
+    {
+      "speaker": "C",
+      "start": 527.582,
+      "end": 531.3820000000001,
+      "text": " Então resumindo, semana que vem vou ter que fazer o reteste de novo no SGE,"
+    },
+    {
+      "speaker": "C",
+      "start": 531.6320000000001,
+      "end": 536.332,
+      "text": " que vai ser a semana mais tranquila para mim, vai ter que ser o G."
+    },
+    {
+      "speaker": "B",
+      "start": 536.852,
+      "end": 544.802,
+      "text": " É, agora esse negócio de trocar operadora, quer dizer, você ter uma andar gerar um PDF e ele gerar uma operadora diferente,"
+    },
+    {
+      "speaker": "B",
+      "start": 545.052,
+      "end": 550.152,
+      "text": " eu acho que praticamente com certeza é alguma coisa da autenticação,"
+    },
+    {
+      "speaker": "B",
+      "start": 550.302,
+      "end": 553.502,
+      "text": " eu não diria nem de..."
+    },
+    {
+      "speaker": "B",
+      "start": 554.388,
+      "end": 559.688,
+      "text": " de ambiente, eu diria, do processo utilizado para certificar a autenticação mesmo,"
+    },
+    {
+      "speaker": "B",
+      "start": 559.888,
+      "end": 563.938,
+      "text": " porque pelo que o Gustavo mostrou para a gente lá naquela época,"
+    },
+    {
+      "speaker": "B",
+      "start": 564.088,
+      "end": 570.388,
+      "text": " ele carrega várias operadoras, quando você se loga, o seu usuário,"
+    },
+    {
+      "speaker": "B",
+      "start": 570.488,
+      "end": 572.988,
+      "text": " a partir do momento que você escolhe uma,"
+    },
+    {
+      "speaker": "B",
+      "start": 573.138,
+      "end": 576.288,
+      "text": " ele vai dar um tipo um refresh lá no token,"
+    },
+    {
+      "speaker": "B",
+      "start": 576.438,
+      "end": 579.438,
+      "text": " e coloca só aquela operadora que você escolheu."
+    },
+    {
+      "speaker": "B",
+      "start": 580.404,
+      "end": 591.404,
+      "text": " na hora de gerar o pdf quer dizer só trocou operadora na hora de gerar o pdf né na verdade quando você entrou lá os atendimentos era tudo da operadora que você se logou só"
+    },
+    {
+      "speaker": "C",
+      "start": 591.404,
+      "end": 591.954,
+      "text": " era mas"
+    },
+    {
+      "speaker": "B",
+      "start": 591.954,
+      "end": 600.004,
+      "text": " na hora de gerar o pdf lá na petição lá de gerar o pdf é que você que ele mostrou uma operadora diferente não é isso então"
+    },
+    {
+      "speaker": "C",
+      "start": 601.604,
+      "end": 606.204,
+      "text": " é assim eu vou anotar tudo que a gente está vendo experiência estou anotando"
+    },
+    {
+      "speaker": "C",
+      "start": 607.124,
+      "end": 613.574,
+      "text": " Só com o Matheus, eu estou passando para o Matheus só o que eu achei no formulário de carência, entendeu?"
+    },
+    {
+      "speaker": "B",
+      "start": 613.574,
+      "end": 613.874,
+      "text": " Tá."
+    },
+    {
+      "speaker": "C",
+      "start": 613.874,
+      "end": 615.574,
+      "text": " Que eu estou testando o carência."
+    },
+    {
+      "speaker": "C",
+      "start": 616.274,
+      "end": 622.324,
+      "text": " Até o fim da nossa entrega, o foco vai ser o carência e o CPT,"
+    },
+    {
+      "speaker": "C",
+      "start": 622.374,
+      "end": 623.874,
+      "text": " que é o que a gente precisa entregar."
+    },
+    {
+      "speaker": "C",
+      "start": 624.524,
+      "end": 627.574,
+      "text": " De qualquer forma, o que eu achar diferente, estou anotando."
+    },
+    {
+      "speaker": "C",
+      "start": 628.4739999999999,
+      "end": 632.824,
+      "text": " Estou anotando se eu consigo reproduzir para a gente ver depois,"
+    },
+    {
+      "speaker": "C",
+      "start": 633.074,
+      "end": 635.2239999999999,
+      "text": " entendeu? Porque agora..."
+    },
+    {
+      "speaker": "C",
+      "start": 636.244,
+      "end": 637.494,
+      "text": " Não tem muito o que fazer,"
+    },
+    {
+      "speaker": "C",
+      "start": 637.544,
+      "end": 638.894,
+      "text": " a gente tem que sair entregando."
+    },
+    {
+      "speaker": "C",
+      "start": 639.194,
+      "end": 640.244,
+      "text": " Isso não vai acabar."
+    },
+    {
+      "speaker": "C",
+      "start": 640.594,
+      "end": 643.444,
+      "text": " Se for parar para resolver tudo que a gente estava falando de diferente,"
+    },
+    {
+      "speaker": "C",
+      "start": 643.544,
+      "end": 644.944,
+      "text": " foi o que eu mostrei para o Matheus."
+    },
+    {
+      "speaker": "C",
+      "start": 645.094,
+      "end": 656.344,
+      "text": " Se eu pesquiso, se eu entro na pesquisa de atendimento, eu vou pesquisar um atendimento que na listagem principal está lá na página 12,"
+    },
+    {
+      "speaker": "C",
+      "start": 656.694,
+      "end": 662.244,
+      "text": " nunca rega, entendeu? Não aparece para mim, a pesquisa não está funcionando."
+    },
+    {
+      "speaker": "C",
+      "start": 662.7080000000001,
+      "end": 664.158,
+      "text": " nas primeiras páginas aparece."
+    },
+    {
+      "speaker": "C",
+      "start": 664.608,
+      "end": 668.7080000000001,
+      "text": " Então eu estou anotando e a gente vê semana que vem para ver o que é que vai fazer."
+    },
+    {
+      "speaker": "C",
+      "start": 669.508,
+      "end": 671.658,
+      "text": " Entendeu? Porque não está igual,"
+    },
+    {
+      "speaker": "C",
+      "start": 671.908,
+      "end": 678.658,
+      "text": " isso eu posso afirmar, não está igual o que estava antes dessa mudança."
+    },
+    {
+      "speaker": "C",
+      "start": 679.158,
+      "end": 681.058,
+      "text": " Eu não estou falando em questão de regra,"
+    },
+    {
+      "speaker": "C",
+      "start": 681.108,
+      "end": 682.7080000000001,
+      "text": " estou falando em questão de comportamento."
+    },
+    {
+      "speaker": "C",
+      "start": 683.4580000000001,
+      "end": 684.058,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "C",
+      "start": 684.158,
+      "end": 687.408,
+      "text": " Não era a mesma coisa que não acontecia,"
+    },
+    {
+      "speaker": "C",
+      "start": 687.4580000000001,
+      "end": 690.7080000000001,
+      "text": " principalmente o que eu passei com a máquina de teste na máquina dele."
+    },
+    {
+      "speaker": "C",
+      "start": 691.252,
+      "end": 695.302,
+      "text": " Não aconteceu que era para eu marcar outra votação recente, porque eu careço do CPT."
+    },
+    {
+      "speaker": "C",
+      "start": 695.3520000000001,
+      "end": 699.6020000000001,
+      "text": " É recente, é recente, essas alterações."
+    },
+    {
+      "speaker": "C",
+      "start": 699.902,
+      "end": 702.452,
+      "text": " Então a gente tem que descobrir o que é."
+    },
+    {
+      "speaker": "B",
+      "start": 704.252,
+      "end": 704.8520000000001,
+      "text": " Amanda,"
+    },
+    {
+      "speaker": "B",
+      "start": 704.952,
+      "end": 710.952,
+      "text": " eu vi que você criou um novo card lá de geração de PDF com bugs."
+    },
+    {
+      "speaker": "C",
+      "start": 712.002,
+      "end": 719.202,
+      "text": " Eu só retornei o que já estava, eu adicionei os bugs e retornei. É porque aquele caso,"
+    },
+    {
+      "speaker": "C",
+      "start": 719.302,
+      "end": 720.3520000000001,
+      "text": " campos..."
+    },
+    {
+      "speaker": "C",
+      "start": 722.74,
+      "end": 734.74,
+      "text": " tem casos que eu não estava conseguindo preencher no formulário e aí agora que eu consegui preencher eu tinha que adicionar os novos planos entendeu aí"
+    },
+    {
+      "speaker": "A",
+      "start": 734.74,
+      "end": 739.24,
+      "text": " Então aumentou a lista de bugs a serem corrigidos, o Júlio."
+    },
+    {
+      "speaker": "B",
+      "start": 742.29,
+      "end": 743.04,
+      "text": " Beleza."
+    },
+    {
+      "speaker": "A",
+      "start": 743.44,
+      "end": 746.09,
+      "text": " Então aumentou a lista de bugs a serem corrigidos, o Júlio."
+    },
+    {
+      "speaker": "C",
+      "start": 749.044,
+      "end": 751.044,
+      "text": " E com certeza semana que vem vai aumentar mais."
+    },
+    {
+      "speaker": "A",
+      "start": 751.944,
+      "end": 758.394,
+      "text": " É, por enquanto eu estou tranquilo aqui, o carência era um dos formulários que a gente não tinha feito total regressivo dele,"
+    },
+    {
+      "speaker": "A",
+      "start": 758.544,
+      "end": 758.694,
+      "text": " né?"
+    },
+    {
+      "speaker": "A",
+      "start": 758.7439999999999,
+      "end": 761.594,
+      "text": " E o que vai me assustar é se começar a mudar,"
+    },
+    {
+      "speaker": "A",
+      "start": 761.644,
+      "end": 762.144,
+      "text": " por exemplo,"
+    },
+    {
+      "speaker": "A",
+      "start": 762.394,
+      "end": 762.9939999999999,
+      "text": " 8 e 22."
+    },
+    {
+      "speaker": "A",
+      "start": 763.924,
+      "end": 789.7239999999999,
+      "text": " começar a mudar coisa de lá nesses outros formulários que cara não foi assim já estava ok estava tudo certo tá tudo testado a gente não mexeu mais nada lá e começar a gerar alguns comportamentos porque eu sei que vários desses campos foram mudados tipagens dele e isso pode ter quebrado algum use effect alguma coisa pode ter acontecido entendeu e aí eu eu não consigo"
+    },
+    {
+      "speaker": "B",
+      "start": 790.0360000000001,
+      "end": 791.336,
+      "text": " Por que é essa tipagem?"
+    },
+    {
+      "speaker": "A",
+      "start": 791.336,
+      "end": 799.836,
+      "text": " Pela parte da arquitetura, porque desde aquela mudança do OSLint, aí o OSLint ficou acusando umas paradas."
+    },
+    {
+      "speaker": "A",
+      "start": 800,
+      "end": 802.6,
+      "text": " Aí ele corrigiu, ele"
+    },
+    {
+      "speaker": "B",
+      "start": 802.6,
+      "end": 804.5,
+      "text": " Ele botou uma genérica lá, não foi?"
+    },
+    {
+      "speaker": "B",
+      "start": 804.6,
+      "end": 806.55,
+      "text": " Botou uma... foi isso que ele fez?"
+    },
+    {
+      "speaker": "A",
+      "start": 807.35,
+      "end": 811.1,
+      "text": " botou uma versão mais atualizada e atualizou o pack.js,"
+    },
+    {
+      "speaker": "A",
+      "start": 811.2,
+      "end": 815.05,
+      "text": " o NodeMod, toda a dependência e aí quebrou tudo."
+    },
+    {
+      "speaker": "A",
+      "start": 818.164,
+      "end": 823.564,
+      "text": " Não sei se lembrou se foi o Tony Silva que conseguiu restabelecer, porém ainda não estava passando na build,"
+    },
+    {
+      "speaker": "A",
+      "start": 823.714,
+      "end": 832.2139999999999,
+      "text": " não passava de jeito nenhum e aí ele ficava acusando esses erros de tipagem no TypeScript, coisas que não acusavam anteriormente, se vocês lembram disso."
+    },
+    {
+      "speaker": "A",
+      "start": 832.614,
+      "end": 834.4639999999999,
+      "text": " E aí o que acontece?"
+    },
+    {
+      "speaker": "A",
+      "start": 834.814,
+      "end": 838.314,
+      "text": " Eles corrigiam esse erro onde estava acusando."
+    },
+    {
+      "speaker": "A",
+      "start": 838.804,
+      "end": 848.254,
+      "text": " Só que hoje eu falo, eu não sei se eles foram no formulário e viu se quebrou alguma coisa, fizeram uma passagem completa no formulário e viu se quebrou."
+    },
+    {
+      "speaker": "A",
+      "start": 848.304,
+      "end": 850.704,
+      "text": " Aí eles corrigiam, viu que rodou na build,"
+    },
+    {
+      "speaker": "A",
+      "start": 850.904,
+      "end": 851.904,
+      "text": " resolveu o problema."
+    },
+    {
+      "speaker": "A",
+      "start": 852.204,
+      "end": 853.904,
+      "text": " Aí acusou em outro lugar,"
+    },
+    {
+      "speaker": "A",
+      "start": 854.054,
+      "end": 855.304,
+      "text": " resolveu o problema,"
+    },
+    {
+      "speaker": "A",
+      "start": 855.404,
+      "end": 855.554,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 855.654,
+      "end": 858.204,
+      "text": " Então eu não sei se eles chegaram a ver se quebrou, enfim,"
+    },
+    {
+      "speaker": "A",
+      "start": 858.304,
+      "end": 859.104,
+      "text": " não sei."
+    },
+    {
+      "speaker": "B",
+      "start": 860.154,
+      "end": 861.554,
+      "text": " Provavelmente não, né?"
+    },
+    {
+      "speaker": "B",
+      "start": 861.754,
+      "end": 864.104,
+      "text": " Para ir no formulário, para ver se estava lá funcionando."
+    },
+    {
+      "speaker": "C",
+      "start": 865.3,
+      "end": 872.25,
+      "text": " Então, Júlio, não pode mexer nas dependências sem avisar. Nossa, o que estamos desenvolvendo, né?"
+    },
+    {
+      "speaker": "C",
+      "start": 872.4,
+      "end": 872.5,
+      "text": " Tem"
+    },
+    {
+      "speaker": "B",
+      "start": 872.5,
+      "end": 872.85,
+      "text": " Não,"
+    },
+    {
+      "speaker": "C",
+      "start": 872.85,
+      "end": 872.95,
+      "text": " que deixar..."
+    },
+    {
+      "speaker": "B",
+      "start": 872.95,
+      "end": 874.1,
+      "text": " mas ele falou,"
+    },
+    {
+      "speaker": "B",
+      "start": 874.3,
+      "end": 874.45,
+      "text": " né?"
+    },
+    {
+      "speaker": "B",
+      "start": 874.5,
+      "end": 879.55,
+      "text": " Ele falou que ia mexer naquilo que estava mexendo. Ele até mostrou para a gente."
+    },
+    {
+      "speaker": "A",
+      "start": 879.85,
+      "end": 881.9,
+      "text": " Não, não, é outra coisa daí, por favor."
+    },
+    {
+      "speaker": "B",
+      "start": 882.1,
+      "end": 882.6,
+      "text": " É outra coisa."
+    },
+    {
+      "speaker": "A",
+      "start": 882.6,
+      "end": 885.5,
+      "text": " É, o Gustavo tentou apagar"
+    },
+    {
+      "speaker": "B",
+      "start": 885.5,
+      "end": 885.7,
+      "text": " Eu"
+    },
+    {
+      "speaker": "A",
+      "start": 885.7,
+      "end": 885.9,
+      "text": " a minha"
+    },
+    {
+      "speaker": "B",
+      "start": 885.9,
+      "end": 885.95,
+      "text": " me"
+    },
+    {
+      "speaker": "A",
+      "start": 885.95,
+      "end": 886.05,
+      "text": " agenda,"
+    },
+    {
+      "speaker": "B",
+      "start": 886.05,
+      "end": 886.4,
+      "text": " lembro que"
+    },
+    {
+      "speaker": "A",
+      "start": 886.4,
+      "end": 886.45,
+      "text": " tá?"
+    },
+    {
+      "speaker": "B",
+      "start": 886.45,
+      "end": 887.35,
+      "text": " ele falou dos tipos."
+    },
+    {
+      "speaker": "B",
+      "start": 887.4,
+      "end": 889.4,
+      "text": " Ele até mostrou, abriu o código e tal."
+    },
+    {
+      "speaker": "B",
+      "start": 889.8,
+      "end": 896.25,
+      "text": " Ele falou que estava dando aquelas, não sei se era warning ou se era erro para valer nos tipos."
+    },
+    {
+      "speaker": "B",
+      "start": 896.35,
+      "end": 898.3,
+      "text": " Ele falou que ele ia lá e botava um genérico."
+    },
+    {
+      "speaker": "B",
+      "start": 898.4,
+      "end": 899.35,
+      "text": " Você lembra disso ou não?"
+    },
+    {
+      "speaker": "A",
+      "start": 899.35,
+      "end": 900.3,
+      "text": " Sim, sim,"
+    },
+    {
+      "speaker": "A",
+      "start": 900.45,
+      "end": 900.85,
+      "text": " sim, sim."
+    },
+    {
+      "speaker": "B",
+      "start": 900.85,
+      "end": 901.5,
+      "text": " Ele falou assim,"
+    },
+    {
+      "speaker": "B",
+      "start": 901.6,
+      "end": 903.15,
+      "text": " ah, ele está dando isso aqui porque aqui não tem."
+    },
+    {
+      "speaker": "B",
+      "start": 903.35,
+      "end": 906.6,
+      "text": " Você tem que garantir que está tipado e tal, que não sei lá o quê."
+    },
+    {
+      "speaker": "A",
+      "start": 906.95,
+      "end": 908.35,
+      "text": " Então, aí a gente aborta."
+    },
+    {
+      "speaker": "A",
+      "start": 908.1800000000001,
+      "end": 914.73,
+      "text": " o robôctô é isso porque não deu certo e a gente removeu a regra do s20 aí o s20"
+    },
+    {
+      "speaker": "B",
+      "start": 914.73,
+      "end": 914.98,
+      "text": " Ah,"
+    },
+    {
+      "speaker": "A",
+      "start": 914.98,
+      "end": 915.38,
+      "text": " parou"
+    },
+    {
+      "speaker": "B",
+      "start": 915.38,
+      "end": 915.48,
+      "text": " removeu"
+    },
+    {
+      "speaker": "A",
+      "start": 915.48,
+      "end": 915.83,
+      "text": " exatamente"
+    },
+    {
+      "speaker": "B",
+      "start": 915.83,
+      "end": 916.33,
+      "text": " a regra."
+    },
+    {
+      "speaker": "A",
+      "start": 916.33,
+      "end": 934.53,
+      "text": " aí o s20 voltou a aceitar porque o que acontece ele não é igual sonar que avisa todo lugar dá um relatório de todo lugar que tá ruim ele avisa assim ó tá ruim aqui aí você resolve aqui ele vai acusar em outro lugar e nisso a gente tinha um risco de ficar num loop que a gente não sabe"
+    },
+    {
+      "speaker": "A",
+      "start": 934.548,
+      "end": 940.098,
+      "text": " Até centenas, pode ser centenas, pode ser milhares de pontos que talvez ele tenha identificado um erro de tipo,"
+    },
+    {
+      "speaker": "A",
+      "start": 940.198,
+      "end": 940.698,
+      "text": " por exemplo,"
+    },
+    {
+      "speaker": "B",
+      "start": 940.698,
+      "end": 940.848,
+      "text": " Aí"
+    },
+    {
+      "speaker": "A",
+      "start": 940.848,
+      "end": 941.148,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "B",
+      "start": 941.148,
+      "end": 944.748,
+      "text": " vocês já moveram a regra do S-Link para ele não acusar mais isso."
+    },
+    {
+      "speaker": "A",
+      "start": 944.748,
+      "end": 948.898,
+      "text": " Para ele não gerar mais esse erro, tendo em vista que não quebrava nada da aplicação,"
+    },
+    {
+      "speaker": "A",
+      "start": 949.098,
+      "end": 949.848,
+      "text": " entendeu? Era só..."
+    },
+    {
+      "speaker": "B",
+      "start": 949.848,
+      "end": 953.198,
+      "text": " Mas então não mudou a tipagem, se tirou a regra lá do"
+    },
+    {
+      "speaker": "A",
+      "start": 953.198,
+      "end": 953.248,
+      "text": " Aí"
+    },
+    {
+      "speaker": "B",
+      "start": 953.248,
+      "end": 953.448,
+      "text": " S-Link."
+    },
+    {
+      "speaker": "A",
+      "start": 953.448,
+      "end": 955.398,
+      "text": " após isso, após isso,"
+    },
+    {
+      "speaker": "A",
+      "start": 955.448,
+      "end": 956.448,
+      "text": " na build,"
+    },
+    {
+      "speaker": "A",
+      "start": 956.698,
+      "end": 960.348,
+      "text": " começou a acusar... Após isso não, Também antes disso também."
+    },
+    {
+      "speaker": "B",
+      "start": 960.884,
+      "end": 961.284,
+      "text": " Ah,"
+    },
+    {
+      "speaker": "A",
+      "start": 961.284,
+      "end": 970.634,
+      "text": " A começou a acusar alguns problemas pontuais e aí foi feita essas correções pontuais dentro de alguns códigos e possa ser"
+    },
+    {
+      "speaker": "B",
+      "start": 970.634,
+      "end": 970.784,
+      "text": " foi nós"
+    },
+    {
+      "speaker": "A",
+      "start": 970.784,
+      "end": 970.9839999999999,
+      "text": " que através"
+    },
+    {
+      "speaker": "B",
+      "start": 970.9839999999999,
+      "end": 972.784,
+      "text": " ou pela arquitetura? Ou pelo Gustavo?"
+    },
+    {
+      "speaker": "A",
+      "start": 973.584,
+      "end": 984.2339999999999,
+      "text": " pela arquitetura, eu não lembro se foi Gustavo ou foi o Antônio que mexeu nessas chipagens e aí qual que é o maior problema de todos?"
+    },
+    {
+      "speaker": "A",
+      "start": 984.948,
+      "end": 988.198,
+      "text": " E se for problema do código,"
+    },
+    {
+      "speaker": "A",
+      "start": 988.398,
+      "end": 990.798,
+      "text": " aí é de boa, a gente resolve que acusou erro,"
+    },
+    {
+      "speaker": "A",
+      "start": 990.998,
+      "end": 993.198,
+      "text": " a gente resolve se reproduzir nosso armário acusou."
+    },
+    {
+      "speaker": "A",
+      "start": 993.398,
+      "end": 1000.798,
+      "text": " O problema foi dependências que foram baixadas de dependência para o código, foram atualizadas no Node Modules lá,"
+    },
+    {
+      "speaker": "A",
+      "start": 1000.898,
+      "end": 1005.198,
+      "text": " no Package Json, e aí causou aquele problema lá."
+    },
+    {
+      "speaker": "A",
+      "start": 1005.298,
+      "end": 1006.748,
+      "text": " Aí é pior para a gente,"
+    },
+    {
+      "speaker": "A",
+      "start": 1006.848,
+      "end": 1007.098,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 1007.248,
+      "end": 1010.898,
+      "text": " Porque aí a gente vai ter que fazer um depare e esses arquivos são imensos, enfim."
+    },
+    {
+      "speaker": "A",
+      "start": 1011.38,
+      "end": 1013.03,
+      "text": " Aí esse é o pior de tudo,"
+    },
+    {
+      "speaker": "A",
+      "start": 1013.1800000000001,
+      "end": 1014.23,
+      "text": " porque se for código,"
+    },
+    {
+      "speaker": "A",
+      "start": 1014.3299999999999,
+      "end": 1017.48,
+      "text": " se a gente fazer uma passagem e a gente identifica, a gente vai resolver."
+    },
+    {
+      "speaker": "A",
+      "start": 1017.78,
+      "end": 1018.38,
+      "text": " Agora,"
+    },
+    {
+      "speaker": "A",
+      "start": 1018.48,
+      "end": 1020.88,
+      "text": " quando passa disso,"
+    },
+    {
+      "speaker": "A",
+      "start": 1021.13,
+      "end": 1022.3299999999999,
+      "text": " aí é um pouco mais complicado."
+    },
+    {
+      "speaker": "B",
+      "start": 1023.6800000000001,
+      "end": 1024.23,
+      "text": " Entendi."
+    },
+    {
+      "speaker": "B",
+      "start": 1026.53,
+      "end": 1027.98,
+      "text": " O Gustavo continua fora,"
+    },
+    {
+      "speaker": "B",
+      "start": 1028.08,
+      "end": 1028.28,
+      "text": " cara."
+    },
+    {
+      "speaker": "B",
+      "start": 1028.38,
+      "end": 1029.73,
+      "text": " Estou chamando ele desde de manhã."
+    },
+    {
+      "speaker": "B",
+      "start": 1030.28,
+      "end": 1031.43,
+      "text": " Sabe do Gustavo?"
+    },
+    {
+      "speaker": "B",
+      "start": 1031.48,
+      "end": 1033.03,
+      "text": " O Diego conseguiu falar com ele hoje ou não?"
+    },
+    {
+      "speaker": "D",
+      "start": 1035.68,
+      "end": 1037.18,
+      "text": " Cara, ainda não consegui falar."
+    },
+    {
+      "speaker": "B",
+      "start": 1038.228,
+      "end": 1038.228,
+      "text": " Pois"
+    },
+    {
+      "speaker": "D",
+      "start": 1038.228,
+      "end": 1038.528,
+      "text": " Só"
+    },
+    {
+      "speaker": "B",
+      "start": 1038.528,
+      "end": 1038.578,
+      "text": " Zeca"
+    },
+    {
+      "speaker": "D",
+      "start": 1038.578,
+      "end": 1042.278,
+      "text": " que aquele daí é de que imagina aparecer mais. Ele deve estar com algum problema em casa,"
+    },
+    {
+      "speaker": "D",
+      "start": 1042.378,
+      "end": 1042.828,
+      "text": " provavelmente."
+    },
+    {
+      "speaker": "B",
+      "start": 1043.078,
+      "end": 1044.578,
+      "text": " É, provavelmente"
+    },
+    {
+      "speaker": "B",
+      "start": 1045.378,
+      "end": 1046.9279999999999,
+      "text": " Depois eu vou perguntar a Sheila,"
+    },
+    {
+      "speaker": "B",
+      "start": 1047.028,
+      "end": 1048.328,
+      "text": " a Sheila deve saber de alguma coisa"
+    },
+    {
+      "speaker": "D",
+      "start": 1048.828,
+      "end": 1049.1779999999999,
+      "text": " Sim."
+    },
+    {
+      "speaker": "C",
+      "start": 1049.578,
+      "end": 1055.628,
+      "text": " É, só salientando que essa subida de diversão de dependências aí não pode ser feita assim."
+    },
+    {
+      "speaker": "C",
+      "start": 1055.9279999999999,
+      "end": 1060.478,
+      "text": " Outra vez foi feita na CGR e o Adilson penou para poder corrigir também."
+    },
+    {
+      "speaker": "C",
+      "start": 1061.478,
+      "end": 1062.4279999999999,
+      "text": " Então qualquer inserção"
+    },
+    {
+      "speaker": "B",
+      "start": 1062.4279999999999,
+      "end": 1064.1779999999999,
+      "text": " Algo salvo, Gustavo entrou aqui"
+    },
+    {
+      "speaker": "C",
+      "start": 1064.1779999999999,
+      "end": 1064.6779999999999,
+      "text": " tem que..."
+    },
+    {
+      "speaker": "B",
+      "start": 1065.3,
+      "end": 1065.5,
+      "text": " Vamos"
+    },
+    {
+      "speaker": "C",
+      "start": 1065.5,
+      "end": 1065.65,
+      "text": " Fazer"
+    },
+    {
+      "speaker": "B",
+      "start": 1065.65,
+      "end": 1065.9,
+      "text": " lá."
+    },
+    {
+      "speaker": "C",
+      "start": 1065.9,
+      "end": 1066.8,
+      "text": " com muito cuidado."
+    },
+    {
+      "speaker": "B",
+      "start": 1069.55,
+      "end": 1070.2,
+      "text": " Gustavo,"
+    },
+    {
+      "speaker": "B",
+      "start": 1070.25,
+      "end": 1071.2,
+      "text": " está ouvindo?"
+    },
+    {
+      "speaker": "B",
+      "start": 1074.7,
+      "end": 1076.75,
+      "text": " Se estiver falando, está mutado aí teu microfone."
+    },
+    {
+      "speaker": "B",
+      "start": 1083,
+      "end": 1084.05,
+      "text": " Está ouvindo, Gustavo?"
+    },
+    {
+      "speaker": "C",
+      "start": 1086.25,
+      "end": 1087.15,
+      "text": " Estou te ouvindo."
+    },
+    {
+      "speaker": "C",
+      "start": 1087.2,
+      "end": 1087.8,
+      "text": " Bom dia."
+    },
+    {
+      "speaker": "B",
+      "start": 1089,
+      "end": 1091,
+      "text": " Está podendo falar ou está com algum problema aí?"
+    },
+    {
+      "speaker": "C",
+      "start": 1093.3319999999999,
+      "end": 1095.182,
+      "text": " Tô com um probleminha aqui."
+    },
+    {
+      "speaker": "B",
+      "start": 1096.0819999999999,
+      "end": 1096.382,
+      "text": " É?"
+    },
+    {
+      "speaker": "B",
+      "start": 1097.482,
+      "end": 1101.5819999999999,
+      "text": " Depois que tu olha a mensagem, eu falo, ih, caramba."
+    },
+    {
+      "speaker": "B",
+      "start": 1101.8319999999999,
+      "end": 1102.5819999999999,
+      "text": " Teu filho é?"
+    },
+    {
+      "speaker": "C",
+      "start": 1105.132,
+      "end": 1106.932,
+      "text": " Eu meio te"
+    },
+    {
+      "speaker": "B",
+      "start": 1106.932,
+      "end": 1107.432,
+      "text": " Meio que deu erro."
+    },
+    {
+      "speaker": "C",
+      "start": 1107.432,
+      "end": 1108.032,
+      "text": " eu tô online."
+    },
+    {
+      "speaker": "C",
+      "start": 1108.632,
+      "end": 1109.032,
+      "text": " Tá,"
+    },
+    {
+      "speaker": "B",
+      "start": 1110.8319999999999,
+      "end": 1110.932,
+      "text": " Tá."
+    },
+    {
+      "speaker": "B",
+      "start": 1111.282,
+      "end": 1113.3319999999999,
+      "text": " Depois que tu olha a mensagem que eu deixei lá pra você,"
+    },
+    {
+      "speaker": "B",
+      "start": 1113.382,
+      "end": 1114.482,
+      "text": " então, quando tu estiver em casa."
+    },
+    {
+      "speaker": "C",
+      "start": 1115.432,
+      "end": 1116.5819999999999,
+      "text": " meio que eu tô online."
+    },
+    {
+      "speaker": "B",
+      "start": 1117.232,
+      "end": 1118.032,
+      "text": " Tá bom, então."
+    },
+    {
+      "speaker": "B",
+      "start": 1118.182,
+      "end": 1118.682,
+      "text": " Valeu."
+    },
+    {
+      "speaker": "B",
+      "start": 1122.324,
+      "end": 1123.374,
+      "text": " Filho dele, eu pergunto."
+    },
+    {
+      "speaker": "B",
+      "start": 1127.924,
+      "end": 1129.074,
+      "text": " Então tá bom, Leandro."
+    },
+    {
+      "speaker": "B",
+      "start": 1129.474,
+      "end": 1131.224,
+      "text": " Quer acrescentar alguma coisa, Leandro?"
+    },
+    {
+      "speaker": "C",
+      "start": 1131.424,
+      "end": 1132.074,
+      "text": " Oi, Júlia."
+    },
+    {
+      "speaker": "C",
+      "start": 1132.824,
+      "end": 1133.074,
+      "text": " Boa."
+    },
+    {
+      "speaker": "A",
+      "start": 1133.074,
+      "end": 1134.574,
+      "text": " Só antes de..."
+    },
+    {
+      "speaker": "B",
+      "start": 1134.574,
+      "end": 1135.324,
+      "text": " Fala, Matheus."
+    },
+    {
+      "speaker": "A",
+      "start": 1135.624,
+      "end": 1144.224,
+      "text": " Então, eu vou solicitar para eles essa passagem para a gente conseguir ter a certeza de que, por exemplo, se os problemas,"
+    },
+    {
+      "speaker": "A",
+      "start": 1144.424,
+      "end": 1152.074,
+      "text": " só a arquitetura vai resolver ou a gente consegue resolver ou a gente vai ter que resolver em conjunto para a gente ter tipo um dossiê para entender o que está acontecendo."
+    },
+    {
+      "speaker": "A",
+      "start": 1152.274,
+      "end": 1156.824,
+      "text": " Então, entender aonde está acontecendo, a gente reproduzir, nos reunimos."
+    },
+    {
+      "speaker": "A",
+      "start": 1156.628,
+      "end": 1160.578,
+      "text": " No momento de entender onde está acontecendo, se está acontecendo, local, se acontece desenvolvimento."
+    },
+    {
+      "speaker": "A",
+      "start": 1160.828,
+      "end": 1168.278,
+      "text": " Tendo essa massa de testes e a gente conseguir confirmar, aí a gente consegue passar essa demanda se for para eles,"
+    },
+    {
+      "speaker": "A",
+      "start": 1168.328,
+      "end": 1168.578,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 1168.6779999999999,
+      "end": 1169.228,
+      "text": " Se for deles."
+    },
+    {
+      "speaker": "B",
+      "start": 1169.728,
+      "end": 1170.328,
+      "text": " Entendi."
+    },
+    {
+      "speaker": "B",
+      "start": 1171.6779999999999,
+      "end": 1172.228,
+      "text": " Tá bom."
+    },
+    {
+      "speaker": "A",
+      "start": 1175.9279999999999,
+      "end": 1176.528,
+      "text": " Beleza."
+    },
+    {
+      "speaker": "E",
+      "start": 1177.108,
+      "end": 1179.658,
+      "text": " Bom, com relação à sprint atual,"
+    },
+    {
+      "speaker": "E",
+      "start": 1179.908,
+      "end": 1186.108,
+      "text": " eu queria só confirmar com o Marcos se tem alguma pendência ainda nessa história de desenvolvimento,"
+    },
+    {
+      "speaker": "E",
+      "start": 1186.208,
+      "end": 1189.908,
+      "text": " nessa história 166, no caso na task da história 166."
+    },
+    {
+      "speaker": "E",
+      "start": 1190.408,
+      "end": 1196.108,
+      "text": " Se tiver concluído, Marcos, faz a gentileza, entra na task e marca ela lá como closed,"
+    },
+    {
+      "speaker": "E",
+      "start": 1196.258,
+      "end": 1197.408,
+      "text": " finalizado."
+    },
+    {
+      "speaker": "E",
+      "start": 1197.508,
+      "end": 1199.708,
+      "text": " E daí pega a história."
+    },
+    {
+      "speaker": "A",
+      "start": 1200,
+      "end": 1209.05,
+      "text": " e daí você pode empurrar ela para teste ds qualquer dúvida me chama eu te auxilio aí beleza e aí julho com relação a sprint a próxima sprint"
+    },
+    {
+      "speaker": "A",
+      "start": 1210.164,
+      "end": 1215.314,
+      "text": " Beleza, sabemos que a gente tem somente sete dias úteis. Cara,"
+    },
+    {
+      "speaker": "A",
+      "start": 1215.364,
+      "end": 1224.014,
+      "text": " é insano dizer que a gente vai levar mais do que dois dias para fazer a inclusão daqueles dados lá para a classificação dos motivos."
+    },
+    {
+      "speaker": "A",
+      "start": 1224.914,
+      "end": 1230.914,
+      "text": " E aí tem que combinar o que a gente vai apresentar para o usuário, no caso na segunda-feira."
+    },
+    {
+      "speaker": "A",
+      "start": 1231.412,
+      "end": 1241.412,
+      "text": " qual que vai ser o objetivo dessa próxima sprint mesmo sendo ela mais curta né conteúdo que eu tenho aprovado aqui nem tá aprovado ainda né mas é"
+    },
+    {
+      "speaker": "B",
+      "start": 1241.412,
+      "end": 1241.662,
+      "text": " Tá"
+    },
+    {
+      "speaker": "A",
+      "start": 1241.662,
+      "end": 1241.812,
+      "text": " exatamente"
+    },
+    {
+      "speaker": "B",
+      "start": 1241.812,
+      "end": 1244.562,
+      "text": " para 70 sprint 70 que você tá falando"
+    },
+    {
+      "speaker": "A",
+      "start": 1244.562,
+      "end": 1252.512,
+      "text": " próxima sprint sprint 70 que inicia o desenvolvimento dela inicia dia 13 e a gente finaliza o desenvolvimento no dia 24"
+    },
+    {
+      "speaker": "B",
+      "start": 1253.364,
+      "end": 1253.464,
+      "text": " Uh"
+    },
+    {
+      "speaker": "A",
+      "start": 1253.464,
+      "end": 1253.764,
+      "text": " para"
+    },
+    {
+      "speaker": "B",
+      "start": 1253.764,
+      "end": 1253.914,
+      "text": "-huh."
+    },
+    {
+      "speaker": "A",
+      "start": 1253.914,
+      "end": 1282.114,
+      "text": " entregar ela no dia 27 e aí para a gente combinar o que se vai colocar lá na apresentação do dia 13 segunda-feira agora o planejamento que a gente teoricamente tem que trazer pronto por enquanto eu tenho só essa história uma única história que a classificação para incluir as novas classificações dos anexos de documentos e verificar se a gente vai fazer alguma coisa o que a gente vai acrescentar lá para eles dessas atividades agora que a gente vai entrar para fechar"
+    },
+    {
+      "speaker": "A",
+      "start": 1282.068,
+      "end": 1284.318,
+      "text": " Tchau, então todo o projeto SGR,"
+    },
+    {
+      "speaker": "A",
+      "start": 1284.418,
+      "end": 1294.518,
+      "text": " o peticionamento vai entregar, vai começar a trabalhar nesse fechamento para entrega desses projetos e na sequência as atividades para o novo projeto que é a do análise em monte."
+    },
+    {
+      "speaker": "A",
+      "start": 1297.46,
+      "end": 1299.36,
+      "text": " Achei esses praticinhos aí."
+    },
+    {
+      "speaker": "B",
+      "start": 1299.36,
+      "end": 1301.56,
+      "text": " Vamos fazer uma conversa depois,"
+    },
+    {
+      "speaker": "B",
+      "start": 1301.66,
+      "end": 1302.36,
+      "text": " Leandro?"
+    },
+    {
+      "speaker": "A",
+      "start": 1302.36,
+      "end": 1303.11,
+      "text": " A hora que precisar,"
+    },
+    {
+      "speaker": "B",
+      "start": 1303.11,
+      "end": 1306.01,
+      "text": " Eu te chamo aí, a gente faz uma conversa sobre isso,"
+    },
+    {
+      "speaker": "B",
+      "start": 1306.06,
+      "end": 1306.46,
+      "text": " tá?"
+    },
+    {
+      "speaker": "A",
+      "start": 1306.46,
+      "end": 1306.86,
+      "text": " Tá?"
+    },
+    {
+      "speaker": "B",
+      "start": 1306.86,
+      "end": 1308.81,
+      "text": " E depois chamamos Devs pra gente fechar."
+    },
+    {
+      "speaker": "A",
+      "start": 1309.11,
+      "end": 1309.61,
+      "text": " Isso."
+    },
+    {
+      "speaker": "A",
+      "start": 1309.66,
+      "end": 1310.01,
+      "text": " Aí só,"
+    },
+    {
+      "speaker": "A",
+      "start": 1310.11,
+      "end": 1313.26,
+      "text": " então, nesse caso, a minha ideia seria fazer a planning,"
+    },
+    {
+      "speaker": "A",
+      "start": 1313.36,
+      "end": 1319.46,
+      "text": " então segunda-feira ou hoje, se for o caso, no final da tarde, até o final da tarde, se a gente tiver já uma definição,"
+    },
+    {
+      "speaker": "A",
+      "start": 1319.61,
+      "end": 1323.36,
+      "text": " a gente faz a planning dessa história que vai entrar na sprint seguinte."
+    },
+    {
+      "speaker": "A",
+      "start": 1323.5720000000001,
+      "end": 1347.922,
+      "text": " se não der hoje a gente faz na segunda-feira provavelmente depois do almoço né é que eu acho que vai ser e antes da entrega daí a gente já vai com isso tudo maturado é aí só a questão dos testes né da Amanda que é o risco né para entre as coisas essa sprint para ela criar as evidências fazer todos os testes e a gente fechar ela de forma correta ali porque todas as tasks de testes estão pendentes aqui no meu board aqui ainda beleza"
+    },
+    {
+      "speaker": "B",
+      "start": 1348.724,
+      "end": 1349.024,
+      "text": " Tá."
+    },
+    {
+      "speaker": "B",
+      "start": 1349.824,
+      "end": 1349.874,
+      "text": " Conseguiu"
+    },
+    {
+      "speaker": "A",
+      "start": 1349.874,
+      "end": 1350.624,
+      "text": " Conseguiu, Sol?"
+    },
+    {
+      "speaker": "B",
+      "start": 1350.624,
+      "end": 1351.674,
+      "text": " marcar ainda,"
+    },
+    {
+      "speaker": "B",
+      "start": 1351.774,
+      "end": 1351.874,
+      "text": " né?"
+    },
+    {
+      "speaker": "B",
+      "start": 1351.974,
+      "end": 1354.274,
+      "text": " Mas ele pelo menos já fez, né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1354.274,
+      "end": 1355.824,
+      "text": " Marquei lá, consegui Ah, marcar."
+    },
+    {
+      "speaker": "B",
+      "start": 1355.824,
+      "end": 1356.624,
+      "text": " conseguiu marcar?"
+    },
+    {
+      "speaker": "C",
+      "start": 1357.274,
+      "end": 1357.574,
+      "text": " Sim,"
+    },
+    {
+      "speaker": "B",
+      "start": 1357.574,
+      "end": 1357.824,
+      "text": " Beleza."
+    },
+    {
+      "speaker": "C",
+      "start": 1357.824,
+      "end": 1360.424,
+      "text": " fechei tudo, desloguei, loguei de novo e foi."
+    },
+    {
+      "speaker": "A",
+      "start": 1360.874,
+      "end": 1361.624,
+      "text": " Boa, boa."
+    },
+    {
+      "speaker": "A",
+      "start": 1361.824,
+      "end": 1365.574,
+      "text": " Aí tem que ver só nesse caso dos bugs que a gente tem por o momento."
+    },
+    {
+      "speaker": "A",
+      "start": 1366.652,
+      "end": 1389.652,
+      "text": " é deixa eu voltar aqui tem pelo menos três cards de bugs ali né que eu acho que voltou aquela correção dos pdfs lá que acho que o marcos tinha atuado já aí tem que ver só esse do cpt se tá pronto a gente empurra e aí tem o último bug aí ó correções franquias ou co participação campos de valores numéricos se o bug tá em aberto aqui ainda não sei se ele ele não corresponde a seis print assim como do"
+    },
+    {
+      "speaker": "D",
+      "start": 1389.652,
+      "end": 1389.752,
+      "text": " É,"
+    },
+    {
+      "speaker": "A",
+      "start": 1389.752,
+      "end": 1390.002,
+      "text": " dos pdf"
+    },
+    {
+      "speaker": "D",
+      "start": 1390.002,
+      "end": 1390.302,
+      "text": " então."
+    },
+    {
+      "speaker": "A",
+      "start": 1390.302,
+      "end": 1390.602,
+      "text": " pdf"
+    },
+    {
+      "speaker": "E",
+      "start": 1391.54,
+      "end": 1392.3899999999999,
+      "text": " Esse aí,"
+    },
+    {
+      "speaker": "E",
+      "start": 1392.54,
+      "end": 1395.34,
+      "text": " a gente vai deixar ele aí,"
+    },
+    {
+      "speaker": "E",
+      "start": 1395.44,
+      "end": 1397.6399999999999,
+      "text": " que é o seguinte,"
+    },
+    {
+      "speaker": "E",
+      "start": 1397.84,
+      "end": 1401.49,
+      "text": " esse aí eu acho que foi um comportamento que surgiu depois da operação."
+    },
+    {
+      "speaker": "E",
+      "start": 1402.44,
+      "end": 1404.54,
+      "text": " Eu acho que eu vou pegar esse card aqui,"
+    },
+    {
+      "speaker": "E",
+      "start": 1404.59,
+      "end": 1405.24,
+      "text": " já está aí,"
+    },
+    {
+      "speaker": "E",
+      "start": 1405.34,
+      "end": 1407.6399999999999,
+      "text": " e vou fazer um card só,"
+    },
+    {
+      "speaker": "E",
+      "start": 1407.74,
+      "end": 1414.6399999999999,
+      "text": " por motivo desses comportamentos que não existiam antes dessa alteração que teve."
+    },
+    {
+      "speaker": "E",
+      "start": 1415.24,
+      "end": 1416.6399999999999,
+      "text": " Eu acho mais seguro."
+    },
+    {
+      "speaker": "E",
+      "start": 1417.556,
+      "end": 1421.506,
+      "text": " para a gente conseguir rastrear, não sei o que vocês acham, o que vocês acham."
+    },
+    {
+      "speaker": "A",
+      "start": 1422.006,
+      "end": 1424.256,
+      "text": " Olha, Amanda, quanto mais granular,"
+    },
+    {
+      "speaker": "A",
+      "start": 1424.606,
+      "end": 1428.156,
+      "text": " eu acho que dependendo assim, eu acho que fica até melhor."
+    },
+    {
+      "speaker": "A",
+      "start": 1428.556,
+      "end": 1433.606,
+      "text": " A gente consegue ter uma visibilidade maior e consegue dar vazão, consegue ver o negócio andando, né?"
+    },
+    {
+      "speaker": "A",
+      "start": 1434.506,
+      "end": 1437.806,
+      "text": " Mas vai, acho que muito da gestão aqui interna nossa do time,"
+    },
+    {
+      "speaker": "A",
+      "start": 1437.856,
+      "end": 1438.556,
+      "text": " se achar"
+    },
+    {
+      "speaker": "E",
+      "start": 1438.556,
+      "end": 1438.756,
+      "text": " Porque"
+    },
+    {
+      "speaker": "A",
+      "start": 1438.756,
+      "end": 1441.2060000000001,
+      "text": " que vale a pena a gente quebra, se não, dá para tratar num só."
+    },
+    {
+      "speaker": "E",
+      "start": 1441.856,
+      "end": 1442.556,
+      "text": " assim,"
+    },
+    {
+      "speaker": "E",
+      "start": 1442.756,
+      "end": 1445.9560000000001,
+      "text": " eu acho que se for coisa assim de regra"
+    },
+    {
+      "speaker": "E",
+      "start": 1447.092,
+      "end": 1474.592,
+      "text": " é tranquilo só que esse cara vai ter que passar pelo mateus para ele chegar e falar assim olha no meu ambiente que é o ambiente que está pertinho ele vai ter que olhar e falar assim aqui não funciona então provavelmente isso é um erro de depois dessa alteração aí a gente tem que ver o que fica melhor ou eu crio vários casos vários bugs"
+    },
+    {
+      "speaker": "E",
+      "start": 1475.316,
+      "end": 1481.566,
+      "text": " Ou eu crio um carro só, com todas as coisas que provavelmente é por causa dessa alteração que tem,"
+    },
+    {
+      "speaker": "E",
+      "start": 1481.666,
+      "end": 1483.866,
+      "text": " que a gente vai ter que resolver."
+    },
+    {
+      "speaker": "A",
+      "start": 1483.866,
+      "end": 1490.316,
+      "text": " Eu acho difícil a gente tomar uma decisão agora porque ainda tá com essa questão da instabilidade dos ambientes."
+    },
+    {
+      "speaker": "A",
+      "start": 1490.416,
+      "end": 1501.666,
+      "text": " Eu sei se a gente... Durante que a gente não tenha previsibilidade da estabilidade dos ambientes para a gente poder botar a mão, literalmente, no sistema ali e dizer, ó, dá para fazer, não dá para fazer, quebra ou não quebra."
+    },
+    {
+      "speaker": "B",
+      "start": 1502.068,
+      "end": 1502.068,
+      "text": " Então,"
+    },
+    {
+      "speaker": "E",
+      "start": 1502.068,
+      "end": 1502.568,
+      "text": " Aí você"
+    },
+    {
+      "speaker": "B",
+      "start": 1502.568,
+      "end": 1502.7179999999998,
+      "text": " eu estou falando"
+    },
+    {
+      "speaker": "E",
+      "start": 1502.7179999999998,
+      "end": 1503.568,
+      "text": " considera que, tipo assim,"
+    },
+    {
+      "speaker": "E",
+      "start": 1503.7179999999998,
+      "end": 1506.318,
+      "text": " uma correção, ah, se estabilizar o ambiente,"
+    },
+    {
+      "speaker": "E",
+      "start": 1506.368,
+      "end": 1507.018,
+      "text": " se resolver,"
+    },
+    {
+      "speaker": "E",
+      "start": 1507.068,
+      "end": 1509.768,
+      "text": " às vezes não vai resolver todos os bugs que estão ali,"
+    },
+    {
+      "speaker": "E",
+      "start": 1509.868,
+      "end": 1510.4679999999998,
+      "text": " Exato, entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 1510.4679999999998,
+      "end": 1510.768,
+      "text": " entendo perfeitamente."
+    },
+    {
+      "speaker": "E",
+      "start": 1510.768,
+      "end": 1511.568,
+      "text": " E às vezes não."
+    },
+    {
+      "speaker": "A",
+      "start": 1512.1680000000001,
+      "end": 1512.818,
+      "text": " Exato."
+    },
+    {
+      "speaker": "C",
+      "start": 1513.9679999999998,
+      "end": 1515.068,
+      "text": " você pode, Amanda."
+    },
+    {
+      "speaker": "B",
+      "start": 1516.7179999999998,
+      "end": 1517.018,
+      "text": " aqui,"
+    },
+    {
+      "speaker": "B",
+      "start": 1517.068,
+      "end": 1519.768,
+      "text": " Matheus, com o Gustavo,"
+    },
+    {
+      "speaker": "B",
+      "start": 1519.818,
+      "end": 1526.518,
+      "text": " eu pedi para ele nos procurar, ele disse que vai nos procurar depois para a gente ver se a gente passa um pente fino nessas questões aí com ele."
+    },
+    {
+      "speaker": "B",
+      "start": 1527.508,
+      "end": 1527.858,
+      "text": " Tá,"
+    },
+    {
+      "speaker": "B",
+      "start": 1527.958,
+      "end": 1528.458,
+      "text": " é"
+    },
+    {
+      "speaker": "C",
+      "start": 1528.458,
+      "end": 1531.308,
+      "text": " Ah, mas aí qual questão que você está se referindo?"
+    },
+    {
+      "speaker": "B",
+      "start": 1531.408,
+      "end": 1536.708,
+      "text": " esse negócio que mudou lá o usuário, lá mudou a operadora,"
+    },
+    {
+      "speaker": "B",
+      "start": 1536.908,
+      "end": 1540.608,
+      "text": " que tudo indica que é para dar autenticação, né?"
+    },
+    {
+      "speaker": "B",
+      "start": 1542.358,
+      "end": 1542.858,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "B",
+      "start": 1543.458,
+      "end": 1546.058,
+      "text": " Porque isso daí, isso daí eu acho difícil do código,"
+    },
+    {
+      "speaker": "B",
+      "start": 1546.108,
+      "end": 1546.608,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "C",
+      "start": 1547.158,
+      "end": 1547.808,
+      "text": " É de cara,"
+    },
+    {
+      "speaker": "C",
+      "start": 1547.908,
+      "end": 1548.508,
+      "text": " Amanda,"
+    },
+    {
+      "speaker": "C",
+      "start": 1548.658,
+      "end": 1555.458,
+      "text": " se puder, se você conseguir reproduzir esse teste aí, tirar a massa, enviar ou criar um card."
+    },
+    {
+      "speaker": "C",
+      "start": 1556.116,
+      "end": 1556.766,
+      "text": " que é o que simplesmente"
+    },
+    {
+      "speaker": "E",
+      "start": 1556.766,
+      "end": 1557.216,
+      "text": " Beleza, vou"
+    },
+    {
+      "speaker": "C",
+      "start": 1557.216,
+      "end": 1557.666,
+      "text": " reproduzir"
+    },
+    {
+      "speaker": "E",
+      "start": 1557.666,
+      "end": 1557.916,
+      "text": " deixar"
+    },
+    {
+      "speaker": "C",
+      "start": 1557.916,
+      "end": 1557.966,
+      "text": " para"
+    },
+    {
+      "speaker": "E",
+      "start": 1557.966,
+      "end": 1558.116,
+      "text": " acontecer"
+    },
+    {
+      "speaker": "C",
+      "start": 1558.116,
+      "end": 1558.366,
+      "text": " eles."
+    },
+    {
+      "speaker": "E",
+      "start": 1558.366,
+      "end": 1558.816,
+      "text": " novamente."
+    },
+    {
+      "speaker": "E",
+      "start": 1559.616,
+      "end": 1562.516,
+      "text": " Vou continuar testando aqui e vou ver se acontece novamente."
+    },
+    {
+      "speaker": "C",
+      "start": 1562.516,
+      "end": 1564.666,
+      "text": " Por exemplo, nesse teu negócio do atendimento aqui,"
+    },
+    {
+      "speaker": "C",
+      "start": 1564.766,
+      "end": 1565.616,
+      "text": " é bizarro, né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1565.866,
+      "end": 1568.366,
+      "text": " Eu fui lá na 12ª página,"
+    },
+    {
+      "speaker": "C",
+      "start": 1568.516,
+      "end": 1570.616,
+      "text": " voltei e pesquisei atendimento."
+    },
+    {
+      "speaker": "C",
+      "start": 1570.666,
+      "end": 1571.516,
+      "text": " E pegou."
+    },
+    {
+      "speaker": "C",
+      "start": 1572.416,
+      "end": 1573.816,
+      "text": " Não havia desenvolvimento."
+    },
+    {
+      "speaker": "C",
+      "start": 1574.466,
+      "end": 1575.816,
+      "text": " Aí é difícil, assim,"
+    },
+    {
+      "speaker": "C",
+      "start": 1575.866,
+      "end": 1577.866,
+      "text": " porque na hora que acontece, na hora que não está acontecendo,"
+    },
+    {
+      "speaker": "E",
+      "start": 1577.866,
+      "end": 1578.216,
+      "text": " Exatamente."
+    },
+    {
+      "speaker": "C",
+      "start": 1578.216,
+      "end": 1579.916,
+      "text": " é uma coisa de maluco, assim."
+    },
+    {
+      "speaker": "C",
+      "start": 1582.74,
+      "end": 1583.3400000000001,
+      "text": " Mas é isso."
+    },
+    {
+      "speaker": "C",
+      "start": 1583.3899999999999,
+      "end": 1584.19,
+      "text": " Aí, mano,"
+    },
+    {
+      "speaker": "C",
+      "start": 1584.29,
+      "end": 1587.5900000000001,
+      "text": " se puder, assim que achar esses erros, documenta,"
+    },
+    {
+      "speaker": "E",
+      "start": 1587.5900000000001,
+      "end": 1587.94,
+      "text": " Três"
+    },
+    {
+      "speaker": "C",
+      "start": 1587.94,
+      "end": 1588.1399999999999,
+      "text": " por favor,"
+    },
+    {
+      "speaker": "E",
+      "start": 1588.1399999999999,
+      "end": 1588.3400000000001,
+      "text": " palavras."
+    },
+    {
+      "speaker": "C",
+      "start": 1588.3400000000001,
+      "end": 1588.44,
+      "text": ""
+    },
+    {
+      "speaker": "C",
+      "start": 1588.5900000000001,
+      "end": 1593.24,
+      "text": " e quando você terminar de passar ali o motivo todo, completo,"
+    },
+    {
+      "speaker": "C",
+      "start": 1593.54,
+      "end": 1599.0900000000001,
+      "text": " aí a gente se reúne, pode ser qualquer horário durante o dia, a gente se reúne na prioridade pra esse aí."
+    },
+    {
+      "speaker": "A",
+      "start": 1600,
+      "end": 1603.7,
+      "text": " A gente pensa, ou hoje ou hoje para amanhã, hoje ou hoje para segunda,"
+    },
+    {
+      "speaker": "A",
+      "start": 1603.8,
+      "end": 1605.85,
+      "text": " a única coisa que dá para fazer é o careço e o CPT."
+    },
+    {
+      "speaker": "A",
+      "start": 1606.4,
+      "end": 1610.35,
+      "text": " Então é isso que vai ter que corrigir. A partir de terça-feira a gente vai sair."
+    },
+    {
+      "speaker": "A",
+      "start": 1610.75,
+      "end": 1619.75,
+      "text": " Então tem que ver se até terça-feira o Gustavo vai conseguir estabilizar esse ambiente."
+    },
+    {
+      "speaker": "A",
+      "start": 1621.492,
+      "end": 1621.892,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "B",
+      "start": 1621.892,
+      "end": 1624.192,
+      "text": " Olha, estabilizar, então,"
+    },
+    {
+      "speaker": "B",
+      "start": 1624.392,
+      "end": 1625.092,
+      "text": " o que acontece?"
+    },
+    {
+      "speaker": "B",
+      "start": 1625.392,
+      "end": 1629.592,
+      "text": " Estabilizar é uma coisa, resolver os bugs é outra."
+    },
+    {
+      "speaker": "B",
+      "start": 1629.742,
+      "end": 1632.392,
+      "text": " O ambiente está estável, está funcionando."
+    },
+    {
+      "speaker": "B",
+      "start": 1632.742,
+      "end": 1637.942,
+      "text": " Agora a gente precisa pegar esses problemas que estão acontecendo e entender caso a caso,"
+    },
+    {
+      "speaker": "B",
+      "start": 1638.092,
+      "end": 1643.042,
+      "text": " infelizmente. Não dá para colocar todos no mesmo balaio e falar assim, é esse o problema."
+    },
+    {
+      "speaker": "B",
+      "start": 1643.142,
+      "end": 1646.242,
+      "text": " A gente precisa entender agora caso a caso, infelizmente."
+    },
+    {
+      "speaker": "A",
+      "start": 1646.804,
+      "end": 1648.454,
+      "text": " Então vai ter que ser isso,"
+    },
+    {
+      "speaker": "A",
+      "start": 1648.504,
+      "end": 1652.304,
+      "text": " ter PT e carência,"
+    },
+    {
+      "speaker": "B",
+      "start": 1652.304,
+      "end": 1652.954,
+      "text": " E se a CPTI"
+    },
+    {
+      "speaker": "A",
+      "start": 1652.954,
+      "end": 1653.404,
+      "text": " que é para ser na terceira,"
+    },
+    {
+      "speaker": "B",
+      "start": 1653.404,
+      "end": 1657.954,
+      "text": " carece, o que apresenta? Vamos focar isso nesses daí para a gente..."
+    },
+    {
+      "speaker": "A",
+      "start": 1657.954,
+      "end": 1661.454,
+      "text": " aí a partir de terça a gente vê os outros motivos."
+    },
+    {
+      "speaker": "A",
+      "start": 1662.004,
+      "end": 1677.204,
+      "text": " E aí, a partir de tese, o que eu vou fazer? Eu acho melhor eu vou colocar lá no título uma especificação dessa alteração. A gente vê o que a gente vai bolar, a gente bota uma label, alguma coisa para dizer que esses bugs parecem que surgiram depois dessa alteração."
+    },
+    {
+      "speaker": "A",
+      "start": 1677.654,
+      "end": 1681.054,
+      "text": " E aí eu vou criar um card por motivo,"
+    },
+    {
+      "speaker": "A",
+      "start": 1681.154,
+      "end": 1681.704,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "A",
+      "start": 1682.054,
+      "end": 1685.304,
+      "text": " Que eu vou ter que passar por todos, vou ter que fazer o reteste de novo de todos,"
+    },
+    {
+      "speaker": "A",
+      "start": 1685.454,
+      "end": 1686.304,
+      "text": " né?"
+    },
+    {
+      "speaker": "A",
+      "start": 1687.38,
+      "end": 1690.68,
+      "text": " O que me dói, principalmente por causa do motivo hoje."
+    },
+    {
+      "speaker": "A",
+      "start": 1691.53,
+      "end": 1692.93,
+      "text": " Mas fora isso, tudo bem."
+    },
+    {
+      "speaker": "A",
+      "start": 1694.83,
+      "end": 1697.13,
+      "text": " A gente faz semana que vem,"
+    },
+    {
+      "speaker": "A",
+      "start": 1697.18,
+      "end": 1698.18,
+      "text": " a partir de terça."
+    },
+    {
+      "speaker": "C",
+      "start": 1699.73,
+      "end": 1701.08,
+      "text": " Mais alguma coisa, pessoal?"
+    },
+    {
+      "speaker": "C",
+      "start": 1703.58,
+      "end": 1703.63,
+      "text": " Não?"
+    },
+    {
+      "speaker": "B",
+      "start": 1703.63,
+      "end": 1704.83,
+      "text": " A parte está tranquila."
+    },
+    {
+      "speaker": "C",
+      "start": 1706.83,
+      "end": 1707.28,
+      "text": " Sheila,"
+    },
+    {
+      "speaker": "C",
+      "start": 1707.38,
+      "end": 1710.58,
+      "text": " eu estava tentando falar com o Gustavo, mas eu consegui contato agora com ele."
+    },
+    {
+      "speaker": "C",
+      "start": 1710.63,
+      "end": 1711.78,
+      "text": " Ele está lá no hospital com o filho,"
+    },
+    {
+      "speaker": "C",
+      "start": 1711.83,
+      "end": 1711.93,
+      "text": " né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1712.468,
+      "end": 1712.518,
+      "text": " Caralho."
+    },
+    {
+      "speaker": "A",
+      "start": 1712.518,
+      "end": 1717.068,
+      "text": " É, menino, ele parece que tem uma urucubaca na cabeça dele lá da família,"
+    },
+    {
+      "speaker": "A",
+      "start": 1717.118,
+      "end": 1726.268,
+      "text": " porque ele foi lá trocar o gesso do pequenininho e o outro filho dele mais velho, um que há pouco tempo tinha operado a perna, quebrou o joelho."
+    },
+    {
+      "speaker": "C",
+      "start": 1727.118,
+      "end": 1727.318,
+      "text": " Caralho."
+    },
+    {
+      "speaker": "A",
+      "start": 1727.318,
+      "end": 1729.6680000000001,
+      "text": " Aí ele tá com os dois filhos lá com ele."
+    },
+    {
+      "speaker": "C",
+      "start": 1730.9,
+      "end": 1731.4,
+      "text": " Mas é normal"
+    },
+    {
+      "speaker": "D",
+      "start": 1731.4,
+      "end": 1731.45,
+      "text": " Eu"
+    },
+    {
+      "speaker": "C",
+      "start": 1731.45,
+      "end": 1734.55,
+      "text": " de físico, eles botam o filho em luta ali, ultimate fight,"
+    },
+    {
+      "speaker": "C",
+      "start": 1734.65,
+      "end": 1736,
+      "text": " alguma coisa de praticar."
+    },
+    {
+      "speaker": "D",
+      "start": 1736,
+      "end": 1739.15,
+      "text": " ia até perguntar isso para ele porque o garoto há pouco tempo,"
+    },
+    {
+      "speaker": "D",
+      "start": 1739.2,
+      "end": 1742.15,
+      "text": " você lembra que teve um filho que estava com o pé torto?"
+    },
+    {
+      "speaker": "D",
+      "start": 1742.5,
+      "end": 1745.05,
+      "text": " Que quebrou o pé, sei lá,"
+    },
+    {
+      "speaker": "C",
+      "start": 1745.05,
+      "end": 1745.1,
+      "text": " Sim."
+    },
+    {
+      "speaker": "D",
+      "start": 1745.1,
+      "end": 1746.9,
+      "text": " teve um problema na perna, né?"
+    },
+    {
+      "speaker": "D",
+      "start": 1747.7640000000001,
+      "end": 1753.164,
+      "text": " aí teve que operar botou ali um negócio na perna então agora quebrou o joelho ele estava com os dois lá"
+    },
+    {
+      "speaker": "C",
+      "start": 1753.714,
+      "end": 1754.0140000000001,
+      "text": " É,"
+    },
+    {
+      "speaker": "D",
+      "start": 1754.0140000000001,
+      "end": 1754.214,
+      "text": " aí"
+    },
+    {
+      "speaker": "C",
+      "start": 1754.214,
+      "end": 1754.5140000000001,
+      "text": " eu achei que"
+    },
+    {
+      "speaker": "D",
+      "start": 1754.5140000000001,
+      "end": 1754.614,
+      "text": " ele"
+    },
+    {
+      "speaker": "C",
+      "start": 1754.614,
+      "end": 1754.664,
+      "text": " foi"
+    },
+    {
+      "speaker": "D",
+      "start": 1754.664,
+      "end": 1754.864,
+      "text": " falou que"
+    },
+    {
+      "speaker": "C",
+      "start": 1754.864,
+      "end": 1755.0140000000001,
+      "text": " aí."
+    },
+    {
+      "speaker": "D",
+      "start": 1755.0140000000001,
+      "end": 1758.2640000000001,
+      "text": " vai é ele falou que vai trabalhar agora tarde isso"
+    },
+    {
+      "speaker": "C",
+      "start": 1758.2640000000001,
+      "end": 1758.964,
+      "text": " É, ele me falou."
+    },
+    {
+      "speaker": "D",
+      "start": 1758.964,
+      "end": 1774.414,
+      "text": " só que eu estava até preocupada Júlio porque eu tinha pedido para ele priorizar uma situação lá do sistema de pagamentos que tem que entregar hoje à tarde aí eu estava até pensando aqui como é que ele vai conseguir falar com Matheus e fazer essa parada mas enfim"
+    },
+    {
+      "speaker": "D",
+      "start": 1774.452,
+      "end": 1774.802,
+      "text": " sim"
+    },
+    {
+      "speaker": "C",
+      "start": 1775.002,
+      "end": 1776.752,
+      "text": " É, tem um problema no Sib também,"
+    },
+    {
+      "speaker": "C",
+      "start": 1776.902,
+      "end": 1780.552,
+      "text": " que ele tem que, mas o Sib acho que é tranquilo, é questão de token,"
+    },
+    {
+      "speaker": "C",
+      "start": 1780.652,
+      "end": 1787.552,
+      "text": " tá dando problema na geração de um token e a gente ficou empacado por causa disso, porque não gerava esse token nem a pau até sexta-feira,"
+    },
+    {
+      "speaker": "C",
+      "start": 1787.602,
+      "end": 1787.802,
+      "text": " até"
+    },
+    {
+      "speaker": "D",
+      "start": 1787.802,
+      "end": 1796.502,
+      "text": " mas no pior caso ontem do token no pior caso do token talvez se for assim muito crítico eu posso pedir para o Max tentar ajudar"
+    },
+    {
+      "speaker": "C",
+      "start": 1798.26,
+      "end": 1798.26,
+      "text": " É"
+    },
+    {
+      "speaker": "D",
+      "start": 1798.26,
+      "end": 1798.61,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "C",
+      "start": 1798.61,
+      "end": 1805.36,
+      "text": " porque a gente está dependendo disso para encerrar uma tarefa que a gente precisa demonstrar para o usuário lá."
+    },
+    {
+      "speaker": "C",
+      "start": 1805.81,
+      "end": 1805.86,
+      "text": " Já"
+    },
+    {
+      "speaker": "D",
+      "start": 1805.86,
+      "end": 1806.26,
+      "text": " Então,"
+    },
+    {
+      "speaker": "C",
+      "start": 1806.26,
+      "end": 1806.36,
+      "text": " foi"
+    },
+    {
+      "speaker": "D",
+      "start": 1806.36,
+      "end": 1806.46,
+      "text": " talvez"
+    },
+    {
+      "speaker": "C",
+      "start": 1806.46,
+      "end": 1806.56,
+      "text": " entregue..."
+    },
+    {
+      "speaker": "D",
+      "start": 1806.56,
+      "end": 1810.16,
+      "text": " eu possa pedir para o Marcos."
+    },
+    {
+      "speaker": "D",
+      "start": 1811.71,
+      "end": 1813.51,
+      "text": " Tá, aí a gente pode ver."
+    },
+    {
+      "speaker": "C",
+      "start": 1814.51,
+      "end": 1817.41,
+      "text": " Tá, vamos falar com o Gustavo. Quando você conseguiu falar com ele aqui,"
+    },
+    {
+      "speaker": "D",
+      "start": 1817.41,
+      "end": 1817.46,
+      "text": " Ele"
+    },
+    {
+      "speaker": "C",
+      "start": 1817.46,
+      "end": 1817.86,
+      "text": " ele falou que ele..."
+    },
+    {
+      "speaker": "D",
+      "start": 1817.86,
+      "end": 1819.41,
+      "text": " só vai estar online à tarde."
+    },
+    {
+      "speaker": "D",
+      "start": 1819.46,
+      "end": 1820.56,
+      "text": " Que horas que ele falou para você?"
+    },
+    {
+      "speaker": "C",
+      "start": 1821.11,
+      "end": 1823.41,
+      "text": " Não, ele falou à tarde, mas ele está me respondendo aqui."
+    },
+    {
+      "speaker": "C",
+      "start": 1823.71,
+      "end": 1824.21,
+      "text": " Entendeu?"
+    },
+    {
+      "speaker": "C",
+      "start": 1824.82,
+      "end": 1824.82,
+      "text": " Ele"
+    },
+    {
+      "speaker": "D",
+      "start": 1824.82,
+      "end": 1825.17,
+      "text": " Isso,"
+    },
+    {
+      "speaker": "C",
+      "start": 1825.17,
+      "end": 1825.37,
+      "text": " tá me respondendo"
+    },
+    {
+      "speaker": "D",
+      "start": 1825.37,
+      "end": 1825.97,
+      "text": " ele está respondendo."
+    },
+    {
+      "speaker": "C",
+      "start": 1825.97,
+      "end": 1826.17,
+      "text": " aqui."
+    },
+    {
+      "speaker": "C",
+      "start": 1826.37,
+      "end": 1828.02,
+      "text": " Ele tá até verdinho aqui agora."
+    },
+    {
+      "speaker": "D",
+      "start": 1828.47,
+      "end": 1828.77,
+      "text": " É,"
+    },
+    {
+      "speaker": "D",
+      "start": 1828.82,
+      "end": 1828.97,
+      "text": " não,"
+    },
+    {
+      "speaker": "D",
+      "start": 1829.07,
+      "end": 1830.02,
+      "text": " ele consegue responder,"
+    },
+    {
+      "speaker": "D",
+      "start": 1830.12,
+      "end": 1831.42,
+      "text": " ele só não vai conseguir atuar,"
+    },
+    {
+      "speaker": "D",
+      "start": 1831.57,
+      "end": 1831.72,
+      "text": " né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1832.02,
+      "end": 1832.37,
+      "text": " É,"
+    },
+    {
+      "speaker": "C",
+      "start": 1832.47,
+      "end": 1832.97,
+      "text": " isso."
+    },
+    {
+      "speaker": "D",
+      "start": 1833.37,
+      "end": 1836.92,
+      "text": " Porque eu acho que num pior caso, se ele tiver essas três atividades,"
+    },
+    {
+      "speaker": "D",
+      "start": 1837.12,
+      "end": 1840.07,
+      "text": " talvez o Max, dependendo do que seja,"
+    },
+    {
+      "speaker": "D",
+      "start": 1840.22,
+      "end": 1841.77,
+      "text": " o Max consegue atuar,"
+    },
+    {
+      "speaker": "D",
+      "start": 1841.87,
+      "end": 1843.47,
+      "text": " porque quem está atuando no Kiklo,"
+    },
+    {
+      "speaker": "D",
+      "start": 1843.57,
+      "end": 1845.82,
+      "text": " quem está atuando nessas questões é o Max."
+    },
+    {
+      "speaker": "D",
+      "start": 1847.02,
+      "end": 1849.07,
+      "text": " Mas ele está dedicado lá nas reais."
+    },
+    {
+      "speaker": "D",
+      "start": 1851.028,
+      "end": 1855.478,
+      "text": " Mas ele pode vir aqui eventualmente, se for crítico, eu mando ele largar lá e vir aqui ajudar,"
+    },
+    {
+      "speaker": "D",
+      "start": 1855.628,
+      "end": 1855.828,
+      "text": " entendeu?"
+    },
+    {
+      "speaker": "C",
+      "start": 1857.528,
+      "end": 1858.828,
+      "text": " Perguntando dele aqui."
+    },
+    {
+      "speaker": "D",
+      "start": 1858.978,
+      "end": 1865.328,
+      "text": " Aí você pergunta, porque talvez esse token, eu acho que não me parece ser uma coisa que ele tenha que ter,"
+    },
+    {
+      "speaker": "D",
+      "start": 1865.4279999999999,
+      "end": 1867.228,
+      "text": " vai precisar codificar alguma coisa,"
+    },
+    {
+      "speaker": "D",
+      "start": 1867.328,
+      "end": 1867.878,
+      "text": " Matheus?"
+    },
+    {
+      "speaker": "C",
+      "start": 1868.728,
+      "end": 1869.878,
+      "text": " Não, acho que não. Não é pra cá"
+    },
+    {
+      "speaker": "D",
+      "start": 1869.878,
+      "end": 1869.978,
+      "text": " Não,"
+    },
+    {
+      "speaker": "C",
+      "start": 1869.978,
+      "end": 1870.128,
+      "text": " não."
+    },
+    {
+      "speaker": "D",
+      "start": 1870.128,
+      "end": 1870.228,
+      "text": " né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1870.228,
+      "end": 1871.028,
+      "text": " É lá pros 5."
+    },
+    {
+      "speaker": "D",
+      "start": 1871.028,
+      "end": 1871.6779999999999,
+      "text": " Ah, pro outro?"
+    },
+    {
+      "speaker": "C",
+      "start": 1871.6779999999999,
+      "end": 1872.028,
+      "text": " Acho que não."
+    },
+    {
+      "speaker": "D",
+      "start": 1872.028,
+      "end": 1872.328,
+      "text": " Ah,"
+    },
+    {
+      "speaker": "C",
+      "start": 1872.328,
+      "end": 1872.4279999999999,
+      "text": " É."
+    },
+    {
+      "speaker": "D",
+      "start": 1872.4279999999999,
+      "end": 1872.628,
+      "text": " tá."
+    },
+    {
+      "speaker": "C",
+      "start": 1873.3,
+      "end": 1873.95,
+      "text": " É preciso."
+    },
+    {
+      "speaker": "B",
+      "start": 1874,
+      "end": 1880.45,
+      "text": " Aqui pode ser que seja código ou pode ser que seja keycloak, aí a gente vai precisar da evidência para a gente investigar primeiro."
+    },
+    {
+      "speaker": "D",
+      "start": 1880.45,
+      "end": 1885.4,
+      "text": " É, porque se for que cloque, o Max consegue atuar ajudando o Gustavo, né?"
+    },
+    {
+      "speaker": "D",
+      "start": 1885.75,
+      "end": 1888.75,
+      "text": " Se for código, só não vai dar porque ele tá,"
+    },
+    {
+      "speaker": "D",
+      "start": 1888.85,
+      "end": 1889,
+      "text": " ele"
+    },
+    {
+      "speaker": "C",
+      "start": 1889,
+      "end": 1889.05,
+      "text": " Se"
+    },
+    {
+      "speaker": "D",
+      "start": 1889.05,
+      "end": 1889.4,
+      "text": " não tem nada,"
+    },
+    {
+      "speaker": "C",
+      "start": 1889.4,
+      "end": 1889.65,
+      "text": " for código,"
+    },
+    {
+      "speaker": "D",
+      "start": 1889.65,
+      "end": 1889.95,
+      "text": " não tem,"
+    },
+    {
+      "speaker": "C",
+      "start": 1889.95,
+      "end": 1891.55,
+      "text": " teoricamente é para a gente aqui mesmo,"
+    },
+    {
+      "speaker": "C",
+      "start": 1891.6,
+      "end": 1892.2,
+      "text": " para a equipe aqui,"
+    },
+    {
+      "speaker": "C",
+      "start": 1892.25,
+      "end": 1892.4,
+      "text": " né?"
+    },
+    {
+      "speaker": "D",
+      "start": 1893.35,
+      "end": 1893.7,
+      "text": " então..."
+    },
+    {
+      "speaker": "B",
+      "start": 1894.15,
+      "end": 1895.55,
+      "text": " É, teoricamente sim,"
+    },
+    {
+      "speaker": "B",
+      "start": 1895.7,
+      "end": 1896.9,
+      "text": " teoricamente sim."
+    },
+    {
+      "speaker": "C",
+      "start": 1898.164,
+      "end": 1898.714,
+      "text": " Tá bom então."
+    },
+    {
+      "speaker": "D",
+      "start": 1898.714,
+      "end": 1905.664,
+      "text": " Se precisarem dele, por acaso, se vocês acharem que está demorando muito, aí vocês me falam, que aí eu tento dar uma deslocada no Max."
+    },
+    {
+      "speaker": "C",
+      "start": 1907.164,
+      "end": 1908.114,
+      "text": " Ele ficou aqui,"
+    },
+    {
+      "speaker": "C",
+      "start": 1908.164,
+      "end": 1913.964,
+      "text": " ele falou que ia procurar o Mateus aqui para ver com ele isso daí e disse que ia falar com a Matheus também,"
+    },
+    {
+      "speaker": "C",
+      "start": 1914.0140000000001,
+      "end": 1921.8139999999999,
+      "text": " mas só que se ele tiver ocupado a tarde inteira lá com o cifre por causa da entrega, ele não vai conseguir."
+    },
+    {
+      "speaker": "C",
+      "start": 1923.476,
+      "end": 1925.976,
+      "text": " Vamos a nossa entrega segunda-feira."
+    },
+    {
+      "speaker": "D",
+      "start": 1926.176,
+      "end": 1949.676,
+      "text": " é na verdade ele precisa finalizar ele tem que programar ele precisa finalizar uma atividade lá do do pagamento que eu falei para ele que é a homologação da Deise termina hoje aí eu expliquei para ele falei Gustavo não tenho mais tempo para esperar preciso entregar hoje aí ele falou que até as quatro horas da tarde ele me entregava o Max ó o Max ele só tem reunião às duas"
+    },
+    {
+      "speaker": "D",
+      "start": 1951.444,
+      "end": 1971.594,
+      "text": " e três e meia então se precisar dele ele também tem uma reunião agora às 11 e 30 do Cora mas essa reunião do Cora essa reunião do Cora dura 15 minutos então assim se precisar vocês me falam aí a gente muda aqui o que tiver que mudar tá bom"
+    },
+    {
+      "speaker": "D",
+      "start": 1972.5,
+      "end": 1972.65,
+      "text": " Beleza"
+    },
+    {
+      "speaker": "C",
+      "start": 1972.65,
+      "end": 1973.55,
+      "text": " Tá bom, pessoal."
+    },
+    {
+      "speaker": "C",
+      "start": 1974,
+      "end": 1975.2,
+      "text": " Bom dia a todos aí."
+    },
+    {
+      "speaker": "E",
+      "start": 1975.2,
+      "end": 1983.2,
+      "text": " Pô, só um segundinho, eu queria ver, o Adilson me encaminhou um invite aqui de uma reunião com o pessoal de sustentação do SGR,"
+    },
+    {
+      "speaker": "E",
+      "start": 1983.35,
+      "end": 1988.2,
+      "text": " só queria entender qual que vai ser o assunto tratado lá para eu chegar preparado."
+    },
+    {
+      "speaker": "E",
+      "start": 1992.15,
+      "end": 1992.95,
+      "text": " Adilson!"
+    },
+    {
+      "speaker": "D",
+      "start": 1994.65,
+      "end": 1996.55,
+      "text": " Bom vou deixar vocês aí, boa reunião"
+    },
+    {
+      "speaker": "E",
+      "start": 1996.55,
+      "end": 1996.7,
+      "text": " Obrigado,"
+    },
+    {
+      "speaker": "D",
+      "start": 1996.7,
+      "end": 1997.35,
+      "text": " Boa"
+    },
+    {
+      "speaker": "E",
+      "start": 1997.35,
+      "end": 1997.5,
+      "text": " obrigado."
+    },
+    {
+      "speaker": "D",
+      "start": 1997.5,
+      "end": 1998.3,
+      "text": " reunião ou não,"
+    },
+    {
+      "speaker": "C",
+      "start": 1998.3,
+      "end": 1998.4,
+      "text": " Beleza."
+    },
+    {
+      "speaker": "D",
+      "start": 1998.4,
+      "end": 1998.55,
+      "text": " né?"
+    },
+    {
+      "speaker": "C",
+      "start": 1998.55,
+      "end": 1998.6,
+      "text": ""
+    },
+    {
+      "speaker": "D",
+      "start": 1998.6,
+      "end": 1999.1,
+      "text": " Bom trabalho"
+    },
+    {
+      "speaker": "A",
+      "start": 2000,
+      "end": 2000.8,
+      "text": " Boa sexta-feira,"
+    },
+    {
+      "speaker": "A",
+      "start": 2000.85,
+      "end": 2001.95,
+      "text": " fique com Deus. Tchau, tchau."
+    },
+    {
+      "speaker": "B",
+      "start": 2004.2,
+      "end": 2005.4,
+      "text": " Me chamou aqui,"
+    },
+    {
+      "speaker": "B",
+      "start": 2005.5,
+      "end": 2005.7,
+      "text": " cara."
+    },
+    {
+      "speaker": "C",
+      "start": 2005.7,
+      "end": 2007.75,
+      "text": " Chamei, desculpa, cara."
+    },
+    {
+      "speaker": "C",
+      "start": 2007.85,
+      "end": 2009.25,
+      "text": " Não, você me mandou o invite ali,"
+    },
+    {
+      "speaker": "C",
+      "start": 2009.35,
+      "end": 2013.65,
+      "text": " eu queria só que você me desse um overview de qual que é o assunto que vai rolar nessa reunião de apresentação daqui a"
+    },
+    {
+      "speaker": "B",
+      "start": 2013.65,
+      "end": 2013.7,
+      "text": " Eu"
+    },
+    {
+      "speaker": "C",
+      "start": 2013.7,
+      "end": 2013.75,
+      "text": " pouco."
+    },
+    {
+      "speaker": "B",
+      "start": 2013.75,
+      "end": 2015.6,
+      "text": " acho que a conversa é sobre o SDR."
+    },
+    {
+      "speaker": "C",
+      "start": 2016.4,
+      "end": 2019.95,
+      "text": " Tudo bem, mas sabe qual que é o ponto, um tema específico ou não?"
+    },
+    {
+      "speaker": "B",
+      "start": 2020.75,
+      "end": 2023,
+      "text": " Acho que eles querem implementar alguma melhoria"
+    },
+    {
+      "speaker": "@",
+      "start": 2023,
+      "end": 2026.45,
+      "text": " lá."
+    },
+    {
+      "speaker": "C",
+      "start": 2026.45,
+      "end": 2027.35,
+      "text": " Entendi,"
+    },
+    {
+      "speaker": "C",
+      "start": 2027.5,
+      "end": 2028.35,
+      "text": " mas..."
+    },
+    {
+      "speaker": "C",
+      "start": 2029.268,
+      "end": 2030.518,
+      "text": " Beleza, conversamos lá."
+    },
+    {
+      "speaker": "C",
+      "start": 2031.068,
+      "end": 2031.768,
+      "text": " Beleza, tranquilo."
+    },
+    {
+      "speaker": "B",
+      "start": 2031.768,
+      "end": 2033.168,
+      "text": " É, vamos conversar com ele lá."
+    },
+    {
+      "speaker": "C",
+      "start": 2033.168,
+      "end": 2033.318,
+      "text": " Vamos lá,"
+    },
+    {
+      "speaker": "B",
+      "start": 2033.318,
+      "end": 2033.418,
+      "text": " Vamos"
+    },
+    {
+      "speaker": "C",
+      "start": 2033.418,
+      "end": 2033.568,
+      "text": " quem..."
+    },
+    {
+      "speaker": "B",
+      "start": 2033.568,
+      "end": 2035.268,
+      "text": " tentar jogar isso pra eles mesmo,"
+    },
+    {
+      "speaker": "B",
+      "start": 2035.318,
+      "end": 2035.668,
+      "text": " pra eles atualizarem."
+    },
+    {
+      "speaker": "D",
+      "start": 2035.668,
+      "end": 2037.368,
+      "text": " Quem foi que passou?"
+    },
+    {
+      "speaker": "D",
+      "start": 2037.818,
+      "end": 2039.668,
+      "text": " Ah, o pessoal da sustentação que ficou."
+    },
+    {
+      "speaker": "B",
+      "start": 2039.668,
+      "end": 2042.968,
+      "text": " É, eles querem conversar com a gente hoje sobre o S.R."
+    },
+    {
+      "speaker": "D",
+      "start": 2043.518,
+      "end": 2047.368,
+      "text": " Ah, mas é que eles querem sincronizar alguma coisa com a gente, que não é para a gente fazer,"
+    },
+    {
+      "speaker": "D",
+      "start": 2047.468,
+      "end": 2047.568,
+      "text": " né?"
+    },
+    {
+      "speaker": "D",
+      "start": 2048.018,
+      "end": 2048.468,
+      "text": " Provavelmente,"
+    },
+    {
+      "speaker": "B",
+      "start": 2048.468,
+      "end": 2048.718,
+      "text": " Não,"
+    },
+    {
+      "speaker": "D",
+      "start": 2048.718,
+      "end": 2048.968,
+      "text": " eles querem"
+    },
+    {
+      "speaker": "B",
+      "start": 2048.968,
+      "end": 2049.118,
+      "text": " é."
+    },
+    {
+      "speaker": "D",
+      "start": 2049.118,
+      "end": 2051.368,
+      "text": " sincronizar alguma"
+    },
+    {
+      "speaker": "B",
+      "start": 2051.368,
+      "end": 2052.268,
+      "text": " correndo de atuar lá."
+    },
+    {
+      "speaker": "C",
+      "start": 2052.918,
+      "end": 2053.268,
+      "text": " Então,"
+    },
+    {
+      "speaker": "C",
+      "start": 2053.418,
+      "end": 2053.868,
+      "text": " justamente..."
+    },
+    {
+      "speaker": "D",
+      "start": 2054.118,
+      "end": 2057.018,
+      "text": " eles querem sincronizar alguma coisa com a gente, provavelmente."
+    },
+    {
+      "speaker": "C",
+      "start": 2058.036,
+      "end": 2058.586,
+      "text": " Claro, beleza."
+    },
+    {
+      "speaker": "C",
+      "start": 2058.686,
+      "end": 2060.686,
+      "text": " Vamos lá ver qualquer coisa e qualquer coisa a gente traz o problema"
+    },
+    {
+      "speaker": "B",
+      "start": 2060.686,
+      "end": 2060.836,
+      "text": " Né?"
+    },
+    {
+      "speaker": "C",
+      "start": 2060.836,
+      "end": 2062.036,
+      "text": " aqui para segunda-feira."
+    },
+    {
+      "speaker": "D",
+      "start": 2062.636,
+      "end": 2063.486,
+      "text": " Falou, pessoal."
+    },
+    {
+      "speaker": "D",
+      "start": 2063.636,
+      "end": 2063.736,
+      "text": " Bom"
+    },
+    {
+      "speaker": "C",
+      "start": 2063.736,
+      "end": 2063.986,
+      "text": " Valeu,"
+    },
+    {
+      "speaker": "D",
+      "start": 2063.986,
+      "end": 2064.236,
+      "text": " dia."
+    },
+    {
+      "speaker": "C",
+      "start": 2064.236,
+      "end": 2064.436,
+      "text": " obrigado."
+    },
+    {
+      "speaker": "B",
+      "start": 2064.936,
+      "end": 2065.086,
+      "text": " Valeu,"
+    },
+    {
+      "speaker": "C",
+      "start": 2065.086,
+      "end": 2065.136,
+      "text": " Até"
+    },
+    {
+      "speaker": "D",
+      "start": 2065.136,
+      "end": 2065.336,
+      "text": " Bom,"
+    },
+    {
+      "speaker": "B",
+      "start": 2065.336,
+      "end": 2065.486,
+      "text": " gente."
+    },
+    {
+      "speaker": "C",
+      "start": 2065.486,
+      "end": 2065.736,
+      "text": " gente. a semana. Tchau."
+    },
+    {
+      "speaker": "D",
+      "start": 2065.736,
+      "end": 2065.936,
+      "text": " Até amanhã."
+    },
+    {
+      "speaker": "A",
+      "start": 2065.986,
+      "end": 2066.436,
+      "text": " Tchau, gente."
+    },
+    {
+      "speaker": "B",
+      "start": 2066.436,
+      "end": 2066.586,
+      "text": " Tchau."
+    },
+    {
+      "speaker": "A",
+      "start": 2066.586,
+      "end": 2066.986,
+      "text": " Tchau."
+    }
+  ]
+}

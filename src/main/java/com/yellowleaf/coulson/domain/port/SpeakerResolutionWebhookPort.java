@@ -5,7 +5,7 @@ import com.yellowleaf.coulson.domain.model.TranscriptionSegment;
 
 import java.util.List;
 
-public interface SpeakerResolutionPort {
+public interface SpeakerResolutionWebhookPort {
 
     List<SpeakerMapping> resolve(List<TranscriptionSegment> segments);
 }
