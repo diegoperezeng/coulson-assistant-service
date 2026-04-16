@@ -4,6 +4,8 @@ import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
+import com.yellowleaf.coulson.domain.port.EmbeddingPort;
+import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
 import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
@@ -15,14 +17,23 @@ import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpSpeakerResolutionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.JpaMeetingRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetingJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -99,6 +110,29 @@ public class AppConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.ai.openai.api-key")
+    public EmbeddingPort embeddingPort(EmbeddingModel embeddingModel) {
+        return new OpenAiEmbeddingAdapter(embeddingModel);
+    }
+
+    @Bean
+    public Executor embeddingExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setThreadNamePrefix("embedding-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean
+    public MeetingRepositoryPort meetingRepositoryPort(
+            SpringMeetingJpaRepository jpaRepository,
+            VectorUpdateRepository vectorRepository) {
+        return new JpaMeetingRepositoryAdapter(jpaRepository, vectorRepository);
+    }
+
+    @Bean
     public ProcessVideoUseCase processVideoUseCase(
             VideoStoragePort videoStoragePort,
             VideoSplitterPort videoSplitterPort,
@@ -107,6 +141,8 @@ public class AppConfig {
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
             SpeakerResolutionWebhookPort speakerResolutionWebhookPort,
+            MeetingRepositoryPort meetingRepositoryPort,
+            ApplicationEventPublisher eventPublisher,
             ExecutorService processingExecutor,
             VideoProperties videoProperties) {
         return new ProcessVideoUseCase(
@@ -117,6 +153,8 @@ public class AppConfig {
                 audioSplitterPort,
                 transcriptionWebhookPort,
                 speakerResolutionWebhookPort,
+                meetingRepositoryPort,
+                eventPublisher,
                 processingExecutor,
                 videoProperties.getMaxAudioChunkSeconds());
     }
