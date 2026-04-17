@@ -3,8 +3,8 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n
     restart: always
-    expose:
-      - "5678"
+    ports:
+      - "5678:5678"
     environment:
       - N8N_FORMDATA_FILE_SIZE_MAX=1024
       - N8N_BASIC_AUTH_ACTIVE=true
@@ -80,7 +80,6 @@ services:
       - DB_POSTGRESDB_USER=n8n
       - DB_POSTGRESDB_PASSWORD=zMkjWl3ufg1r5UKqypCO
       - N8N_ENCRYPTION_KEY=LbuJVK8gvlqX6gVIacyeuk7efOvKUhlo
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
     volumes:
       - ./n8n_data:/home/node/.n8n
