@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Custom entrypoint for Kong that builds Lua expressions for request-transformer
 # and performs environment variable substitution in the declarative config.
 
