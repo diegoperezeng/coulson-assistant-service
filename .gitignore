@@ -11,3 +11,5 @@ target/
 /supabase/volumes/snippets/
 /supabase/volumes/storage/
 /videos_for_test/
+/pgdata
+/n8n_data
