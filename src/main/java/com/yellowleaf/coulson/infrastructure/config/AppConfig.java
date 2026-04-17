@@ -1,11 +1,16 @@
 package com.yellowleaf.coulson.infrastructure.config;
 
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
+import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
+import com.yellowleaf.coulson.application.usecase.TeamUseCase;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
 import com.yellowleaf.coulson.domain.port.EmbeddingPort;
 import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
+import org.springframework.ai.openai.OpenAiEmbeddingModel;
+import org.springframework.ai.openai.api.OpenAiApi;
+import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
 import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
@@ -18,12 +23,16 @@ import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpSpeakerResolutionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaMeetingRepositoryAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.JpaTeamRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetingJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
@@ -110,9 +119,16 @@ public class AppConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.ai.openai.api-key")
-    public EmbeddingPort embeddingPort(EmbeddingModel embeddingModel) {
-        return new OpenAiEmbeddingAdapter(embeddingModel);
+    @ConditionalOnProperty(prefix = "spring.ai.openai.embedding", name = "enabled", havingValue = "true")
+    public EmbeddingModel openAiEmbeddingModel(
+            @Value("${spring.ai.openai.api-key}") String apiKey) {
+        return new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.ai.openai.embedding", name = "enabled", havingValue = "true")
+    public EmbeddingPort embeddingPort(EmbeddingModel openAiEmbeddingModel) {
+        return new OpenAiEmbeddingAdapter(openAiEmbeddingModel);
     }
 
     @Bean
@@ -130,6 +146,23 @@ public class AppConfig {
             SpringMeetingJpaRepository jpaRepository,
             VectorUpdateRepository vectorRepository) {
         return new JpaMeetingRepositoryAdapter(jpaRepository, vectorRepository);
+    }
+
+    @Bean
+    public TeamRepositoryPort teamRepositoryPort(
+            SpringTeamJpaRepository teamRepository,
+            SpringTeamMemberJpaRepository memberRepository) {
+        return new JpaTeamRepositoryAdapter(teamRepository, memberRepository);
+    }
+
+    @Bean
+    public TeamUseCase teamUseCase(TeamRepositoryPort teamRepositoryPort) {
+        return new TeamUseCase(teamRepositoryPort);
+    }
+
+    @Bean
+    public TeamMemberUseCase teamMemberUseCase(TeamRepositoryPort teamRepositoryPort) {
+        return new TeamMemberUseCase(teamRepositoryPort);
     }
 
     @Bean
