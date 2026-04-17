@@ -1,0 +1,905 @@
+{
+  "name": "transcribe-service",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "transcribe",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "f9ecc269-65f7-414e-a2c8-c1bd32f24e4f",
+      "name": "Webhook",
+      "webhookId": "912d7dc6-e2ef-426b-8490-c279ae02e56a",
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "v6XVA4RC27q0IDBK",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        320,
+        0
+      ],
+      "id": "89cda35f-fc49-4e67-b7c0-ba8b42725a6e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data0"
+            },
+            {
+              "name": "model",
+              "value": "gpt-4o-transcribe-diarize"
+            },
+            {
+              "name": "response_format",
+              "value": "diarized_json"
+            },
+            {
+              "name": "chunking_strategy",
+              "value": "auto"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 500000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        80,
+        0
+      ],
+      "id": "506af21b-c0d7-4d80-b1bb-5e8a90b686ea",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "NkPvStshonv6cWEQ",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "text/plain, application/json, application/*+json, */*",
+            "content-type": "multipart/form-data;boundary=w6pgegMohRqVjP3r8eRYP4hQTnoIuyP6Wf6n5",
+            "webhook-token": "80797061-413c-47cf-a60c-bcc43a23d703",
+            "user-agent": "Java/21.0.10",
+            "host": "n8n:5678",
+            "connection": "keep-alive",
+            "transfer-encoding": "chunked"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "http://localhost:5678/webhook/transcribe",
+          "executionMode": "production"
+        },
+        "binary": {
+          "data0": {
+            "mimeType": "audio/mpeg",
+            "fileType": "audio",
+            "fileExtension": "mpga",
+            "data": "database",
+            "fileName": "15949cc6-3c1f-4faa-af42-ae381d57da21-audio-chunk-6.mp3",
+            "id": "database:ef379892-6936-4e72-ab1a-39f5f61b7970",
+            "fileSize": "607 kB",
+            "bytes": 607185
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "HTTP Request": [
+      {
+        "json": {
+          "text": "Vamos Exato. suspender. Porque eu vou ter que segurar isso aqui porque estou Isso. aguardando Vamos suspender desse inverno. ela nisso. Vamos focar aqui no peticionamento. Ela já sabe que a gente vai tirar essa release desse projeto. Ah, tranquilo.\nA gente pode cancelar, por enquanto, essas reuniões aí de refinamento. Tá Tá, bom? mas internamente eu posso continuar com o meu refinamento interno dessas duas histórias Pode. que eu tenho, tá? Pode. Se não afetar nada aqui do peticionamento, pode. Não tem problema É, nenhum. a princípio, Eu queria não. que a gente ficasse focado para terminar o peticionamento, tá? É, em paralelo, cara, também tem outro lado, né? Se a gente já tem a previsão de que análise lote...\nÉ certo que vai ser um novo projeto, só não sabemos quando iniciará e nem quem é o time que vai atuar e aí Eu eu... não sei se é certo ou não, tudo indica que o diretor vai puxar, o diretor dela. Como o diretor dela é o diretor presidente, ele tem um pouco mais de força política do que os outros diretores para convencê -los, embora a decisão seja colegiada. Ele tem um pouco mais de força política para convencê-los.\nmas não dá para botar a mão no fogo vai ser análise em lote tem que esperar vir do lado da diretoria tá Eu vou remanejar bom tanto tanto essa agenda que eu só vou abrir o projeto eu só vou abrir o projeto aqui pelo nosso lado quando for confirmado lá por eles até então não abriu projeto não tá Então praticamente a gente não pode atuar nele ainda Beleza ok beleza então pessoal a Dilson pelo menos cinco bugs hoje para amanhã\nVamos acabar com essa moleza, vamos acabar com esse negócio de ficar vendo SGR, rindo SGR toda hora. Vamos é tirar aqui. um maçã de teste Não vejo a hora de acabar com isso. pô prioriza a massa de teste pra Amanda cara A o Amanda que o Amanda Mariano gente, é o severo deles falando Amanda, não a Amanda deles de Amanda falando assim, Júlio, cinco erros já foram pro saco, já estão corrigidos. gente, é melhor esquecer a massa e corrigir esses erros mesmo porque é mesmo? essa massa de teste eu posso fazer depois que acabar sprint, entendeu?\nVocê bebe esse A peixe. gente está ganha. Esse peixe não cabe em 10 pente. O CPT está. Eu não quero reterixar duas vezes o CPT de novo, não. Obrigado, Amanda. Tá bom. Vamos dar um break nisso aí, pessoal. Pessoal, valeu. Tá Obrigado, bom. pessoal. Tá todo mundo. Diego, mais uma vez, seja bem-vindo ao que precisar. Ah, gente. Chama a gente. Valeu, valeu, bom dia. Seja bem-vindo aí, Diego. Valeu. Valeu. Tchau, bem-vindo, Diego.",
+          "segments": [
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos",
+              "speaker": "A",
+              "start": 0,
+              "end": 0,
+              "id": "seg_0"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Exato.",
+              "speaker": "B",
+              "start": 0,
+              "end": 0,
+              "id": "seg_1"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " suspender.",
+              "speaker": "A",
+              "start": 0,
+              "end": 0.55,
+              "id": "seg_2"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Porque eu vou ter que segurar isso aqui porque estou",
+              "speaker": "B",
+              "start": 0.6000000000000001,
+              "end": 2.8,
+              "id": "seg_3"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Isso.",
+              "speaker": "A",
+              "start": 2.8,
+              "end": 3,
+              "id": "seg_4"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " aguardando",
+              "speaker": "B",
+              "start": 3,
+              "end": 3.2,
+              "id": "seg_5"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos suspender",
+              "speaker": "A",
+              "start": 3.2,
+              "end": 3.6500000000000004,
+              "id": "seg_6"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " desse inverno.",
+              "speaker": "B",
+              "start": 3.6500000000000004,
+              "end": 4,
+              "id": "seg_7"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " ela nisso.",
+              "speaker": "A",
+              "start": 4,
+              "end": 4.45,
+              "id": "seg_8"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos focar aqui no peticionamento.",
+              "speaker": "A",
+              "start": 4.55,
+              "end": 6,
+              "id": "seg_9"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Ela já sabe que a gente vai tirar essa release desse projeto.",
+              "speaker": "A",
+              "start": 6.15,
+              "end": 8.900000000000002,
+              "id": "seg_10"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Ah, tranquilo.",
+              "speaker": "B",
+              "start": 9.100000000000001,
+              "end": 9.950000000000001,
+              "id": "seg_11"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " A gente pode cancelar, por enquanto, essas reuniões aí de refinamento.",
+              "speaker": "A",
+              "start": 10.708,
+              "end": 13.808,
+              "id": "seg_12"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Tá",
+              "speaker": "A",
+              "start": 14.058,
+              "end": 14.108,
+              "id": "seg_13"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Tá,",
+              "speaker": "B",
+              "start": 14.108,
+              "end": 14.457999999999998,
+              "id": "seg_14"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " bom?",
+              "speaker": "A",
+              "start": 14.457999999999998,
+              "end": 14.608,
+              "id": "seg_15"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " mas internamente eu posso continuar com o meu refinamento interno dessas duas histórias",
+              "speaker": "B",
+              "start": 14.608,
+              "end": 19.308,
+              "id": "seg_16"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Pode.",
+              "speaker": "A",
+              "start": 19.308,
+              "end": 19.458,
+              "id": "seg_17"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " que eu tenho,",
+              "speaker": "B",
+              "start": 19.458,
+              "end": 19.958,
+              "id": "seg_18"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " tá? Pode. Se não afetar nada aqui do peticionamento,",
+              "speaker": "A",
+              "start": 20.058,
+              "end": 22.708,
+              "id": "seg_19"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " pode. Não tem problema",
+              "speaker": "A",
+              "start": 22.808,
+              "end": 23.458,
+              "id": "seg_20"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " É,",
+              "speaker": "B",
+              "start": 23.458,
+              "end": 23.558,
+              "id": "seg_21"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " nenhum.",
+              "speaker": "A",
+              "start": 23.558,
+              "end": 23.758,
+              "id": "seg_22"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " a princípio,",
+              "speaker": "B",
+              "start": 23.808,
+              "end": 24.058,
+              "id": "seg_23"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Eu queria",
+              "speaker": "A",
+              "start": 24.058,
+              "end": 24.658,
+              "id": "seg_24"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " não.",
+              "speaker": "B",
+              "start": 24.658,
+              "end": 24.708,
+              "id": "seg_25"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " que a gente ficasse focado para terminar o peticionamento, tá?",
+              "speaker": "A",
+              "start": 24.708,
+              "end": 27.558,
+              "id": "seg_26"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " É, em paralelo, cara, também tem outro lado,",
+              "speaker": "B",
+              "start": 27.558,
+              "end": 30.208,
+              "id": "seg_27"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " né?",
+              "speaker": "B",
+              "start": 30.258000000000003,
+              "end": 30.408,
+              "id": "seg_28"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Se a gente já tem a previsão de que análise lote...",
+              "speaker": "B",
+              "start": 30.458,
+              "end": 34.558,
+              "id": "seg_29"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " É certo que vai ser um novo projeto, só não sabemos quando iniciará e nem quem é o time que vai atuar e aí",
+              "speaker": "B",
+              "start": 35.06,
+              "end": 41.61,
+              "id": "seg_30"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Eu",
+              "speaker": "A",
+              "start": 41.61,
+              "end": 41.81,
+              "id": "seg_31"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " eu...",
+              "speaker": "B",
+              "start": 41.81,
+              "end": 41.96,
+              "id": "seg_32"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " não sei se é certo ou não, tudo indica que o diretor vai puxar, o diretor dela.",
+              "speaker": "A",
+              "start": 41.96,
+              "end": 47.510000000000005,
+              "id": "seg_33"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Como o diretor dela é o diretor presidente,",
+              "speaker": "A",
+              "start": 47.760000000000005,
+              "end": 50.66,
+              "id": "seg_34"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " ele tem um pouco mais de força política do que os outros diretores para convencê-los, embora a decisão seja colegiada.",
+              "speaker": "A",
+              "start": 51.010000000000005,
+              "end": 58.46,
+              "id": "seg_35"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Ele tem um pouco mais de força política para convencê-los.",
+              "speaker": "A",
+              "start": 58.760000000000005,
+              "end": 62.06,
+              "id": "seg_36"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " mas não dá para botar a mão no fogo vai ser análise em lote tem que esperar vir do lado da diretoria tá",
+              "speaker": "A",
+              "start": 61.94,
+              "end": 67.53999999999999,
+              "id": "seg_37"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Eu vou remanejar",
+              "speaker": "B",
+              "start": 67.53999999999999,
+              "end": 68.94,
+              "id": "seg_38"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " bom tanto tanto",
+              "speaker": "A",
+              "start": 68.94,
+              "end": 69.99,
+              "id": "seg_39"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " essa agenda",
+              "speaker": "B",
+              "start": 69.99,
+              "end": 70.24,
+              "id": "seg_40"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " que eu só vou abrir o projeto eu só vou abrir o projeto aqui pelo nosso lado quando for confirmado lá por eles até então não abriu projeto não tá",
+              "speaker": "A",
+              "start": 70.24,
+              "end": 77.84,
+              "id": "seg_41"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Então praticamente a gente não pode atuar nele ainda Beleza",
+              "speaker": "B",
+              "start": 77.84,
+              "end": 80.64,
+              "id": "seg_42"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " ok beleza então pessoal a Dilson pelo menos cinco bugs hoje para amanhã",
+              "speaker": "A",
+              "start": 80.64,
+              "end": 88.99000000000001,
+              "id": "seg_43"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos acabar com essa moleza, vamos acabar com esse negócio de ficar vendo SGR, rindo SGR toda hora.",
+              "speaker": "A",
+              "start": 90.868,
+              "end": 95.41799999999999,
+              "id": "seg_44"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos",
+              "speaker": "A",
+              "start": 95.768,
+              "end": 95.91799999999999,
+              "id": "seg_45"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " é",
+              "speaker": "B",
+              "start": 95.91799999999999,
+              "end": 96.068,
+              "id": "seg_46"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " tirar aqui.",
+              "speaker": "A",
+              "start": 96.068,
+              "end": 96.41799999999999,
+              "id": "seg_47"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " um maçã de teste",
+              "speaker": "C",
+              "start": 96.41799999999999,
+              "end": 97.268,
+              "id": "seg_48"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Não vejo a hora de acabar com isso.",
+              "speaker": "D",
+              "start": 97.768,
+              "end": 99.96799999999999,
+              "id": "seg_49"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " pô prioriza a massa de teste pra Amanda cara",
+              "speaker": "B",
+              "start": 100.318,
+              "end": 103.018,
+              "id": "seg_50"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " A",
+              "speaker": "A",
+              "start": 103.018,
+              "end": 103.118,
+              "id": "seg_51"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " o",
+              "speaker": "B",
+              "start": 103.118,
+              "end": 103.368,
+              "id": "seg_52"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Amanda",
+              "speaker": "A",
+              "start": 103.368,
+              "end": 103.41799999999999,
+              "id": "seg_53"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " que o",
+              "speaker": "B",
+              "start": 103.41799999999999,
+              "end": 103.568,
+              "id": "seg_54"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Amanda",
+              "speaker": "A",
+              "start": 103.568,
+              "end": 103.618,
+              "id": "seg_55"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Mariano",
+              "speaker": "B",
+              "start": 103.618,
+              "end": 103.66799999999999,
+              "id": "seg_56"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " gente,",
+              "speaker": "C",
+              "start": 103.66799999999999,
+              "end": 103.718,
+              "id": "seg_57"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " é o severo",
+              "speaker": "B",
+              "start": 103.718,
+              "end": 103.91799999999999,
+              "id": "seg_58"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " deles",
+              "speaker": "A",
+              "start": 103.91799999999999,
+              "end": 104.118,
+              "id": "seg_59"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " falando",
+              "speaker": "B",
+              "start": 104.118,
+              "end": 104.16799999999999,
+              "id": "seg_60"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Amanda,",
+              "speaker": "A",
+              "start": 104.16799999999999,
+              "end": 104.318,
+              "id": "seg_61"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " não",
+              "speaker": "B",
+              "start": 104.318,
+              "end": 104.518,
+              "id": "seg_62"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " a Amanda deles de Amanda falando assim, Júlio, cinco erros já foram pro saco, já estão corrigidos.",
+              "speaker": "A",
+              "start": 104.518,
+              "end": 108.96799999999999,
+              "id": "seg_63"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " gente,",
+              "speaker": "C",
+              "start": 109.118,
+              "end": 109.318,
+              "id": "seg_64"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " é melhor esquecer a massa e corrigir esses erros mesmo porque",
+              "speaker": "C",
+              "start": 109.41799999999999,
+              "end": 112.71799999999999,
+              "id": "seg_65"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " é mesmo?",
+              "speaker": "B",
+              "start": 112.71799999999999,
+              "end": 112.96799999999999,
+              "id": "seg_66"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " essa massa de teste eu posso fazer depois que acabar sprint,",
+              "speaker": "C",
+              "start": 112.96799999999999,
+              "end": 116.768,
+              "id": "seg_67"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " entendeu?",
+              "speaker": "C",
+              "start": 117.018,
+              "end": 117.21799999999999,
+              "id": "seg_68"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Você bebe esse",
+              "speaker": "C",
+              "start": 117.14,
+              "end": 117.54,
+              "id": "seg_69"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " A",
+              "speaker": "D",
+              "start": 117.54,
+              "end": 117.59,
+              "id": "seg_70"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " peixe.",
+              "speaker": "C",
+              "start": 117.59,
+              "end": 117.94,
+              "id": "seg_71"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " gente está ganha.",
+              "speaker": "D",
+              "start": 117.94,
+              "end": 118.34,
+              "id": "seg_72"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Esse peixe não cabe em 10 pente.",
+              "speaker": "C",
+              "start": 118.34,
+              "end": 119.79,
+              "id": "seg_73"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " O CPT está.",
+              "speaker": "C",
+              "start": 120.04,
+              "end": 121.19,
+              "id": "seg_74"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Eu não quero reterixar duas vezes o CPT de novo, não.",
+              "speaker": "C",
+              "start": 121.34,
+              "end": 123.84,
+              "id": "seg_75"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Obrigado, Amanda.",
+              "speaker": "D",
+              "start": 124.14,
+              "end": 124.69,
+              "id": "seg_76"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Tá bom.",
+              "speaker": "A",
+              "start": 124.69,
+              "end": 125.09,
+              "id": "seg_77"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Vamos dar um break nisso aí, pessoal.",
+              "speaker": "D",
+              "start": 125.79,
+              "end": 127.29,
+              "id": "seg_78"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Pessoal, valeu.",
+              "speaker": "A",
+              "start": 127.34,
+              "end": 127.69,
+              "id": "seg_79"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Tá",
+              "speaker": "C",
+              "start": 127.69,
+              "end": 127.74000000000001,
+              "id": "seg_80"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Obrigado, bom. pessoal. Tá todo mundo.",
+              "speaker": "A",
+              "start": 127.74000000000001,
+              "end": 129.19,
+              "id": "seg_81"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Diego, mais uma vez,",
+              "speaker": "D",
+              "start": 129.19,
+              "end": 130.14000000000001,
+              "id": "seg_82"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " seja bem-vindo ao que precisar.",
+              "speaker": "D",
+              "start": 130.19,
+              "end": 130.94,
+              "id": "seg_83"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Ah,",
+              "speaker": "C",
+              "start": 130.94,
+              "end": 131.04,
+              "id": "seg_84"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " gente. Chama a gente. Valeu, valeu, bom dia. Seja bem-vindo aí, Diego.",
+              "speaker": "D",
+              "start": 131.04,
+              "end": 133.84,
+              "id": "seg_85"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Valeu.",
+              "speaker": "A",
+              "start": 134.44,
+              "end": 134.49,
+              "id": "seg_86"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Valeu.",
+              "speaker": "D",
+              "start": 134.49,
+              "end": 134.89000000000001,
+              "id": "seg_87"
+            },
+            {
+              "type": "transcript.text.segment",
+              "text": " Tchau, bem-vindo, Diego.",
+              "speaker": "C",
+              "start": 134.89000000000001,
+              "end": 136.54,
+              "id": "seg_88"
+            }
+          ],
+          "usage": {
+            "type": "tokens",
+            "total_tokens": 6529,
+            "input_tokens": 1939,
+            "input_token_details": {
+              "text_tokens": 147,
+              "audio_tokens": 1792
+            },
+            "output_tokens": 4590
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "xE4FnW1fLse0FMFz",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "2cf78d42-c763-4791-809f-0e4cab9d3f08",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be02686943a482a6b4f04dedbf7edd2fb9f73966827b8e819dc894f9e80ad668"
+  },
+  "id": "g1XpjhYhaY5gSCKZ",
+  "tags": []
+}

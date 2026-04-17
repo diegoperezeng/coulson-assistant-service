@@ -1,0 +1,589 @@
+{
+  "name": "speakers-identify",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "speakers",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8ed99e05-2f34-4864-a570-7e4136b141f4",
+      "name": "Webhook",
+      "webhookId": "205d4968-3119-498d-b42c-9b12c5654631",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "v6XVA4RC27q0IDBK",
+          "name": "Header Auth account"
+        }
+      },
+      "notes": "O body deve ser SEMPRE:\n\n\"\n    \"body\": {\n      \"videoId\": \"8ef16bba-4907-4dcd-ae11-075e031a07ba\",\n      \"transcription\": \"Bem-axi. Exato, e aí não pega nem no local e nem pega no ambiente, porque o local ele reproduz no ambiente o desenvolvimento da autenticação. Aí é isso, Júlio, aí eu já resolvi agora, vou subir e vou aguardar a Amanda testar agora ... \",\n      \"totalChunks\": 4,\n      \"segments\": [\n        {\n          \"speaker\": \"A\",\n          \"start\": 0,\n          \"end\": 0.3500000000000001,\n          \"text\": \" Bem-axi.\"\n        },\n        {\n          \"speaker\": \"B\",\n          \"start\": 1.4500000000000004,\n          \"end\": 5,\n          \"text\": \" Exato, e aí não pega nem no local e nem pega no ambiente,\"\n        },\n        {\n          \"speaker\": \"B\",\n          \"start\": 5.2,\n          \"end\": 8.600000000000001,\n          \"text\": \" porque o local ele reproduz no ambiente o desenvolvimento da autenticação.\"\n        },\n        {\n          \"speaker\": \"B\",\n          \"start\": 9.950000000000001,\n          \"end\": 12.600000000000001,\n          \"text\": \" Aí é isso, Júlio, aí eu já resolvi agora,\"\n        }     ]\n    },\n    \"webhookUrl\": \"http://localhost:5678/webhook/speakers\",\n    \"executionMode\": \"production\"\n  }\n]\n\""
+    },
+    {
+      "parameters": {
+        "jsCode": "const segments = $input.first().json.body.segments;\nlet speakersList =[];\n\nfor (const segment of segments) {\n  if(segment.speaker!=\"@\"){\n    speakersList.push(segment.speaker);\n  }\n}\n\nconst speakersSet = new Set(speakersList);\n\nreturn Array.from(speakersSet, (speaker) => ({ speaker }));;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "858dc172-909c-4e64-84e9-5db0a7158481",
+      "name": "codigos de locutores"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "08eecc61-6597-4899-b1bc-e36e4fdd8ef8",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.first().json.output[0].speakers;\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        0
+      ],
+      "id": "bee55f37-72b6-4d7b-bcc4-65f0ed0f6db8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Considere a janela de 1–2 falas após uma menção direta para confirmar o vínculo (nome→speaker). Se não houver confirmação, não atribua.\n\nA transcrição a ser verificado os nomes dos participantes:\n\"\n{{ ($('Webhook').first().json.body.segments|| []).map(({ type,start, end, ...rest }) => rest).toJsonString(); }}}\n\"",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Você têm: Lista de códigos de speakers (use exatamente estes códigos como chaves): {{(()=>{\n  let speakersInTranscription = \"[\";\n  const speakerCodes = $('codigos de locutores').all();\n  for(let i=0;i<speakerCodes.length;i++){\n    const elem = i==(speakerCodes.length-1)?\"]\":\",\";\n    speakersInTranscription += speakerCodes[i].json.speaker + elem;}\n  return speakersInTranscription\n})() }}\n\nVocê receberá: Uma transcrição diarizada em segmentos na ordem exata da conversa, onde cada segmento possui um código de speaker e o texto falado.\n\nTarefa:\nIdentificar o NOME REAL de cada speaker (pessoa) com base exclusivamente em evidências presentes na conversa e retornar APENAS um JSON válido que mapeie cada código para um nome.\n\nRegras de identificação (muito importantes):\n- Use SOMENTE evidências explícitas na transcrição. Não invente nomes.\n- Identifique um speaker quando houver uma das evidências abaixo:\n  (E1) Autoidentificação: o próprio speaker diz seu nome (ex.: “eu sou o João”, “aqui é a Maria”).\n  (E2) Chamado direto + resposta imediata: alguém chama “João?” e o speaker chamado responde em seguida (na fala imediatamente seguinte ou nas próximas 1–2 falas, mantendo coerência).\n  (E3) Apresentação por terceiros + confirmação: alguém apresenta “esta é a Maria” e a pessoa se manifesta confirmando/continuando (ex.: “oi, Maria aqui” ou fala consistente logo após).\n- Se houver apenas menção de um nome, mas NINGUÉM responde/assume esse nome de forma rastreável, IGNORE essa menção (não atribua).\n- Se houver ambiguidade (ex.: mais de um candidato possível) ou evidência fraca, retorne \"unnamed\" para esse speaker.\n- Se o áudio sugerir papéis (ex.: “atendente”, “cliente”), isso NÃO é nome. Não use papéis como nome.\n- Se houver nomes completos e apelidos, prefira o nome mais completo e natural (ex.: “João Silva” > “João”), desde que evidenciado.\n- Não use nomes que aparecem apenas em contexto de terceiros (ex.: “meu marido João”) sem a pessoa “João” falar e ser rastreável.\n- Se a conversa citar vários “João” (homônimos), não atribua; use \"unnamed\".\n\nSaída:\n- Retorne APENAS um JSON puro (sem markdown, sem texto extra, sem a palavra “json”).\n- O JSON deve conter todas as chaves dos códigos fornecidos.\n- Para cada código: se identificado, valor é o nome (string). Se não identificado, valor é \"unnamed\".\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "e2f23d27-e63e-4690-abd8-97ba4a4ff21d",
+      "name": "AI Agent",
+      "executeOnce": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[{\n      \"speakers\":[\n            {\n              \"speaker\": \"A\",\n              \"name\": \"Han Solo\"\n            },\n            {\n              \"speaker\": \"B\",\n              \"name\": \"Luke\"\n            },\n            {\n              \"speaker\": \"C\",\n              \"name\": \"Jar Jar Binks\"\n            }\n      ]\n}]"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        240
+      ],
+      "id": "32f31628-6175-42a9-a0c9-44622226ef20",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        192
+      ],
+      "id": "12c96347-8835-401f-9c48-204d0bef2a5d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NkPvStshonv6cWEQ",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "text/plain, application/json, application/*+json, */*",
+            "content-type": "application/json",
+            "webhook-token": "80797061-413c-47cf-a60c-bcc43a23d703",
+            "user-agent": "Java/21.0.10",
+            "host": "n8n:5678",
+            "connection": "keep-alive",
+            "transfer-encoding": "chunked"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "segments": [
+              {
+                "speaker": "A",
+                "text": " Aí atrapalhou o pesqueiro aqui,",
+                "end": 3.902,
+                "start": 1.652
+              },
+              {
+                "speaker": "A",
+                "text": " meu camarada",
+                "end": 4.702,
+                "start": 4.002000000000001
+              },
+              {
+                "speaker": "B",
+                "text": " Bom, eu vou dar uma olhadinha aqui nesse meu perfil, eu vejo com vocês aí então desse esquema.",
+                "end": 12.802,
+                "start": 6.052
+              },
+              {
+                "speaker": "A",
+                "text": " A gente conversa aí por fora aí",
+                "end": 14.802,
+                "start": 12.802
+              },
+              {
+                "speaker": "B",
+                "text": " Mas aí, até pra gente liberar as meninas,",
+                "end": 18.452,
+                "start": 15.302
+              },
+              {
+                "speaker": "B",
+                "text": " tem mais alguma coisa, Priscila, que você acha que a gente precise a princípio dar uma...",
+                "end": 25.952,
+                "start": 18.552000000000003
+              },
+              {
+                "speaker": "B",
+                "text": " Dá uma, dá",
+                "end": 27.887999999999998,
+                "start": 27.188
+              },
+              {
+                "speaker": "C",
+                "text": " Não.",
+                "end": 28.387999999999998,
+                "start": 27.887999999999998
+              },
+              {
+                "speaker": "B",
+                "text": " uma priorizada. A gente vai priorizar isso que você passou pra gente até agora, tá, desse 14 e 15.",
+                "end": 33.288,
+                "start": 28.387999999999998
+              },
+              {
+                "speaker": "C",
+                "text": " Por enquanto é só esses dois aqui.",
+                "end": 35.938,
+                "start": 33.838
+              },
+              {
+                "speaker": "B",
+                "text": " Ah, não, então beleza.",
+                "end": 37.188,
+                "start": 36.338
+              },
+              {
+                "speaker": "C",
+                "text": " Eu acho que esse daqui deve dar um trabalho para achar as coisas dele aqui.",
+                "end": 41.738,
+                "start": 37.188
+              },
+              {
+                "speaker": "C",
+                "text": " Sei lá.",
+                "end": 42.988,
+                "start": 42.338
+              },
+              {
+                "speaker": "C",
+                "text": " Esse legado, né,",
+                "end": 47.438,
+                "start": 46.038
+              },
+              {
+                "speaker": "C",
+                "text": " esse zero aqui.",
+                "end": 48.388000000000005,
+                "start": 47.538
+              },
+              {
+                "speaker": "A",
+                "text": " Entendi.",
+                "end": 51.938,
+                "start": 51.188
+              },
+              {
+                "speaker": "C",
+                "text": " Aí,",
+                "end": 52.788,
+                "start": 52.788
+              },
+              {
+                "speaker": "A",
+                "text": " Não sei se",
+                "end": 53.187999999999995,
+                "start": 52.788
+              },
+              {
+                "speaker": "C",
+                "text": " depois",
+                "end": 53.288,
+                "start": 53.187999999999995
+              },
+              {
+                "speaker": "A",
+                "text": " a gente...",
+                "end": 53.538,
+                "start": 53.288
+              },
+              {
+                "speaker": "C",
+                "text": " que souber todas as tabelas,",
+                "end": 57.837999999999994,
+                "start": 53.538
+              },
+              {
+                "speaker": "C",
+                "text": " aí eu peço alguns desses aqui,",
+                "end": 60.437999999999995,
+                "start": 57.888
+              },
+              {
+                "speaker": "C",
+                "text": " tipo dois desses aqui,",
+                "end": 62.138,
+                "start": 60.488
+              },
+              {
+                "speaker": "C",
+                "text": " que tem no... Porque esse relatório foram elas que pediram também,",
+                "end": 65.788,
+                "start": 62.238
+              },
+              {
+                "speaker": "C",
+                "text": " então eu acredito que elas devam usar esses outros tipos aqui,",
+                "end": 70.188,
+                "start": 65.888
+              },
+              {
+                "speaker": "C",
+                "text": " porque no CEAR tem muito mais tipos ali,",
+                "end": 74.938,
+                "start": 70.28800000000001
+              },
+              {
+                "speaker": "C",
+                "text": " só que elas não pediram para incluir no relatório, elas só pediram esses.",
+                "end": 79.83800000000001,
+                "start": 75.03800000000001
+              },
+              {
+                "speaker": "C",
+                "text": " Então, deve ser o que elas usam mais.",
+                "end": 83.156,
+                "start": 80.756
+              },
+              {
+                "speaker": "B",
+                "text": " Entendi, bacana.",
+                "end": 85.206,
+                "start": 83.756
+              },
+              {
+                "speaker": "B",
+                "text": " A gente parte deles e aí depois se precisar demais a gente vai adaptando.",
+                "end": 90.606,
+                "start": 85.256
+              },
+              {
+                "speaker": "C",
+                "text": " Sim.",
+                "end": 92.156,
+                "start": 91.606
+              },
+              {
+                "speaker": "B",
+                "text": " Tranquilo.",
+                "end": 95.256,
+                "start": 94.106
+              },
+              {
+                "speaker": "B",
+                "text": " Então vou juntar com o Yorimá, esse ister,",
+                "end": 99.706,
+                "start": 95.656
+              },
+              {
+                "speaker": "B",
+                "text": " e a gente vai...",
+                "end": 102.156,
+                "start": 99.806
+              },
+              {
+                "speaker": "B",
+                "text": " Vamos começar a caçar essa parte aí do projeto, ver com o que a gente tem, o que a gente pode falar também.",
+                "end": 110.442,
+                "start": 103.892
+              },
+              {
+                "speaker": "B",
+                "text": " E a gente dá o feedback aqui no chat.",
+                "end": 112.892,
+                "start": 110.942
+              },
+              {
+                "speaker": "C",
+                "text": " Tá",
+                "end": 114.692,
+                "start": 114.392
+              },
+              {
+                "speaker": "D",
+                "text": " Tá",
+                "end": 114.74199999999999,
+                "start": 114.692
+              },
+              {
+                "speaker": "C",
+                "text": " bom.",
+                "end": 114.942,
+                "start": 114.74199999999999
+              },
+              {
+                "speaker": "D",
+                "text": " certo.",
+                "end": 115.292,
+                "start": 114.942
+              },
+              {
+                "speaker": "B",
+                "text": " Tá bom?",
+                "end": 115.842,
+                "start": 115.292
+              },
+              {
+                "speaker": "D",
+                "text": " Tranquilo, qualquer coisa vocês avisam a gente que vocês precisarem, beleza?",
+                "end": 118.792,
+                "start": 115.842
+              },
+              {
+                "speaker": "B",
+                "text": " Beleza.",
+                "end": 120.142,
+                "start": 119.192
+              },
+              {
+                "speaker": "D",
+                "text": " Tá",
+                "end": 120.74199999999999,
+                "start": 120.592
+              },
+              {
+                "speaker": "B",
+                "text": " Tá bom,",
+                "end": 121.142,
+                "start": 120.74199999999999
+              },
+              {
+                "speaker": "D",
+                "text": " bom, gente,",
+                "end": 121.442,
+                "start": 121.142
+              },
+              {
+                "speaker": "B",
+                "text": " valeu.",
+                "end": 121.642,
+                "start": 121.442
+              },
+              {
+                "speaker": "D",
+                "text": " Obrigadão, viu?",
+                "end": 122.49199999999999,
+                "start": 121.642
+              },
+              {
+                "speaker": "D",
+                "text": " Tá bom.",
+                "end": 123.942,
+                "start": 123.442
+              },
+              {
+                "speaker": "C",
+                "text": " Obrigada.",
+                "end": 124.24199999999999,
+                "start": 123.942
+              },
+              {
+                "speaker": "A",
+                "text": " valeu então gente falou fique com Deus aí valeu",
+                "end": 127.192,
+                "start": 124.24199999999999
+              },
+              {
+                "speaker": "B",
+                "text": " Fique com Deus. Tchau.",
+                "end": 128.542,
+                "start": 127.442
+              }
+            ]
+          },
+          "webhookUrl": "http://localhost:5678/webhook/speakers",
+          "executionMode": "production"
+        },
+        "binary": {
+          "data": {
+            "data": "eyJzZWdtZW50cyI6W3sic3BlYWtlciI6IkEiLCJ0ZXh0IjoiIEHDrSBhdHJhcGFsaG91IG8gcGVzcXVlaXJvIGFxdWksIiwiZW5kIjozLjkwMiwic3RhcnQiOjEuNjUyfSx7InNwZWFrZXIiOiJBIiwidGV4dCI6IiBtZXUgY2FtYXJhZGEiLCJlbmQiOjQuNzAyLCJzdGFydCI6NC4wMDIwMDAwMDAwMDAwMDF9LHsic3BlYWtlciI6IkIiLCJ0ZXh0IjoiIEJvbSwgZXUgdm91IGRhciB1bWEgb2xoYWRpbmhhIGFxdWkgbmVzc2UgbWV1IHBlcmZpbCwgZXUgdmVqbyBjb20gdm9jw6pzIGHDrSBlbnTDo28gZGVzc2UgZXNxdWVtYS4iLCJlbmQiOjEyLjgwMiwic3RhcnQiOjYuMDUyfSx7InNwZWFrZXIiOiJBIiwidGV4dCI6IiBBIGdlbnRlIGNvbnZlcnNhIGHDrSBwb3IgZm9yYSBhw60iLCJlbmQiOjE0LjgwMiwic3RhcnQiOjEyLjgwMn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgTWFzIGHDrSwgYXTDqSBwcmEgZ2VudGUgbGliZXJhciBhcyBtZW5pbmFzLCIsImVuZCI6MTguNDUyLCJzdGFydCI6MTUuMzAyfSx7InNwZWFrZXIiOiJCIiwidGV4dCI6IiB0ZW0gbWFpcyBhbGd1bWEgY29pc2EsIFByaXNjaWxhLCBxdWUgdm9jw6ogYWNoYSBxdWUgYSBnZW50ZSBwcmVjaXNlIGEgcHJpbmPDrXBpbyBkYXIgdW1hLi4uIiwiZW5kIjoyNS45NTIsInN0YXJ0IjoxOC41NTIwMDAwMDAwMDAwMDN9LHsic3BlYWtlciI6IkIiLCJ0ZXh0IjoiIETDoSB1bWEsIGTDoSIsImVuZCI6MjcuODg3OTk5OTk5OTk5OTk4LCJzdGFydCI6MjcuMTg4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBOw6NvLiIsImVuZCI6MjguMzg3OTk5OTk5OTk5OTk4LCJzdGFydCI6MjcuODg3OTk5OTk5OTk5OTk4fSx7InNwZWFrZXIiOiJCIiwidGV4dCI6IiB1bWEgcHJpb3JpemFkYS4gQSBnZW50ZSB2YWkgcHJpb3JpemFyIGlzc28gcXVlIHZvY8OqIHBhc3NvdSBwcmEgZ2VudGUgYXTDqSBhZ29yYSwgdMOhLCBkZXNzZSAxNCBlIDE1LiIsImVuZCI6MzMuMjg4LCJzdGFydCI6MjguMzg3OTk5OTk5OTk5OTk4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBQb3IgZW5xdWFudG8gw6kgc8OzIGVzc2VzIGRvaXMgYXF1aS4iLCJlbmQiOjM1LjkzOCwic3RhcnQiOjMzLjgzOH0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgQWgsIG7Do28sIGVudMOjbyBiZWxlemEuIiwiZW5kIjozNy4xODgsInN0YXJ0IjozNi4zMzh9LHsic3BlYWtlciI6IkMiLCJ0ZXh0IjoiIEV1IGFjaG8gcXVlIGVzc2UgZGFxdWkgZGV2ZSBkYXIgdW0gdHJhYmFsaG8gcGFyYSBhY2hhciBhcyBjb2lzYXMgZGVsZSBhcXVpLiIsImVuZCI6NDEuNzM4LCJzdGFydCI6MzcuMTg4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBTZWkgbMOhLiIsImVuZCI6NDIuOTg4LCJzdGFydCI6NDIuMzM4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBFc3NlIGxlZ2FkbywgbsOpLCIsImVuZCI6NDcuNDM4LCJzdGFydCI6NDYuMDM4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBlc3NlIHplcm8gYXF1aS4iLCJlbmQiOjQ4LjM4ODAwMDAwMDAwMDAwNSwic3RhcnQiOjQ3LjUzOH0seyJzcGVha2VyIjoiQSIsInRleHQiOiIgRW50ZW5kaS4iLCJlbmQiOjUxLjkzOCwic3RhcnQiOjUxLjE4OH0seyJzcGVha2VyIjoiQyIsInRleHQiOiIgQcOtLCIsImVuZCI6NTIuNzg4LCJzdGFydCI6NTIuNzg4fSx7InNwZWFrZXIiOiJBIiwidGV4dCI6IiBOw6NvIHNlaSBzZSIsImVuZCI6NTMuMTg3OTk5OTk5OTk5OTk1LCJzdGFydCI6NTIuNzg4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBkZXBvaXMiLCJlbmQiOjUzLjI4OCwic3RhcnQiOjUzLjE4Nzk5OTk5OTk5OTk5NX0seyJzcGVha2VyIjoiQSIsInRleHQiOiIgYSBnZW50ZS4uLiIsImVuZCI6NTMuNTM4LCJzdGFydCI6NTMuMjg4fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBxdWUgc291YmVyIHRvZGFzIGFzIHRhYmVsYXMsIiwiZW5kIjo1Ny44Mzc5OTk5OTk5OTk5OTQsInN0YXJ0Ijo1My41Mzh9LHsic3BlYWtlciI6IkMiLCJ0ZXh0IjoiIGHDrSBldSBwZcOnbyBhbGd1bnMgZGVzc2VzIGFxdWksIiwiZW5kIjo2MC40Mzc5OTk5OTk5OTk5OTUsInN0YXJ0Ijo1Ny44ODh9LHsic3BlYWtlciI6IkMiLCJ0ZXh0IjoiIHRpcG8gZG9pcyBkZXNzZXMgYXF1aSwiLCJlbmQiOjYyLjEzOCwic3RhcnQiOjYwLjQ4OH0seyJzcGVha2VyIjoiQyIsInRleHQiOiIgcXVlIHRlbSBuby4uLiBQb3JxdWUgZXNzZSByZWxhdMOzcmlvIGZvcmFtIGVsYXMgcXVlIHBlZGlyYW0gdGFtYsOpbSwiLCJlbmQiOjY1Ljc4OCwic3RhcnQiOjYyLjIzOH0seyJzcGVha2VyIjoiQyIsInRleHQiOiIgZW50w6NvIGV1IGFjcmVkaXRvIHF1ZSBlbGFzIGRldmFtIHVzYXIgZXNzZXMgb3V0cm9zIHRpcG9zIGFxdWksIiwiZW5kIjo3MC4xODgsInN0YXJ0Ijo2NS44ODh9LHsic3BlYWtlciI6IkMiLCJ0ZXh0IjoiIHBvcnF1ZSBubyBDRUFSIHRlbSBtdWl0byBtYWlzIHRpcG9zIGFsaSwiLCJlbmQiOjc0LjkzOCwic3RhcnQiOjcwLjI4ODAwMDAwMDAwMDAxfSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBzw7MgcXVlIGVsYXMgbsOjbyBwZWRpcmFtIHBhcmEgaW5jbHVpciBubyByZWxhdMOzcmlvLCBlbGFzIHPDsyBwZWRpcmFtIGVzc2VzLiIsImVuZCI6NzkuODM4MDAwMDAwMDAwMDEsInN0YXJ0Ijo3NS4wMzgwMDAwMDAwMDAwMX0seyJzcGVha2VyIjoiQyIsInRleHQiOiIgRW50w6NvLCBkZXZlIHNlciBvIHF1ZSBlbGFzIHVzYW0gbWFpcy4iLCJlbmQiOjgzLjE1Niwic3RhcnQiOjgwLjc1Nn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgRW50ZW5kaSwgYmFjYW5hLiIsImVuZCI6ODUuMjA2LCJzdGFydCI6ODMuNzU2fSx7InNwZWFrZXIiOiJCIiwidGV4dCI6IiBBIGdlbnRlIHBhcnRlIGRlbGVzIGUgYcOtIGRlcG9pcyBzZSBwcmVjaXNhciBkZW1haXMgYSBnZW50ZSB2YWkgYWRhcHRhbmRvLiIsImVuZCI6OTAuNjA2LCJzdGFydCI6ODUuMjU2fSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBTaW0uIiwiZW5kIjo5Mi4xNTYsInN0YXJ0Ijo5MS42MDZ9LHsic3BlYWtlciI6IkIiLCJ0ZXh0IjoiIFRyYW5xdWlsby4iLCJlbmQiOjk1LjI1Niwic3RhcnQiOjk0LjEwNn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgRW50w6NvIHZvdSBqdW50YXIgY29tIG8gWW9yaW3DoSwgZXNzZSBpc3RlciwiLCJlbmQiOjk5LjcwNiwic3RhcnQiOjk1LjY1Nn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgZSBhIGdlbnRlIHZhaS4uLiIsImVuZCI6MTAyLjE1Niwic3RhcnQiOjk5LjgwNn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgVmFtb3MgY29tZcOnYXIgYSBjYcOnYXIgZXNzYSBwYXJ0ZSBhw60gZG8gcHJvamV0bywgdmVyIGNvbSBvIHF1ZSBhIGdlbnRlIHRlbSwgbyBxdWUgYSBnZW50ZSBwb2RlIGZhbGFyIHRhbWLDqW0uIiwiZW5kIjoxMTAuNDQyLCJzdGFydCI6MTAzLjg5Mn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgRSBhIGdlbnRlIGTDoSBvIGZlZWRiYWNrIGFxdWkgbm8gY2hhdC4iLCJlbmQiOjExMi44OTIsInN0YXJ0IjoxMTAuOTQyfSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBUw6EiLCJlbmQiOjExNC42OTIsInN0YXJ0IjoxMTQuMzkyfSx7InNwZWFrZXIiOiJEIiwidGV4dCI6IiBUw6EiLCJlbmQiOjExNC43NDE5OTk5OTk5OTk5OSwic3RhcnQiOjExNC42OTJ9LHsic3BlYWtlciI6IkMiLCJ0ZXh0IjoiIGJvbS4iLCJlbmQiOjExNC45NDIsInN0YXJ0IjoxMTQuNzQxOTk5OTk5OTk5OTl9LHsic3BlYWtlciI6IkQiLCJ0ZXh0IjoiIGNlcnRvLiIsImVuZCI6MTE1LjI5Miwic3RhcnQiOjExNC45NDJ9LHsic3BlYWtlciI6IkIiLCJ0ZXh0IjoiIFTDoSBib20/IiwiZW5kIjoxMTUuODQyLCJzdGFydCI6MTE1LjI5Mn0seyJzcGVha2VyIjoiRCIsInRleHQiOiIgVHJhbnF1aWxvLCBxdWFscXVlciBjb2lzYSB2b2PDqnMgYXZpc2FtIGEgZ2VudGUgcXVlIHZvY8OqcyBwcmVjaXNhcmVtLCBiZWxlemE/IiwiZW5kIjoxMTguNzkyLCJzdGFydCI6MTE1Ljg0Mn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgQmVsZXphLiIsImVuZCI6MTIwLjE0Miwic3RhcnQiOjExOS4xOTJ9LHsic3BlYWtlciI6IkQiLCJ0ZXh0IjoiIFTDoSIsImVuZCI6MTIwLjc0MTk5OTk5OTk5OTk5LCJzdGFydCI6MTIwLjU5Mn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgVMOhIGJvbSwiLCJlbmQiOjEyMS4xNDIsInN0YXJ0IjoxMjAuNzQxOTk5OTk5OTk5OTl9LHsic3BlYWtlciI6IkQiLCJ0ZXh0IjoiIGJvbSwgZ2VudGUsIiwiZW5kIjoxMjEuNDQyLCJzdGFydCI6MTIxLjE0Mn0seyJzcGVha2VyIjoiQiIsInRleHQiOiIgdmFsZXUuIiwiZW5kIjoxMjEuNjQyLCJzdGFydCI6MTIxLjQ0Mn0seyJzcGVha2VyIjoiRCIsInRleHQiOiIgT2JyaWdhZMOjbywgdml1PyIsImVuZCI6MTIyLjQ5MTk5OTk5OTk5OTk5LCJzdGFydCI6MTIxLjY0Mn0seyJzcGVha2VyIjoiRCIsInRleHQiOiIgVMOhIGJvbS4iLCJlbmQiOjEyMy45NDIsInN0YXJ0IjoxMjMuNDQyfSx7InNwZWFrZXIiOiJDIiwidGV4dCI6IiBPYnJpZ2FkYS4iLCJlbmQiOjEyNC4yNDE5OTk5OTk5OTk5OSwic3RhcnQiOjEyMy45NDJ9LHsic3BlYWtlciI6IkEiLCJ0ZXh0IjoiIHZhbGV1IGVudMOjbyBnZW50ZSBmYWxvdSBmaXF1ZSBjb20gRGV1cyBhw60gdmFsZXUiLCJlbmQiOjEyNy4xOTIsInN0YXJ0IjoxMjQuMjQxOTk5OTk5OTk5OTl9LHsic3BlYWtlciI6IkIiLCJ0ZXh0IjoiIEZpcXVlIGNvbSBEZXVzLiBUY2hhdS4iLCJlbmQiOjEyOC41NDIsInN0YXJ0IjoxMjcuNDQyfV19",
+            "mimeType": "application/json"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "AI Agent": [
+      {
+        "json": {
+          "output": [
+            {
+              "speakers": [
+                {
+                  "speaker": "A",
+                  "name": "unnamed"
+                },
+                {
+                  "speaker": "B",
+                  "name": "unnamed"
+                },
+                {
+                  "speaker": "C",
+                  "name": "Priscila"
+                },
+                {
+                  "speaker": "D",
+                  "name": "unnamed"
+                }
+              ]
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "codigos de locutores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "codigos de locutores": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "416de92f-11d9-4332-bca5-e136cf500f90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be02686943a482a6b4f04dedbf7edd2fb9f73966827b8e819dc894f9e80ad668"
+  },
+  "id": "IyQjN615IY7SBCAP",
+  "tags": []
+}
