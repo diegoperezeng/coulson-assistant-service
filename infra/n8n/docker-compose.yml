@@ -1,3 +1,4 @@
+name: n8n
 services:
   n8n:
     image: docker.n8n.io/n8nio/n8n
@@ -28,8 +29,6 @@ services:
       - DB_POSTGRESDB_DATABASE=n8ndb
       - DB_POSTGRESDB_USER=n8n
       - DB_POSTGRESDB_PASSWORD=zMkjWl3ufg1r5UKqypCO
-      - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
-      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
       - N8N_RUNNERS_ENABLED=true
       - EXECUTIONS_MODE=queue
     depends_on:
@@ -59,7 +58,7 @@ services:
       POSTGRES_PASSWORD: zMkjWl3ufg1r5UKqypCO
       POSTGRES_DB: n8ndb
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
     networks:
       - yellowleaf-net
   n8n-worker:
