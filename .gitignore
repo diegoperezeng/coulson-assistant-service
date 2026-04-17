@@ -7,9 +7,11 @@ target/
 .idea/
 *.iml
 .mvn/
-/supabase/volumes/db/data/
-/supabase/volumes/snippets/
-/supabase/volumes/storage/
+infra/supabase/volumes/db/data/
+infra/supabase/volumes/snippets/
+infra/supabase/volumes/storage/
 /videos_for_test/
-/pgdata
-/n8n_data
+infra/n8n/pgdata/
+infra/n8n/n8n_data/
+.gitignore
+infra/n8n/n8n_data/
