@@ -7,5 +7,7 @@ target/
 .idea/
 *.iml
 .mvn/
-/supabase/volumes/
+/supabase/volumes/db/data/
+/supabase/volumes/snippets/
+/supabase/volumes/storage/
 /videos_for_test/
