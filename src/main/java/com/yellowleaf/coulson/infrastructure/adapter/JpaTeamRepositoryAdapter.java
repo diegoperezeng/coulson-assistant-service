@@ -1,10 +1,14 @@
 package com.yellowleaf.coulson.infrastructure.adapter;
 
+import com.yellowleaf.coulson.domain.model.Participant;
 import com.yellowleaf.coulson.domain.model.Team;
 import com.yellowleaf.coulson.domain.model.TeamMember;
 import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
+import com.yellowleaf.coulson.infrastructure.persistence.entity.ParticipantEntity;
 import com.yellowleaf.coulson.infrastructure.persistence.entity.TeamEntity;
 import com.yellowleaf.coulson.infrastructure.persistence.entity.TeamMemberEntity;
+import com.yellowleaf.coulson.infrastructure.persistence.entity.TeamMemberId;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringParticipantJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
 
@@ -18,12 +22,15 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
 
     private final SpringTeamJpaRepository teamRepository;
     private final SpringTeamMemberJpaRepository memberRepository;
+    private final SpringParticipantJpaRepository participantRepository;
 
     public JpaTeamRepositoryAdapter(
             SpringTeamJpaRepository teamRepository,
-            SpringTeamMemberJpaRepository memberRepository) {
+            SpringTeamMemberJpaRepository memberRepository,
+            SpringParticipantJpaRepository participantRepository) {
         this.teamRepository = teamRepository;
         this.memberRepository = memberRepository;
+        this.participantRepository = participantRepository;
     }
 
     @Override
@@ -31,8 +38,7 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
         TeamEntity entity = new TeamEntity();
         entity.setName(name);
         entity.setCreatedAt(OffsetDateTime.now());
-        TeamEntity saved = teamRepository.save(entity);
-        return toTeam(saved);
+        return toTeam(teamRepository.save(entity));
     }
 
     @Override
@@ -54,19 +60,33 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     @Override
-    public TeamMember saveMember(UUID teamId, String name) {
+    public TeamMember addMember(UUID teamId, UUID participantId) {
         TeamEntity team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new NoSuchElementException("Team not found: " + teamId));
+        ParticipantEntity participant = participantRepository.findById(participantId)
+                .orElseThrow(() -> new NoSuchElementException("Participant not found: " + participantId));
+
+        TeamMemberId pk = new TeamMemberId(teamId, participantId);
+        if (memberRepository.existsById(pk)) {
+            throw new IllegalStateException("Participant already belongs to this team");
+        }
+
         TeamMemberEntity entity = new TeamMemberEntity();
+        entity.setId(pk);
         entity.setTeam(team);
-        entity.setName(name);
-        entity.setCreatedAt(OffsetDateTime.now());
+        entity.setParticipant(participant);
+        entity.setAddedAt(OffsetDateTime.now());
         return toMember(memberRepository.save(entity));
     }
 
     @Override
-    public Optional<TeamMember> findMemberById(UUID teamId, UUID memberId) {
-        return memberRepository.findByIdAndTeamId(memberId, teamId).map(this::toMember);
+    public Optional<TeamMember> findMember(UUID teamId, UUID participantId) {
+        return memberRepository.findById(new TeamMemberId(teamId, participantId)).map(this::toMember);
+    }
+
+    @Override
+    public List<TeamMember> findAllMembers() {
+        return memberRepository.findAll().stream().map(this::toMember).toList();
     }
 
     @Override
@@ -74,23 +94,16 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
         if (!teamRepository.existsById(teamId)) {
             throw new NoSuchElementException("Team not found: " + teamId);
         }
-        return memberRepository.findAllByTeamId(teamId).stream().map(this::toMember).toList();
+        return memberRepository.findAllById_TeamId(teamId).stream().map(this::toMember).toList();
     }
 
     @Override
-    public TeamMember updateMember(UUID memberId, String name) {
-        TeamMemberEntity entity = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
-        entity.setName(name);
-        return toMember(memberRepository.save(entity));
-    }
-
-    @Override
-    public void deleteMember(UUID memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new NoSuchElementException("Member not found: " + memberId);
+    public void removeMember(UUID teamId, UUID participantId) {
+        TeamMemberId pk = new TeamMemberId(teamId, participantId);
+        if (!memberRepository.existsById(pk)) {
+            throw new NoSuchElementException("Member not found in team");
         }
-        memberRepository.deleteById(memberId);
+        memberRepository.deleteById(pk);
     }
 
     private Team toTeam(TeamEntity e) {
@@ -98,12 +111,16 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     private Team toTeamWithMembers(TeamEntity e) {
-        List<TeamMember> members = memberRepository.findAllByTeamId(e.getId())
+        List<TeamMember> members = memberRepository.findAllById_TeamId(e.getId())
                 .stream().map(this::toMember).toList();
         return new Team(e.getId(), e.getName(), e.getCreatedAt(), members);
     }
 
     private TeamMember toMember(TeamMemberEntity e) {
-        return new TeamMember(e.getId(), e.getTeam().getId(), e.getName(), e.getCreatedAt());
+        return new TeamMember(e.getId().getTeamId(), toParticipant(e.getParticipant()), e.getAddedAt());
+    }
+
+    private Participant toParticipant(ParticipantEntity e) {
+        return new Participant(e.getId(), e.getName(), e.getRole(), e.getVoiceSampleKey(), e.getCreatedAt());
     }
 }

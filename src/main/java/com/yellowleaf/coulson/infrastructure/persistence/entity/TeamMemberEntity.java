@@ -1,45 +1,45 @@
 package com.yellowleaf.coulson.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "team_members")
 public class TeamMemberEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @EmbeddedId
+    private TeamMemberId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
+    @MapsId("teamId")
+    @JoinColumn(name = "team_id")
     private TeamEntity team;
 
-    @Column(nullable = false, length = 255)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("participantId")
+    @JoinColumn(name = "participant_id")
+    private ParticipantEntity participant;
 
-    @Column(name = "created_at", nullable = false)
-    private OffsetDateTime createdAt;
+    @Column(name = "added_at", nullable = false)
+    private OffsetDateTime addedAt;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public TeamMemberId getId() { return id; }
+    public void setId(TeamMemberId id) { this.id = id; }
 
     public TeamEntity getTeam() { return team; }
     public void setTeam(TeamEntity team) { this.team = team; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public ParticipantEntity getParticipant() { return participant; }
+    public void setParticipant(ParticipantEntity participant) { this.participant = participant; }
 
-    public OffsetDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    public OffsetDateTime getAddedAt() { return addedAt; }
+    public void setAddedAt(OffsetDateTime addedAt) { this.addedAt = addedAt; }
 }

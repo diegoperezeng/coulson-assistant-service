@@ -1,5 +1,6 @@
 package com.yellowleaf.coulson.infrastructure.config;
 
+import com.yellowleaf.coulson.application.usecase.ParticipantUseCase;
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamUseCase;
@@ -8,6 +9,8 @@ import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
 import com.yellowleaf.coulson.domain.port.EmbeddingPort;
 import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
+import com.yellowleaf.coulson.domain.port.ParticipantRepositoryPort;
+import com.yellowleaf.coulson.domain.port.StoragePort;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
@@ -23,10 +26,13 @@ import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpSpeakerResolutionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaMeetingRepositoryAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.JpaParticipantRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaTeamRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.SupabaseStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetingJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringParticipantJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
@@ -47,7 +53,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@EnableConfigurationProperties({WebhookProperties.class, VideoProperties.class, FfmpegProperties.class})
+@EnableConfigurationProperties({WebhookProperties.class, VideoProperties.class, FfmpegProperties.class, SupabaseProperties.class})
 public class AppConfig {
 
     @Bean
@@ -149,10 +155,40 @@ public class AppConfig {
     }
 
     @Bean
+    public RestTemplate storageRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10_000);
+        factory.setReadTimeout(60_000);
+        return new RestTemplate(factory);
+    }
+
+    @Bean
+    public StoragePort storagePort(RestTemplate storageRestTemplate, SupabaseProperties supabaseProperties) {
+        return new SupabaseStorageAdapter(storageRestTemplate, supabaseProperties);
+    }
+
+    @Bean
+    public ParticipantRepositoryPort participantRepositoryPort(SpringParticipantJpaRepository repository) {
+        return new JpaParticipantRepositoryAdapter(repository);
+    }
+
+    @Bean
+    public ParticipantUseCase participantUseCase(
+            ParticipantRepositoryPort participantRepositoryPort,
+            StoragePort storagePort,
+            SupabaseProperties supabaseProperties) {
+        return new ParticipantUseCase(
+                participantRepositoryPort,
+                storagePort,
+                supabaseProperties.getStorage().getVoiceSamplesBucket());
+    }
+
+    @Bean
     public TeamRepositoryPort teamRepositoryPort(
             SpringTeamJpaRepository teamRepository,
-            SpringTeamMemberJpaRepository memberRepository) {
-        return new JpaTeamRepositoryAdapter(teamRepository, memberRepository);
+            SpringTeamMemberJpaRepository memberRepository,
+            SpringParticipantJpaRepository participantRepository) {
+        return new JpaTeamRepositoryAdapter(teamRepository, memberRepository, participantRepository);
     }
 
     @Bean

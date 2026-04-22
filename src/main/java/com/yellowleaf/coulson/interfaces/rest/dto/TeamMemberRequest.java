@@ -1,17 +1,17 @@
 package com.yellowleaf.coulson.interfaces.rest.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
-@Schema(description = "Request payload to add or update a team member")
+import java.util.UUID;
+
+@Schema(description = "Request payload to add a participant to a team")
 public class TeamMemberRequest {
 
-    @NotBlank
-    @Size(max = 255)
-    @Schema(description = "Member name", example = "Matheus")
-    private String name;
+    @NotNull
+    @Schema(description = "Participant ID", example = "b2f3c1d4-89ab-4321-bcde-0123456789ab")
+    private UUID participantId;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public UUID getParticipantId() { return participantId; }
+    public void setParticipantId(UUID participantId) { this.participantId = participantId; }
 }

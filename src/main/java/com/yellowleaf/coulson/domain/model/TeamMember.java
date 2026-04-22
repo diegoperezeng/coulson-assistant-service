@@ -5,20 +5,17 @@ import java.util.UUID;
 
 public class TeamMember {
 
-    private final UUID id;
     private final UUID teamId;
-    private final String name;
-    private final OffsetDateTime createdAt;
+    private final Participant participant;
+    private final OffsetDateTime addedAt;
 
-    public TeamMember(UUID id, UUID teamId, String name, OffsetDateTime createdAt) {
-        this.id = id;
+    public TeamMember(UUID teamId, Participant participant, OffsetDateTime addedAt) {
         this.teamId = teamId;
-        this.name = name;
-        this.createdAt = createdAt;
+        this.participant = participant;
+        this.addedAt = addedAt;
     }
 
-    public UUID getId() { return id; }
     public UUID getTeamId() { return teamId; }
-    public String getName() { return name; }
-    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public Participant getParticipant() { return participant; }
+    public OffsetDateTime getAddedAt() { return addedAt; }
 }

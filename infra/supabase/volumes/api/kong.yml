@@ -2,18 +2,34 @@ _format_version: '2.1'
 _transform: true
 
 ###
+### Global plugins
+###
+plugins:
+  - name: response-transformer
+    config:
+      add:
+        headers:
+          - "X-Frame-Options: DENY"
+          - "X-Content-Type-Options: nosniff"
+          - "X-XSS-Protection: 1; mode=block"
+          - "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+
+###
 ### Consumers / Users
 ###
 consumers:
   - username: DASHBOARD
   - username: anon
     keyauth_credentials:
-      - key: $SUPABASE_ANON_KEY
-      - key: $SUPABASE_PUBLISHABLE_KEY
+      - key: $ANON_KEY
   - username: service_role
     keyauth_credentials:
-      - key: $SUPABASE_SERVICE_KEY
-      - key: $SUPABASE_SECRET_KEY
+      - key: $SERVICE_ROLE_KEY
+  - username: supabase-user
+    jwt_secrets:
+      - key: supabase-demo
+        algorithm: HS256
+        secret: $JWT_SECRET
 
 ###
 ### Access Control List
@@ -361,3 +377,95 @@ services:
       - name: basic-auth
         config:
           hide_credentials: true
+
+###
+### Coulson Assistant Service
+###
+services:
+  - name: coulson-swagger-ui
+    _comment: 'Coulson Swagger UI - no JWT'
+    url: http://coulson-assistant-service:8080/swagger-ui
+    routes:
+      - name: coulson-swagger-ui-route
+        strip_path: true
+        paths:
+          - /coulson/swagger-ui
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - OPTIONS
+          max_age: 3600
+
+  - name: coulson-api-docs
+    _comment: 'Coulson API docs JSON - no JWT'
+    url: http://coulson-assistant-service:8080/api-docs
+    routes:
+      - name: coulson-api-docs-route
+        strip_path: true
+        paths:
+          - /coulson/api-docs
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - OPTIONS
+          max_age: 3600
+
+  - name: coulson-webjars
+    _comment: 'Coulson webjars (Swagger assets) - no JWT'
+    url: http://coulson-assistant-service:8080/webjars
+    routes:
+      - name: coulson-webjars-route
+        strip_path: true
+        paths:
+          - /coulson/webjars
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - OPTIONS
+          max_age: 3600
+
+  - name: coulson-assistant-service
+    _comment: 'Coulson API - JWT required'
+    url: http://coulson-assistant-service:8080/
+    routes:
+      - name: coulson-api-route
+        strip_path: true
+        paths:
+          - /coulson/
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+            - PATCH
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Client-Info
+          exposed_headers:
+            - X-Kong-Request-Id
+          max_age: 3600
+      - name: jwt
+        config:
+          key_claim_name: iss
+          claims_to_verify:
+            - exp
+          secret_is_base64: false

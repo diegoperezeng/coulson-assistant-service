@@ -1,9 +1,7 @@
 services:
-  coulson-assistant:
+  coulson-assistant-service:
     build: .
-    container_name: coulson-assistant
-    ports:
-      - "8080:8080"
+    container_name: coulson-assistant-service
     environment:
       - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL:-http://n8n:5678}
       - WEBHOOK_TRANSCRIBE_PATH=${WEBHOOK_TRANSCRIBE_PATH:-/webhook/transcribe}
@@ -29,6 +27,9 @@ services:
       - SUPABASE_STORAGE_ACCESS_KEY=${SUPABASE_STORAGE_ACCESS_KEY}
       - SUPABASE_STORAGE_SECRET_KEY=${SUPABASE_STORAGE_SECRET_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SWAGGER_EXTERNAL_URL=${SWAGGER_EXTERNAL_URL:-}
+      - SWAGGER_API_DOCS_URL=${SWAGGER_API_DOCS_URL:-/api-docs}
+      - SWAGGER_CONFIG_URL=${SWAGGER_CONFIG_URL:-/api-docs/swagger-config}
     volumes:
       - coulson-temp:/tmp/coulson-videos
     networks:

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -48,24 +47,21 @@ public class TeamController {
                 .body(TeamResponse.from(teamUseCase.create(request.getName())));
     }
 
-    @Operation(summary = "List all teams")
-    @ApiResponse(responseCode = "200", description = "Teams returned")
-    @GetMapping
-    public ResponseEntity<List<TeamResponse>> findAll() {
-        return ResponseEntity.ok(teamUseCase.findAll().stream().map(TeamResponse::from).toList());
-    }
-
-    @Operation(summary = "Find a team by ID (includes members)")
+    @Operation(summary = "List teams or find by ID",
+            description = "Returns all teams when no ID is provided. Returns a single team (with members) when ID is provided.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Team found"),
+            @ApiResponse(responseCode = "200", description = "Teams returned"),
             @ApiResponse(responseCode = "404", description = "Team not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping(params = "id")
-    public ResponseEntity<TeamResponse> findById(
-            @Parameter(description = "Team ID", required = true)
-            @RequestParam UUID id) {
-        return ResponseEntity.ok(TeamResponse.from(teamUseCase.findById(id)));
+    @GetMapping
+    public ResponseEntity<?> get(
+            @Parameter(description = "Team ID (optional — omit to list all)")
+            @RequestParam(required = false) UUID id) {
+        if (id != null) {
+            return ResponseEntity.ok(TeamResponse.from(teamUseCase.findById(id)));
+        }
+        return ResponseEntity.ok(teamUseCase.findAll().stream().map(TeamResponse::from).toList());
     }
 
     @Operation(summary = "Delete a team and all its members")

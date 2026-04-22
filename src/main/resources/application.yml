@@ -60,11 +60,23 @@ ffmpeg:
   audio-channels: ${FFMPEG_AUDIO_CHANNELS:1}
   audio-bitrate: ${FFMPEG_AUDIO_BITRATE:32k}
 
+supabase:
+  url: ${SUPABASE_URL:http://supabase-kong:8000}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+  storage:
+    voice-samples-bucket: ${SUPABASE_VOICE_SAMPLES_BUCKET:voice-samples}
+
+swagger:
+  external-url: ${SWAGGER_EXTERNAL_URL:}
+
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui
+    url: ${SWAGGER_API_DOCS_URL:/api-docs}
+    config-url: ${SWAGGER_CONFIG_URL:/api-docs/swagger-config}
+    oauth2-redirect-url: ${SWAGGER_EXTERNAL_URL:}/swagger-ui/oauth2-redirect.html
     display-request-duration: true
     operations-sorter: method
     tags-sorter: alpha

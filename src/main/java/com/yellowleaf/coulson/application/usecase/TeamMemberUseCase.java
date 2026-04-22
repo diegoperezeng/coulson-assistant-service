@@ -15,24 +15,24 @@ public class TeamMemberUseCase {
         this.teamRepositoryPort = teamRepositoryPort;
     }
 
-    public TeamMember add(UUID teamId, String name) {
-        return teamRepositoryPort.saveMember(teamId, name);
+    public TeamMember add(UUID teamId, UUID participantId) {
+        return teamRepositoryPort.addMember(teamId, participantId);
     }
 
-    public TeamMember findById(UUID teamId, UUID memberId) {
-        return teamRepositoryPort.findMemberById(teamId, memberId)
-                .orElseThrow(() -> new NoSuchElementException("Member not found: " + memberId));
+    public TeamMember findById(UUID teamId, UUID participantId) {
+        return teamRepositoryPort.findMember(teamId, participantId)
+                .orElseThrow(() -> new NoSuchElementException("Member not found in team"));
+    }
+
+    public List<TeamMember> findAll() {
+        return teamRepositoryPort.findAllMembers();
     }
 
     public List<TeamMember> findAllByTeam(UUID teamId) {
         return teamRepositoryPort.findMembersByTeam(teamId);
     }
 
-    public TeamMember update(UUID memberId, String name) {
-        return teamRepositoryPort.updateMember(memberId, name);
-    }
-
-    public void delete(UUID memberId) {
-        teamRepositoryPort.deleteMember(memberId);
+    public void remove(UUID teamId, UUID participantId) {
+        teamRepositoryPort.removeMember(teamId, participantId);
     }
 }

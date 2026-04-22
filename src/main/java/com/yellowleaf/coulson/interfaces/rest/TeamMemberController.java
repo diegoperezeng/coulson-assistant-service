@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,12 +36,12 @@ public class TeamMemberController {
         this.teamMemberUseCase = teamMemberUseCase;
     }
 
-    @Operation(summary = "Add a member to a team")
+    @Operation(summary = "Add a participant to a team")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Member added"),
-            @ApiResponse(responseCode = "400", description = "Invalid request",
+            @ApiResponse(responseCode = "201", description = "Participant added to team"),
+            @ApiResponse(responseCode = "400", description = "Invalid request or participant already in team",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Team not found",
+            @ApiResponse(responseCode = "404", description = "Team or participant not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping(params = "teamId")
@@ -50,58 +49,45 @@ public class TeamMemberController {
             @Parameter(description = "Team ID", required = true) @RequestParam UUID teamId,
             @Valid @RequestBody TeamMemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(TeamMemberResponse.from(teamMemberUseCase.add(teamId, request.getName())));
+                .body(TeamMemberResponse.from(teamMemberUseCase.add(teamId, request.getParticipantId())));
     }
 
-    @Operation(summary = "List all members of a team")
+    @Operation(summary = "List team members or find a specific one",
+            description = "Returns all members across all teams when no parameters are provided. " +
+                    "Returns members of a specific team when only teamId is provided. " +
+                    "Returns a single member when both teamId and participantId are provided.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Members returned"),
-            @ApiResponse(responseCode = "404", description = "Team not found",
+            @ApiResponse(responseCode = "404", description = "Team or member not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping(params = "teamId")
-    public ResponseEntity<List<TeamMemberResponse>> findAllByTeam(
-            @Parameter(description = "Team ID", required = true) @RequestParam UUID teamId) {
-        return ResponseEntity.ok(teamMemberUseCase.findAllByTeam(teamId).stream()
+    @GetMapping
+    public ResponseEntity<List<TeamMemberResponse>> get(
+            @Parameter(description = "Team ID (optional)") @RequestParam(required = false) UUID teamId,
+            @Parameter(description = "Participant ID (optional — requires teamId)") @RequestParam(required = false) UUID participantId) {
+        if (teamId != null && participantId != null) {
+            return ResponseEntity.ok(List.of(
+                    TeamMemberResponse.from(teamMemberUseCase.findById(teamId, participantId))));
+        }
+        if (teamId != null) {
+            return ResponseEntity.ok(teamMemberUseCase.findAllByTeam(teamId).stream()
+                    .map(TeamMemberResponse::from).toList());
+        }
+        return ResponseEntity.ok(teamMemberUseCase.findAll().stream()
                 .map(TeamMemberResponse::from).toList());
     }
 
-    @Operation(summary = "Find a specific member")
+    @Operation(summary = "Remove a participant from a team")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Member found"),
+            @ApiResponse(responseCode = "204", description = "Participant removed from team"),
             @ApiResponse(responseCode = "404", description = "Member not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping(params = {"teamId", "memberId"})
-    public ResponseEntity<TeamMemberResponse> findById(
+    @DeleteMapping(params = {"teamId", "participantId"})
+    public ResponseEntity<Void> remove(
             @Parameter(description = "Team ID", required = true) @RequestParam UUID teamId,
-            @Parameter(description = "Member ID", required = true) @RequestParam UUID memberId) {
-        return ResponseEntity.ok(TeamMemberResponse.from(teamMemberUseCase.findById(teamId, memberId)));
-    }
-
-    @Operation(summary = "Update a member name")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Member updated"),
-            @ApiResponse(responseCode = "404", description = "Member not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @PutMapping(params = "memberId")
-    public ResponseEntity<TeamMemberResponse> update(
-            @Parameter(description = "Member ID", required = true) @RequestParam UUID memberId,
-            @Valid @RequestBody TeamMemberRequest request) {
-        return ResponseEntity.ok(TeamMemberResponse.from(teamMemberUseCase.update(memberId, request.getName())));
-    }
-
-    @Operation(summary = "Remove a member from a team")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Member removed"),
-            @ApiResponse(responseCode = "404", description = "Member not found",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @DeleteMapping(params = "memberId")
-    public ResponseEntity<Void> delete(
-            @Parameter(description = "Member ID", required = true) @RequestParam UUID memberId) {
-        teamMemberUseCase.delete(memberId);
+            @Parameter(description = "Participant ID", required = true) @RequestParam UUID participantId) {
+        teamMemberUseCase.remove(teamId, participantId);
         return ResponseEntity.noContent().build();
     }
 }

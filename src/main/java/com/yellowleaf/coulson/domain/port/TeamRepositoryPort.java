@@ -17,13 +17,13 @@ public interface TeamRepositoryPort {
 
     void deleteTeam(UUID id);
 
-    TeamMember saveMember(UUID teamId, String name);
+    TeamMember addMember(UUID teamId, UUID participantId);
 
-    Optional<TeamMember> findMemberById(UUID teamId, UUID memberId);
+    Optional<TeamMember> findMember(UUID teamId, UUID participantId);
+
+    List<TeamMember> findAllMembers();
 
     List<TeamMember> findMembersByTeam(UUID teamId);
 
-    TeamMember updateMember(UUID memberId, String name);
-
-    void deleteMember(UUID memberId);
+    void removeMember(UUID teamId, UUID participantId);
 }

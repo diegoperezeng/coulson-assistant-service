@@ -18,8 +18,6 @@ services:
     depends_on:
       analytics:
         condition: service_started
-    ports:
-      - "3001:3000"
     environment:
       HOSTNAME: "0.0.0.0"
       STUDIO_PG_META_URL: http://meta:8080
@@ -53,6 +51,21 @@ services:
     networks:
       - yellowleaf-net
 
+  kong-ssl-init:
+    container_name: supabase-kong-ssl-init
+    image: alpine:3.19
+    volumes:
+      - kong-ssl:/ssl
+    command: >
+      sh -c "
+      if [ ! -f /ssl/server.crt ]; then
+        apk add --no-cache openssl &&
+        openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /ssl/server.key -out /ssl/server.crt -subj '/CN=coulson-assistant/O=Yellowleaf' &&
+        chmod 644 /ssl/server.crt /ssl/server.key;
+      fi
+      "
+    restart: "no"
+
   kong:
     container_name: supabase-kong
     image: kong/kong:3.9.1
@@ -70,18 +83,20 @@ services:
     depends_on:
       studio:
         condition: service_healthy
+      kong-ssl-init:
+        condition: service_completed_successfully
     ports:
-      - "${KONG_HTTP_PORT}:8000/tcp"
       - "${KONG_HTTPS_PORT}:8443/tcp"
     volumes:
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
       - ./volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro
+      - kong-ssl:/home/kong/ssl
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
       KONG_DNS_ORDER: LAST,A,CNAME
       KONG_DNS_NOT_FOUND_TTL: 1
-      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function,response-transformer,jwt
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
       KONG_PROXY_ACCESS_LOG: /dev/stdout combined
@@ -93,6 +108,9 @@ services:
       SERVICE_ROLE_KEY_ASYMMETRIC: ${SERVICE_ROLE_KEY_ASYMMETRIC:-}
       DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
       DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
+      KONG_SSL_CERT: /home/kong/ssl/server.crt
+      KONG_SSL_CERT_KEY: /home/kong/ssl/server.key
+      JWT_SECRET: ${JWT_SECRET}
     entrypoint: /home/kong/kong-entrypoint.sh
 
   auth:
@@ -185,7 +203,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
       DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
-      DB_ENC_KEY: supabaserealtime
+      DB_ENC_KEY: ${REALTIME_DB_ENC_KEY}
       API_JWT_SECRET: ${JWT_SECRET}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       METRICS_JWT_SECRET: ${JWT_SECRET}
@@ -399,8 +417,8 @@ services:
     image: supabase/supavisor:2.7.4
     restart: unless-stopped
     ports:
-      - "${POSTGRES_PORT}:5432"
-      - "${POOLER_PROXY_PORT_TRANSACTION}:6543"
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
+      - "127.0.0.1:${POOLER_PROXY_PORT_TRANSACTION}:6543"
     volumes:
       - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro,z
     healthcheck:
@@ -441,6 +459,7 @@ services:
 volumes:
   db-config:
   deno-cache:
+  kong-ssl:
 
 networks:
   yellowleaf-net:

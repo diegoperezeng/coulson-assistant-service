@@ -66,7 +66,7 @@ Serviços disponíveis após inicialização:
 | Serviço | URL |
 |---|---|
 | API Gateway (Kong) | http://localhost:8000 |
-| Supabase Studio | http://localhost:3001 |
+| Supabase Studio | http://localhost:8000 (HTTP Basic Auth: `DASHBOARD_USERNAME` e `DASHBOARD_PASSWORD` em `infra/supabase/.env`) |
 | PostgreSQL direto | localhost:5432 |
 
 > As credenciais padrão estão no arquivo `supabase/.env`.
