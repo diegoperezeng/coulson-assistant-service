@@ -100,6 +100,8 @@ services:
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
       KONG_PROXY_ACCESS_LOG: /dev/stdout combined
+      ANON_KEY: ${ANON_KEY}
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:-}
@@ -217,6 +219,39 @@ services:
     networks:
       - yellowleaf-net
 
+  minio:
+    container_name: supabase-minio
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - yellowleaf-net
+
+  minio-init:
+    container_name: supabase-minio-init
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MC_HOST_local: http://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@supabase-minio:9000
+      GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
+    entrypoint: >
+      sh -c "mc mb --ignore-existing local/$$GLOBAL_S3_BUCKET"
+    networks:
+      - yellowleaf-net
+    restart: "no"
+
   storage:
     container_name: supabase-storage
     image: supabase/storage-api:v1.48.26
@@ -228,6 +263,8 @@ services:
         condition: service_started
       imgproxy:
         condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://storage:5000/status"]
       timeout: 5s
@@ -243,17 +280,19 @@ services:
       STORAGE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
       REQUEST_ALLOW_X_FORWARDED_PATH: "true"
       FILE_SIZE_LIMIT: 5368709120
-      STORAGE_BACKEND: file
+      STORAGE_BACKEND: s3
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
-      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: ${STORAGE_TENANT_ID}
       REGION: ${REGION}
+      AWS_DEFAULT_REGION: ${REGION}
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      GLOBAL_S3_ENDPOINT: http://supabase-minio:9000
+      GLOBAL_S3_FORCE_PATH_STYLE: "true"
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
       S3_PROTOCOL_ACCESS_KEY_ID: ${S3_PROTOCOL_ACCESS_KEY_ID}
       S3_PROTOCOL_ACCESS_KEY_SECRET: ${S3_PROTOCOL_ACCESS_KEY_SECRET}
-    volumes:
-      - ./volumes/storage:/var/lib/storage:z
     networks:
       - yellowleaf-net
 
@@ -460,6 +499,7 @@ volumes:
   db-config:
   deno-cache:
   kong-ssl:
+  minio-data:
 
 networks:
   yellowleaf-net:

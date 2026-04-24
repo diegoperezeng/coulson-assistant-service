@@ -378,10 +378,7 @@ services:
         config:
           hide_credentials: true
 
-###
-### Coulson Assistant Service
-###
-services:
+  ## Coulson Assistant Service
   - name: coulson-swagger-ui
     _comment: 'Coulson Swagger UI - no JWT'
     url: http://coulson-assistant-service:8080/swagger-ui

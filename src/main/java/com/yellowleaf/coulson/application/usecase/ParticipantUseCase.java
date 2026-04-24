@@ -57,6 +57,24 @@ public class ParticipantUseCase {
         return participantRepositoryPort.update(id, name, role, voiceSampleKey);
     }
 
+    public byte[] downloadVoiceSample(UUID id) {
+        Participant participant = findById(id);
+        if (participant.getVoiceSampleKey() == null) {
+            throw new NoSuchElementException("No voice sample for participant: " + id);
+        }
+        log.info("Downloading voice sample for participant {}: {}", id, participant.getVoiceSampleKey());
+        return storagePort.download(voiceSamplesBucket, participant.getVoiceSampleKey());
+    }
+
+    public Participant updateVoiceSample(UUID id, byte[] voiceSampleBytes, String contentType, String fileExtension) {
+        Participant existing = findById(id);
+        if (existing.getVoiceSampleKey() != null) {
+            storagePort.delete(voiceSamplesBucket, existing.getVoiceSampleKey());
+        }
+        String voiceSampleKey = uploadVoiceSampleIfPresent(id, voiceSampleBytes, contentType, fileExtension);
+        return participantRepositoryPort.update(id, existing.getName(), existing.getRole(), voiceSampleKey);
+    }
+
     public void delete(UUID id) {
         Participant participant = findById(id);
         if (participant.getVoiceSampleKey() != null) {

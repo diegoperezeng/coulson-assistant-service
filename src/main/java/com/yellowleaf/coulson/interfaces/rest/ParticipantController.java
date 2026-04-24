@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,6 +99,33 @@ public class ParticipantController {
                 participantUseCase.update(id, name, role, bytes, contentType, extension)));
     }
 
+    @Operation(summary = "Upload or replace the voice sample of a participant",
+            description = "Uploads a voice sample for the participant. If one already exists, it is deleted and replaced.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Voice sample updated"),
+            @ApiResponse(responseCode = "400", description = "No file provided",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Participant not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PatchMapping(params = "id", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ParticipantResponse> updateVoiceSample(
+            @Parameter(description = "Participant ID", required = true) @RequestParam UUID id,
+            @Parameter(description = "Voice sample audio file", required = true) @RequestPart MultipartFile voiceSample)
+            throws IOException {
+
+        if (voiceSample == null || voiceSample.isEmpty()) {
+            throw new IllegalArgumentException("Voice sample file is required");
+        }
+
+        return ResponseEntity.ok(ParticipantResponse.from(
+                participantUseCase.updateVoiceSample(
+                        id,
+                        voiceSample.getBytes(),
+                        voiceSample.getContentType(),
+                        resolveExtension(voiceSample))));
+    }
+
     @Operation(summary = "Delete a participant")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Participant deleted"),
@@ -117,4 +145,5 @@ public class ParticipantController {
         int dot = filename.lastIndexOf('.');
         return dot >= 0 ? filename.substring(dot + 1) : "bin";
     }
+
 }

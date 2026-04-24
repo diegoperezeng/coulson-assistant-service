@@ -39,6 +39,17 @@ public class SupabaseStorageAdapter implements StoragePort {
     }
 
     @Override
+    public byte[] download(String bucket, String objectPath) {
+        String url = supabaseProperties.getUrl() + "/storage/v1/object/" + bucket + "/" + objectPath;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(supabaseProperties.getServiceRoleKey());
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class).getBody();
+    }
+
+    @Override
     public void delete(String bucket, String objectPath) {
         String url = supabaseProperties.getUrl() + "/storage/v1/object/" + bucket + "/" + objectPath;
 
