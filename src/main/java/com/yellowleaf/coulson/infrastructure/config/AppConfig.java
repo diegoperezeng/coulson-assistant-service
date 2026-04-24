@@ -45,6 +45,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -53,7 +54,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@EnableConfigurationProperties({WebhookProperties.class, VideoProperties.class, FfmpegProperties.class, SupabaseProperties.class})
+@EnableConfigurationProperties({
+        WebhookProperties.class,
+        VideoProperties.class,
+        FfmpegProperties.class,
+        SupabaseProperties.class,
+        RequestLoggingProperties.class
+})
 public class AppConfig {
 
     @Bean
@@ -226,5 +233,13 @@ public class AppConfig {
                 eventPublisher,
                 processingExecutor,
                 videoProperties.getMaxAudioChunkSeconds());
+    }
+
+    @Bean
+    public FilterRegistrationBean<HttpRequestLoggingFilter> httpRequestLoggingFilter(RequestLoggingProperties properties) {
+        FilterRegistrationBean<HttpRequestLoggingFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new HttpRequestLoggingFilter(properties));
+        registration.setOrder(0);
+        return registration;
     }
 }

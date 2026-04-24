@@ -86,7 +86,7 @@ services:
       kong-ssl-init:
         condition: service_completed_successfully
     ports:
-      - "${KONG_HTTPS_PORT}:8443/tcp"
+      - "0.0.0.0:${KONG_HTTPS_PORT}:8443/tcp"
     volumes:
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
       - ./volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro
@@ -248,6 +248,24 @@ services:
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
     entrypoint: >
       sh -c "mc mb --ignore-existing local/$$GLOBAL_S3_BUCKET"
+    networks:
+      - yellowleaf-net
+    restart: "no"
+
+  storage-init:
+    container_name: supabase-storage-init
+    image: curlimages/curl:latest
+    depends_on:
+      storage:
+        condition: service_healthy
+    environment:
+      STORAGE_URL: http://storage:5000
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      BUCKETS: "voice-samples meetings"
+      BUCKET_PUBLIC: "false"
+    volumes:
+      - ./scripts/create-buckets.sh:/create-buckets.sh:ro
+    entrypoint: ["sh", "/create-buckets.sh"]
     networks:
       - yellowleaf-net
     restart: "no"

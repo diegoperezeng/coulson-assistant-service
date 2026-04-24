@@ -94,3 +94,9 @@ management:
 logging:
   level:
     com.yellowleaf.coulson: INFO
+
+request-logging:
+  enabled: ${REQUEST_LOGGING_ENABLED:true}
+  ignore-prefixes:
+    - /actuator/health
+    - /actuator/info
