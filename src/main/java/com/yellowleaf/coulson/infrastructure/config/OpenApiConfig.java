@@ -41,7 +41,7 @@ public class OpenApiConfig {
                                 of up to 200 MB when necessary, sends each chunk to the configured transcription \
                                 webhook, and returns the combined transcription as a single text.
                                 """)
-                        .version("1.0.0")
+                        .version("1.0.1")
                         .contact(new Contact()
                                 .name("Yellowleaf")
                                 .email("contato@yellowleaf.com.br")))
