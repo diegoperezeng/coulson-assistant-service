@@ -129,13 +129,13 @@ public class ProcessVideoUseCase {
             long audioSizeMb = audioSizeBytes / (1024 * 1024);
             System.out.println("--------------------------------");
             System.out.println("Audio final: " + mergedAudio.getFilePath().getFileName());
-            System.out.println("Tamanho: " + audioSizeMb + "MB (" + audioSizeBytes + " bytes)");
+            System.out.println("Size: " + audioSizeMb + "MB (" + audioSizeBytes + " bytes)");
             System.out.println("--------------------------------");
             log.info("Final audio ready [videoId={}] size={}MB", video.getId(), audioSizeMb);
 
             if (audioSizeBytes > 25L * 1024 * 1024) {
                 throw new IllegalStateException(
-                        "Arquivo muito extenso para transcrição. Tamanho do áudio final: " + audioSizeMb + "MB");
+                        "File too large for transcription. Final audio size: " + audioSizeMb + "MB");
             }
 
             List<AudioChunk> audioChunksForTranscription = audioSplitterPort.split(mergedAudio, maxAudioChunkSeconds);

@@ -19,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -99,7 +101,13 @@ public class VideoController {
                     description = "Video file to be transcribed. Files larger than 200 MB are split automatically.",
                     required = true
             )
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @Parameter(
+                    description = "Team ID that the video belongs to",
+                    required = false
+            )
+            @RequestParam(required = false) UUID teamId
+        ){
 
         log.info("Received transcription request for file: {} size: {}MB",
                 file.getOriginalFilename(),
