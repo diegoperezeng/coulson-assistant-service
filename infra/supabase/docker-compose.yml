@@ -252,6 +252,24 @@ services:
       - yellowleaf-net
     restart: "no"
 
+  storage-init:
+    container_name: supabase-storage-init
+    image: curlimages/curl:latest
+    depends_on:
+      storage:
+        condition: service_healthy
+    environment:
+      STORAGE_URL: http://storage:5000
+      SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      BUCKETS: "voice-samples meetings"
+      BUCKET_PUBLIC: "false"
+    volumes:
+      - ./scripts/create-buckets.sh:/create-buckets.sh:ro
+    entrypoint: ["sh", "/create-buckets.sh"]
+    networks:
+      - yellowleaf-net
+    restart: "no"
+
   storage:
     container_name: supabase-storage
     image: supabase/storage-api:v1.48.26
