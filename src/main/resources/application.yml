@@ -8,6 +8,36 @@ spring:
     multipart:
       max-file-size: 4GB
       max-request-size: 4GB
+  datasource:
+    url: ${SUPABASE_DB_URL}
+    username: ${SUPABASE_DB_USER:postgres}
+    password: ${SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiChatAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiAudioSpeechAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiAudioTranscriptionAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiImageAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration
+      - org.springframework.ai.model.openai.autoconfigure.OpenAiModerationAutoConfiguration
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      embedding:
+        enabled: ${OPENAI_EMBEDDING_ENABLED:false}
+        options:
+          model: text-embedding-3-small
 
 webhook:
   base-url: ${WEBHOOK_BASE_URL:http://n8n:5678}
@@ -30,11 +60,23 @@ ffmpeg:
   audio-channels: ${FFMPEG_AUDIO_CHANNELS:1}
   audio-bitrate: ${FFMPEG_AUDIO_BITRATE:32k}
 
+supabase:
+  url: ${SUPABASE_URL:http://supabase-kong:8000}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+  storage:
+    voice-samples-bucket: ${SUPABASE_VOICE_SAMPLES_BUCKET:voice-samples}
+
+swagger:
+  external-url: ${SWAGGER_EXTERNAL_URL:}
+
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui
+    url: ${SWAGGER_API_DOCS_URL:/api-docs}
+    config-url: ${SWAGGER_CONFIG_URL:/api-docs/swagger-config}
+    oauth2-redirect-url: ${SWAGGER_EXTERNAL_URL:}/swagger-ui/oauth2-redirect.html
     display-request-duration: true
     operations-sorter: method
     tags-sorter: alpha

@@ -1,0 +1,264 @@
+{
+  "name": "Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -16
+      ],
+      "id": "b65fd9c9-3b3c-46f3-9a9d-d5447ab8fc15",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "N8nErrors",
+        "fields": "={{(()=>{\n\n  function extractMainFields(jsonInput) {\n    try {\n      const obj = typeof jsonInput === 'string' ? JSON.parse(jsonInput) : jsonInput;\n      if (typeof obj !== 'object' || obj === null) return '';\n  \n      const mainFields = Object.keys(obj);\n      return mainFields.join(', ');\n    } catch (e) {\n      return '';\n    }\n  }\n  return extractMainFields($json)\n\n})()}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        -288
+      ],
+      "id": "d79bcf5b-6437-4792-a0fc-58b16d9a7c05",
+      "name": "Insert documents",
+      "credentials": {
+        "mongoDb": {
+          "id": "bpS8px0DMWICUGkH",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "UOq0wm244EAQrATl",
+          "mode": "list",
+          "cachedResultName": "tb_errors",
+          "cachedResultUrl": "/projects/t5SyZkzsZCPgyckU/datatables/UOq0wm244EAQrATl"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "error": "={{ $json.execution.toJsonString() }}"
+          },
+          "matchingColumns": [
+            "error"
+          ],
+          "schema": [
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "08d2bbc5-f863-4902-9509-324292efb817",
+      "name": "Insert row"
+    }
+  ],
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "11308",
+            "url": "http://localhost:5678/workflow/g1XpjhYhaY5gSCKZ/executions/11308",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "description": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!--<![endif]-->\n<head>\n\n<title>api.openai.com | 520: Web server is returning an unknown error</title>\n<meta charset=\"UTF-8\" />\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\" />\n<meta name=\"robots\" content=\"noindex, nofollow\" />\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />\n<link rel=\"stylesheet\" id=\"cf_styles-css\" href=\"/cdn-cgi/styles/main.css\" />\n</head>\n<body>\n<div id=\"cf-wrapper\">\n    <div id=\"cf-error-details\" class=\"p-0\">\n        <header class=\"mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8\">\n            <h1 class=\"inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2\">\n                <span class=\"inline-block\">Web server is returning an unknown error</span>\n                <span class=\"code-label\">Error code 520</span>\n            </h1>\n            <div>\n                Visit <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=api.openai.com\" target=\"_blank\" rel=\"noopener noreferrer\">cloudflare.com</a> for more information.\n            </div>\n            <div class=\"mt-3\">2026-04-09 17:49:30 UTC</div>\n        </header>\n        <div class=\"my-8 bg-gradient-gray\">\n            <div class=\"w-240 lg:w-full mx-auto\">\n                <div class=\"clearfix md:px-8\">\n                    <div id=\"cf-browser-status\" class=\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    \n    <span class=\"cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    \n  </div>\n  <span class=\"md:block w-full truncate\">You</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  \n    Browser\n  \n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-green-success\">Working</span>\n  \n</div>\n                    <div id=\"cf-cloudflare-status\" class=\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=api.openai.com\" target=\"_blank\" rel=\"noopener noreferrer\">\n    <span class=\"cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    </a>\n  </div>\n  <span class=\"md:block w-full truncate\">Rio de Janeiro</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  <a href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=api.openai.com\" target=\"_blank\" rel=\"noopener noreferrer\">\n    Cloudflare\n  </a>\n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-green-success\">Working</span>\n  \n</div>\n                    <div id=\"cf-host-status\" class=\"cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\">\n  <div class=\"relative mb-10 md:m-0\">\n    \n    <span class=\"cf-icon-server block md:hidden h-20 bg-center bg-no-repeat\"></span>\n    <span class=\"cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\"></span>\n    \n  </div>\n  <span class=\"md:block w-full truncate\">api.openai.com</span>\n  <h3 class=\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\">\n  \n    Host\n  \n  </h3>\n  \n  <span class=\"leading-1.3 text-2xl text-red-error\">Error</span>\n  \n</div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"w-240 lg:w-full mx-auto mb-8 lg:px-8\">\n            <div class=\"clearfix\">\n                <div class=\"w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed\">\n                    <h2 class=\"text-3xl font-normal leading-1.3 mb-4\">What happened?</h2>\n                    <p>There is an unknown connection issue between Cloudflare and the origin web server. As a result, the web page can not be displayed.</p>\n                </div>\n                <div class=\"w-1/2 md:w-full float-left leading-relaxed\">\n                    <h2 class=\"text-3xl font-normal leading-1.3 mb-4\">What can I do?</h2>\n                    \n                <h3 class=\"text-15 font-semibold mb-2\">If you are a visitor of this website:</h3>\n                <p class=\"mb-6\">Please try again in a few minutes.</p>\n\n                <h3 class=\"text-15 font-semibold mb-2\">If you are the owner of this website:</h3>\n                <p><span>There is an issue between Cloudflare's cache and your origin web server. Cloudflare monitors for these errors and automatically investigates the cause. To help support the investigation, you can pull the corresponding error log from your web server and submit it our support team.  Please include the Ray ID (which is at the bottom of this error page).</span> <a rel=\"noopener noreferrer\" href=   \"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-520/\">Additional troubleshooting resources</a>.</p>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300\">\n    <p class=\"text-13\">\n      <span class=\"cf-footer-item sm:block sm:mb-1\">Cloudflare Ray ID: <strong class=\"font-semibold\">9e9b573cbef9210d</strong></span>\n      <span class=\"cf-footer-separator sm:hidden\">&bull;</span>\n      <span id=\"cf-footer-item-ip\" class=\"cf-footer-item hidden sm:block sm:mb-1\">\n        Your IP:\n        <button type=\"button\" id=\"cf-footer-ip-reveal\" class=\"cf-footer-ip-reveal-btn\">Click to reveal</button>\n        <span class=\"hidden\" id=\"cf-footer-ip\">189.85.89.140</span>\n        <span class=\"cf-footer-separator sm:hidden\">&bull;</span>\n      </span>\n      <span class=\"cf-footer-item sm:block sm:mb-1\"><span>Performance &amp; security by</span> <a rel=\"noopener noreferrer\" href=\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=api.openai.com\" id=\"brand_link\" target=\"_blank\">Cloudflare</a></span>\n      \n    </p>\n    <script>(function(){function d(){var b=a.getElementById(\"cf-footer-item-ip\"),c=a.getElementById(\"cf-footer-ip-reveal\");b&&\"classList\"in b&&(b.classList.remove(\"hidden\"),c.addEventListener(\"click\",function(){c.classList.add(\"hidden\");a.getElementById(\"cf-footer-ip\").classList.remove(\"hidden\")}))}var a=document;document.addEventListener&&a.addEventListener(\"DOMContentLoaded\",d)})();</script>\n  </div><!-- /.error-footer -->\n\n    </div>\n</div>\n</body>\n</html>",
+              "timestamp": 1775756971042,
+              "context": {
+                "itemIndex": 0,
+                "request": {
+                  "headers": {
+                    "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+                    "Authorization": "**hidden**",
+                    "OpenAI-Organization": "",
+                    "content-type": "multipart/form-data; boundary=--------------------------7db522bfbaa4d7f6cc4911f4"
+                  },
+                  "method": "POST",
+                  "uri": "**hidden**/audio/transcriptions",
+                  "gzip": true,
+                  "rejectUnauthorized": true,
+                  "followRedirect": true,
+                  "resolveWithFullResponse": true,
+                  "sendCredentialsOnCrossOriginRedirect": false,
+                  "followAllRedirects": true,
+                  "timeout": 500000,
+                  "formData": {
+                    "_overheadLength": 530,
+                    "_valueLength": 42,
+                    "_valuesToMeasure": [
+                      {
+                        "_events": {},
+                        "_readableState": {
+                          "highWaterMark": 16,
+                          "buffer": [],
+                          "bufferIndex": 0,
+                          "length": 0,
+                          "pipes": [],
+                          "awaitDrainWriters": null
+                        },
+                        "_eventsCount": 2
+                      }
+                    ],
+                    "writable": false,
+                    "readable": true,
+                    "dataSize": 0,
+                    "maxDataSize": 2097152,
+                    "pauseStreams": true,
+                    "_released": true,
+                    "_streams": [],
+                    "_currentStream": null,
+                    "_insideLoop": false,
+                    "_pendingNext": false,
+                    "_boundary": "--------------------------7db522bfbaa4d7f6cc4911f4",
+                    "_events": {},
+                    "_eventsCount": 3
+                  },
+                  "encoding": null,
+                  "json": false,
+                  "useStream": true
+                }
+              },
+              "functionality": "regular",
+              "name": "NodeApiError",
+              "node": {
+                "parameters": {
+                  "curlImport": "",
+                  "method": "POST",
+                  "url": "https://api.openai.com/v1/audio/transcriptions",
+                  "authentication": "predefinedCredentialType",
+                  "nodeCredentialType": "openAiApi",
+                  "provideSslCertificates": false,
+                  "sendQuery": false,
+                  "sendHeaders": false,
+                  "sendBody": true,
+                  "contentType": "multipart-form-data",
+                  "bodyParameters": {
+                    "parameters": [
+                      {
+                        "parameterType": "formBinaryData",
+                        "name": "file",
+                        "inputDataFieldName": "data0"
+                      },
+                      {
+                        "parameterType": "formData",
+                        "name": "model",
+                        "value": "gpt-4o-transcribe-diarize"
+                      },
+                      {
+                        "parameterType": "formData",
+                        "name": "response_format",
+                        "value": "diarized_json"
+                      },
+                      {
+                        "parameterType": "formData",
+                        "name": "chunking_strategy",
+                        "value": "auto"
+                      }
+                    ]
+                  },
+                  "options": {
+                    "timeout": 500000
+                  },
+                  "infoMessage": ""
+                },
+                "type": "n8n-nodes-base.httpRequest",
+                "typeVersion": 4.4,
+                "position": [
+                  80,
+                  0
+                ],
+                "id": "506af21b-c0d7-4d80-b1bb-5e8a90b686ea",
+                "name": "HTTP Request",
+                "credentials": {
+                  "openAiApi": {
+                    "id": "NkPvStshonv6cWEQ",
+                    "name": "OpenAi account"
+                  }
+                }
+              },
+              "messages": [
+                "520 - \"<!DOCTYPE html>\\n<!--[if lt IE 7]> <html class=\\\"no-js ie6 oldie\\\" lang=\\\"en-US\\\"> <![endif]-->\\n<!--[if IE 7]>    <html class=\\\"no-js ie7 oldie\\\" lang=\\\"en-US\\\"> <![endif]-->\\n<!--[if IE 8]>    <html class=\\\"no-js ie8 oldie\\\" lang=\\\"en-US\\\"> <![endif]-->\\n<!--[if gt IE 8]><!--> <html class=\\\"no-js\\\" lang=\\\"en-US\\\"> <!--<![endif]-->\\n<head>\\n\\n<title>api.openai.com | 520: Web server is returning an unknown error</title>\\n<meta charset=\\\"UTF-8\\\" />\\n<meta http-equiv=\\\"Content-Type\\\" content=\\\"text/html; charset=UTF-8\\\" />\\n<meta http-equiv=\\\"X-UA-Compatible\\\" content=\\\"IE=Edge\\\" />\\n<meta name=\\\"robots\\\" content=\\\"noindex, nofollow\\\" />\\n<meta name=\\\"viewport\\\" content=\\\"width=device-width,initial-scale=1\\\" />\\n<link rel=\\\"stylesheet\\\" id=\\\"cf_styles-css\\\" href=\\\"/cdn-cgi/styles/main.css\\\" />\\n</head>\\n<body>\\n<div id=\\\"cf-wrapper\\\">\\n    <div id=\\\"cf-error-details\\\" class=\\\"p-0\\\">\\n        <header class=\\\"mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-8\\\">\\n            <h1 class=\\\"inline-block sm:block sm:mb-2 font-light text-60 lg:text-4xl text-black-dark leading-tight mr-2\\\">\\n                <span class=\\\"inline-block\\\">Web server is returning an unknown error</span>\\n                <span class=\\\"code-label\\\">Error code 520</span>\\n            </h1>\\n            <div>\\n                Visit <a href=\\\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=api.openai.com\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">cloudflare.com</a> for more information.\\n            </div>\\n            <div class=\\\"mt-3\\\">2026-04-09 17:49:30 UTC</div>\\n        </header>\\n        <div class=\\\"my-8 bg-gradient-gray\\\">\\n            <div class=\\\"w-240 lg:w-full mx-auto\\\">\\n                <div class=\\\"clearfix md:px-8\\\">\\n                    <div id=\\\"cf-browser-status\\\" class=\\\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\\\">\\n  <div class=\\\"relative mb-10 md:m-0\\\">\\n    \\n    <span class=\\\"cf-icon-browser block md:hidden h-20 bg-center bg-no-repeat\\\"></span>\\n    <span class=\\\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\\\"></span>\\n    \\n  </div>\\n  <span class=\\\"md:block w-full truncate\\\">You</span>\\n  <h3 class=\\\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\\\">\\n  \\n    Browser\\n  \\n  </h3>\\n  \\n  <span class=\\\"leading-1.3 text-2xl text-green-success\\\">Working</span>\\n  \\n</div>\\n                    <div id=\\\"cf-cloudflare-status\\\" class=\\\" relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\\\">\\n  <div class=\\\"relative mb-10 md:m-0\\\">\\n    <a href=\\\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=api.openai.com\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">\\n    <span class=\\\"cf-icon-cloud block md:hidden h-20 bg-center bg-no-repeat\\\"></span>\\n    <span class=\\\"cf-icon-ok w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\\\"></span>\\n    </a>\\n  </div>\\n  <span class=\\\"md:block w-full truncate\\\">Rio de Janeiro</span>\\n  <h3 class=\\\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\\\">\\n  <a href=\\\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&utm_campaign=api.openai.com\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">\\n    Cloudflare\\n  </a>\\n  </h3>\\n  \\n  <span class=\\\"leading-1.3 text-2xl text-green-success\\\">Working</span>\\n  \\n</div>\\n                    <div id=\\\"cf-host-status\\\" class=\\\"cf-error-source relative w-1/3 md:w-full py-15 md:p-0 md:py-8 md:text-left md:border-solid md:border-0 md:border-b md:border-gray-400 overflow-hidden float-left md:float-none text-center\\\">\\n  <div class=\\\"relative mb-10 md:m-0\\\">\\n    \\n    <span class=\\\"cf-icon-server block md:hidden h-20 bg-center bg-no-repeat\\\"></span>\\n    <span class=\\\"cf-icon-error w-12 h-12 absolute left-1/2 md:left-auto md:right-0 md:top-0 -ml-6 -bottom-4\\\"></span>\\n    \\n  </div>\\n  <span class=\\\"md:block w-full truncate\\\">api.openai.com</span>\\n  <h3 class=\\\"md:inline-block mt-3 md:mt-0 text-2xl text-gray-600 font-light leading-1.3\\\">\\n  \\n    Host\\n  \\n  </h3>\\n  \\n  <span class=\\\"leading-1.3 text-2xl text-red-error\\\">Error</span>\\n  \\n</div>\\n                </div>\\n            </div>\\n        </div>\\n\\n        <div class=\\\"w-240 lg:w-full mx-auto mb-8 lg:px-8\\\">\\n            <div class=\\\"clearfix\\\">\\n                <div class=\\\"w-1/2 md:w-full float-left pr-6 md:pb-10 md:pr-0 leading-relaxed\\\">\\n                    <h2 class=\\\"text-3xl font-normal leading-1.3 mb-4\\\">What happened?</h2>\\n                    <p>There is an unknown connection issue between Cloudflare and the origin web server. As a result, the web page can not be displayed.</p>\\n                </div>\\n                <div class=\\\"w-1/2 md:w-full float-left leading-relaxed\\\">\\n                    <h2 class=\\\"text-3xl font-normal leading-1.3 mb-4\\\">What can I do?</h2>\\n                    \\n                <h3 class=\\\"text-15 font-semibold mb-2\\\">If you are a visitor of this website:</h3>\\n                <p class=\\\"mb-6\\\">Please try again in a few minutes.</p>\\n\\n                <h3 class=\\\"text-15 font-semibold mb-2\\\">If you are the owner of this website:</h3>\\n                <p><span>There is an issue between Cloudflare's cache and your origin web server. Cloudflare monitors for these errors and automatically investigates the cause. To help support the investigation, you can pull the corresponding error log from your web server and submit it our support team.  Please include the Ray ID (which is at the bottom of this error page).</span> <a rel=\\\"noopener noreferrer\\\" href=   \\\"https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-520/\\\">Additional troubleshooting resources</a>.</p>\\n                </div>\\n            </div>\\n        </div>\\n\\n        <div class=\\\"cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300\\\">\\n    <p class=\\\"text-13\\\">\\n      <span class=\\\"cf-footer-item sm:block sm:mb-1\\\">Cloudflare Ray ID: <strong class=\\\"font-semibold\\\">9e9b573cbef9210d</strong></span>\\n      <span class=\\\"cf-footer-separator sm:hidden\\\">&bull;</span>\\n      <span id=\\\"cf-footer-item-ip\\\" class=\\\"cf-footer-item hidden sm:block sm:mb-1\\\">\\n        Your IP:\\n        <button type=\\\"button\\\" id=\\\"cf-footer-ip-reveal\\\" class=\\\"cf-footer-ip-reveal-btn\\\">Click to reveal</button>\\n        <span class=\\\"hidden\\\" id=\\\"cf-footer-ip\\\">189.85.89.140</span>\\n        <span class=\\\"cf-footer-separator sm:hidden\\\">&bull;</span>\\n      </span>\\n      <span class=\\\"cf-footer-item sm:block sm:mb-1\\\"><span>Performance &amp; security by</span> <a rel=\\\"noopener noreferrer\\\" href=\\\"https://www.cloudflare.com/5xx-error-landing?utm_source=errorcode_520&#38;utm_campaign=api.openai.com\\\" id=\\\"brand_link\\\" target=\\\"_blank\\\">Cloudflare</a></span>\\n      \\n    </p>\\n    <script>(function(){function d(){var b=a.getElementById(\\\"cf-footer-item-ip\\\"),c=a.getElementById(\\\"cf-footer-ip-reveal\\\");b&&\\\"classList\\\"in b&&(b.classList.remove(\\\"hidden\\\"),c.addEventListener(\\\"click\\\",function(){c.classList.add(\\\"hidden\\\");a.getElementById(\\\"cf-footer-ip\\\").classList.remove(\\\"hidden\\\")}))}var a=document;document.addEventListener&&a.addEventListener(\\\"DOMContentLoaded\\\",d)})();</script>\\n  </div><!-- /.error-footer -->\\n\\n    </div>\\n</div>\\n</body>\\n</html>\""
+              ],
+              "httpCode": "520",
+              "message": "The service failed to process your request",
+              "stack": "NodeApiError: The service failed to process your request\n    at ExecuteContext.requestWithAuthentication (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+exporter-trace-otlp_2d19a9be2839cb42cd2e8c9cacd05d5a/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:1265:10)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at ExecuteContext.requestWithAuthentication (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+exporter-trace-otlp_2d19a9be2839cb42cd2e8c9cacd05d5a/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:1566:11)"
+            },
+            "lastNodeExecuted": "HTTP Request",
+            "mode": "webhook",
+            "executionContext": {
+              "version": 1,
+              "establishedAt": 1775756886128,
+              "source": "webhook",
+              "redaction": {
+                "version": 1,
+                "policy": "none"
+              },
+              "triggerNode": {
+                "name": "Webhook",
+                "type": "n8n-nodes-base.webhook"
+              }
+            }
+          },
+          "workflow": {
+            "id": "g1XpjhYhaY5gSCKZ",
+            "name": "transcribe-service"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f01b0589-73aa-4a4d-bff4-95b042679662",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "be02686943a482a6b4f04dedbf7edd2fb9f73966827b8e819dc894f9e80ad668"
+  },
+  "id": "xE4FnW1fLse0FMFz",
+  "tags": []
+}

@@ -7,16 +7,20 @@ import com.yellowleaf.coulson.domain.model.Transcription;
 import com.yellowleaf.coulson.domain.model.TranscriptionSegment;
 import com.yellowleaf.coulson.domain.model.Video;
 import com.yellowleaf.coulson.domain.model.VideoChunk;
+import com.yellowleaf.coulson.domain.event.MeetingTranscribedEvent;
+import com.yellowleaf.coulson.domain.model.Meeting;
 import com.yellowleaf.coulson.domain.model.SpeakerMapping;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
 import com.yellowleaf.coulson.domain.port.AudioSplitterPort;
+import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
 import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
 import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -41,6 +45,8 @@ public class ProcessVideoUseCase {
     private final AudioSplitterPort audioSplitterPort;
     private final TranscriptionWebhookPort transcriptionWebhookPort;
     private final SpeakerResolutionWebhookPort speakerResolutionWebhookPort;
+    private final MeetingRepositoryPort meetingRepositoryPort;
+    private final ApplicationEventPublisher eventPublisher;
     private final ExecutorService executor;
     private final double maxAudioChunkSeconds;
 
@@ -52,6 +58,8 @@ public class ProcessVideoUseCase {
             AudioSplitterPort audioSplitterPort,
             TranscriptionWebhookPort transcriptionWebhookPort,
             SpeakerResolutionWebhookPort speakerResolutionWebhookPort,
+            MeetingRepositoryPort meetingRepositoryPort,
+            ApplicationEventPublisher eventPublisher,
             ExecutorService executor,
             double maxAudioChunkSeconds) {
         this.storagePort = storagePort;
@@ -61,6 +69,8 @@ public class ProcessVideoUseCase {
         this.audioSplitterPort = audioSplitterPort;
         this.transcriptionWebhookPort = transcriptionWebhookPort;
         this.speakerResolutionWebhookPort = speakerResolutionWebhookPort;
+        this.meetingRepositoryPort = meetingRepositoryPort;
+        this.eventPublisher = eventPublisher;
         this.executor = executor;
         this.maxAudioChunkSeconds = maxAudioChunkSeconds;
     }
@@ -184,11 +194,31 @@ public class ProcessVideoUseCase {
             log.info("Transcription complete [videoId={}] videoChunks={} audioChunks={} segments={}",
                     video.getId(), videoChunks.size(), audioChunksForTranscription.size(), allSegments.size());
 
+            persistMeeting(video, combinedText.toString().trim(), allSegments);
+
             return new TranscriptionResult(
                     video.getId(), combinedText.toString().trim(), videoChunks.size(), allSegments);
 
         } finally {
             filesToCleanup.forEach(this::deleteQuietly);
+        }
+    }
+
+    private void persistMeeting(Video video, String fullText, List<TranscriptionSegment> segments) {
+        try {
+            String title = video.getOriginalName();
+            Meeting meeting = new Meeting(
+                    video.getId(),
+                    title,
+                    video.getDurationSeconds(),
+                    fullText,
+                    segments
+            );
+            meetingRepositoryPort.save(meeting);
+            eventPublisher.publishEvent(new MeetingTranscribedEvent(video.getId()));
+            log.info("Meeting persisted [meetingId={}]", video.getId());
+        } catch (Exception e) {
+            log.error("Failed to persist meeting [meetingId={}]: {}", video.getId(), e.getMessage());
         }
     }
 
