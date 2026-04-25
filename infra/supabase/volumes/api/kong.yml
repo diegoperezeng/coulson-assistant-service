@@ -378,6 +378,32 @@ services:
         config:
           hide_credentials: true
 
+  ## n8n Workflow Automation
+  - name: n8n
+    _comment: 'n8n: /n8n/* -> http://n8n:5678/*'
+    url: http://n8n:5678/
+    routes:
+      - name: n8n-all
+        strip_path: true
+        paths:
+          - /n8n/
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+            - PATCH
+          headers:
+            - Authorization
+            - Content-Type
+          max_age: 3600
+
   ## Coulson Assistant Service
   - name: coulson-swagger-ui
     _comment: 'Coulson Swagger UI - no JWT'

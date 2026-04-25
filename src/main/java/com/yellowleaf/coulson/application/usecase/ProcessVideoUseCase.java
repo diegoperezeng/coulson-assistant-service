@@ -77,9 +77,13 @@ public class ProcessVideoUseCase {
 
     public TranscriptionResult execute(ProcessVideoCommand command) {
         log.info("Starting video processing for file: {}", command.getFile().getOriginalFilename());
-
         Video video = storagePort.store(command.getFile());
         log.info("Video stored [id={}] size={}MB", video.getId(), video.getSizeInBytes() / (1024 * 1024));
+        return process(video);
+    }
+
+    public TranscriptionResult process(Video video) {
+        log.info("Processing video [id={}]", video.getId());
 
         List<Path> filesToCleanup = new ArrayList<>();
         filesToCleanup.add(video.getFilePath());

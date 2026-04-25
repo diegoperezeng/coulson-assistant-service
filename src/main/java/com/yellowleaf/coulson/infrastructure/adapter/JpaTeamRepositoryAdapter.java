@@ -12,6 +12,8 @@ import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringPartic
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,6 +44,7 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Team> findTeamById(UUID id) {
         return teamRepository.findById(id).map(this::toTeamWithMembers);
     }
@@ -76,20 +79,25 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
         entity.setTeam(team);
         entity.setParticipant(participant);
         entity.setAddedAt(OffsetDateTime.now());
-        return toMember(memberRepository.save(entity));
+        memberRepository.save(entity);
+
+        return new TeamMember(teamId, toParticipant(participant), entity.getAddedAt());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<TeamMember> findMember(UUID teamId, UUID participantId) {
         return memberRepository.findById(new TeamMemberId(teamId, participantId)).map(this::toMember);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TeamMember> findAllMembers() {
         return memberRepository.findAll().stream().map(this::toMember).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TeamMember> findMembersByTeam(UUID teamId) {
         if (!teamRepository.existsById(teamId)) {
             throw new NoSuchElementException("Team not found: " + teamId);

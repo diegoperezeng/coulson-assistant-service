@@ -1,7 +1,9 @@
 package com.yellowleaf.coulson.infrastructure.config;
 
+import com.yellowleaf.coulson.application.usecase.GetTranscriptionJobUseCase;
 import com.yellowleaf.coulson.application.usecase.ParticipantUseCase;
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
+import com.yellowleaf.coulson.application.usecase.SubmitTranscriptionJobUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamUseCase;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
@@ -11,6 +13,7 @@ import com.yellowleaf.coulson.domain.port.EmbeddingPort;
 import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
 import com.yellowleaf.coulson.domain.port.ParticipantRepositoryPort;
 import com.yellowleaf.coulson.domain.port.StoragePort;
+import com.yellowleaf.coulson.domain.port.TranscriptionJobRepositoryPort;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
@@ -28,6 +31,7 @@ import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAda
 import com.yellowleaf.coulson.infrastructure.adapter.JpaMeetingRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaParticipantRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaTeamRepositoryAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.JpaTranscriptionJobRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.SupabaseStorageAdapter;
@@ -35,6 +39,7 @@ import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetin
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringParticipantJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTranscriptionJobJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -241,5 +246,43 @@ public class AppConfig {
         registration.setFilter(new HttpRequestLoggingFilter(properties));
         registration.setOrder(0);
         return registration;
+    }
+
+    @Bean
+    public Executor jobExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setQueueCapacity(20);
+        executor.setThreadNamePrefix("transcription-job-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean
+    public TranscriptionJobRepositoryPort transcriptionJobRepositoryPort(
+            SpringTranscriptionJobJpaRepository repository) {
+        return new JpaTranscriptionJobRepositoryAdapter(repository);
+    }
+
+    @Bean
+    public SubmitTranscriptionJobUseCase submitTranscriptionJobUseCase(
+            VideoStoragePort videoStoragePort,
+            TranscriptionJobRepositoryPort transcriptionJobRepositoryPort,
+            ProcessVideoUseCase processVideoUseCase,
+            ObjectMapper objectMapper,
+            Executor jobExecutor) {
+        return new SubmitTranscriptionJobUseCase(
+                videoStoragePort,
+                transcriptionJobRepositoryPort,
+                processVideoUseCase,
+                objectMapper,
+                jobExecutor);
+    }
+
+    @Bean
+    public GetTranscriptionJobUseCase getTranscriptionJobUseCase(
+            TranscriptionJobRepositoryPort transcriptionJobRepositoryPort) {
+        return new GetTranscriptionJobUseCase(transcriptionJobRepositoryPort);
     }
 }
