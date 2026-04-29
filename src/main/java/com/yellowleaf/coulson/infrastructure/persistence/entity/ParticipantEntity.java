@@ -27,6 +27,12 @@ public class ParticipantEntity {
     @Column(name = "voice_sample_key", length = 1000)
     private String voiceSampleKey;
 
+    @Column(name = "voice_id", length = 255)
+    private String voiceId;
+
+    @Column(name = "presentation_audio_key", length = 1000)
+    private String presentationAudioKey;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
@@ -41,6 +47,12 @@ public class ParticipantEntity {
 
     public String getVoiceSampleKey() { return voiceSampleKey; }
     public void setVoiceSampleKey(String voiceSampleKey) { this.voiceSampleKey = voiceSampleKey; }
+
+    public String getVoiceId() { return voiceId; }
+    public void setVoiceId(String voiceId) { this.voiceId = voiceId; }
+
+    public String getPresentationAudioKey() { return presentationAudioKey; }
+    public void setPresentationAudioKey(String presentationAudioKey) { this.presentationAudioKey = presentationAudioKey; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }

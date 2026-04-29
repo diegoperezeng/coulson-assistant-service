@@ -28,4 +28,6 @@ public interface TeamRepositoryPort {
     List<TeamMember> findMembersByParticipant(UUID participantId);
 
     void removeMember(UUID teamId, UUID participantId);
+
+    Team updatePresentationAudio(UUID id, String presentationAudioKey, double durationSeconds);
 }

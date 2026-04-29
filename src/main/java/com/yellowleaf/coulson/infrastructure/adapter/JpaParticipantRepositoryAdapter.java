@@ -50,6 +50,15 @@ public class JpaParticipantRepositoryAdapter implements ParticipantRepositoryPor
     }
 
     @Override
+    public Participant updateVoiceData(UUID id, String voiceId, String presentationAudioKey) {
+        ParticipantEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Participant not found: " + id));
+        entity.setVoiceId(voiceId);
+        entity.setPresentationAudioKey(presentationAudioKey);
+        return toParticipant(repository.save(entity));
+    }
+
+    @Override
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
             throw new NoSuchElementException("Participant not found: " + id);
@@ -58,6 +67,7 @@ public class JpaParticipantRepositoryAdapter implements ParticipantRepositoryPor
     }
 
     private Participant toParticipant(ParticipantEntity e) {
-        return new Participant(e.getId(), e.getName(), e.getRole(), e.getVoiceSampleKey(), e.getCreatedAt());
+        return new Participant(e.getId(), e.getName(), e.getRole(), e.getVoiceSampleKey(),
+                e.getVoiceId(), e.getPresentationAudioKey(), e.getCreatedAt());
     }
 }

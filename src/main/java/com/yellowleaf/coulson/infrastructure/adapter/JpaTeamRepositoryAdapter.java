@@ -121,14 +121,25 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
         memberRepository.deleteById(pk);
     }
 
+    @Override
+    public Team updatePresentationAudio(UUID id, String presentationAudioKey, double durationSeconds) {
+        TeamEntity entity = teamRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Team not found: " + id));
+        entity.setPresentationAudioKey(presentationAudioKey);
+        entity.setPresentationAudioDurationSeconds(durationSeconds);
+        return toTeamWithMembers(teamRepository.save(entity));
+    }
+
     private Team toTeam(TeamEntity e) {
-        return new Team(e.getId(), e.getName(), e.getCreatedAt(), List.of());
+        return new Team(e.getId(), e.getName(), e.getCreatedAt(), List.of(),
+                e.getPresentationAudioKey(), e.getPresentationAudioDurationSeconds());
     }
 
     private Team toTeamWithMembers(TeamEntity e) {
         List<TeamMember> members = memberRepository.findAllById_TeamId(e.getId())
                 .stream().map(this::toMember).toList();
-        return new Team(e.getId(), e.getName(), e.getCreatedAt(), members);
+        return new Team(e.getId(), e.getName(), e.getCreatedAt(), members,
+                e.getPresentationAudioKey(), e.getPresentationAudioDurationSeconds());
     }
 
     private TeamMember toMember(TeamMemberEntity e) {
@@ -136,6 +147,7 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     private Participant toParticipant(ParticipantEntity e) {
-        return new Participant(e.getId(), e.getName(), e.getRole(), e.getVoiceSampleKey(), e.getCreatedAt());
+        return new Participant(e.getId(), e.getName(), e.getRole(), e.getVoiceSampleKey(),
+                e.getVoiceId(), e.getPresentationAudioKey(), e.getCreatedAt());
     }
 }

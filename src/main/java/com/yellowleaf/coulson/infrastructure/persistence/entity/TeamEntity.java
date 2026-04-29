@@ -24,6 +24,12 @@ public class TeamEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
+    @Column(name = "presentation_audio_key", length = 1000)
+    private String presentationAudioKey;
+
+    @Column(name = "presentation_audio_duration_seconds")
+    private Double presentationAudioDurationSeconds;
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
@@ -32,4 +38,10 @@ public class TeamEntity {
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getPresentationAudioKey() { return presentationAudioKey; }
+    public void setPresentationAudioKey(String presentationAudioKey) { this.presentationAudioKey = presentationAudioKey; }
+
+    public Double getPresentationAudioDurationSeconds() { return presentationAudioDurationSeconds; }
+    public void setPresentationAudioDurationSeconds(Double presentationAudioDurationSeconds) { this.presentationAudioDurationSeconds = presentationAudioDurationSeconds; }
 }

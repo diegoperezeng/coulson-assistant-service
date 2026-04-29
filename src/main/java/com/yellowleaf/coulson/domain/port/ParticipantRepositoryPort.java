@@ -16,5 +16,7 @@ public interface ParticipantRepositoryPort {
 
     Participant update(UUID id, String name, String role, String voiceSampleKey);
 
+    Participant updateVoiceData(UUID id, String voiceId, String presentationAudioKey);
+
     void delete(UUID id);
 }

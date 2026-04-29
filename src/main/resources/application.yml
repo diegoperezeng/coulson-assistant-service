@@ -82,6 +82,16 @@ supabase:
   service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
   storage:
     voice-samples-bucket: ${SUPABASE_VOICE_SAMPLES_BUCKET:voice-samples}
+    presentation-audio-bucket: ${SUPABASE_PRESENTATION_AUDIO_BUCKET:presentation-audio}
+
+elevenlabs:
+  api-key: ${ELEVENLABS_API_KEY}
+  base-url: ${ELEVENLABS_BASE_URL:https://api.elevenlabs.io}
+  model-id: ${ELEVENLABS_MODEL_ID:eleven_multilingual_v2}
+  stability: ${ELEVENLABS_STABILITY:0.5}
+  similarity-boost: ${ELEVENLABS_SIMILARITY_BOOST:0.75}
+  style: ${ELEVENLABS_STYLE:0.0}
+  speed: ${ELEVENLABS_SPEED:1.0}
 
 swagger:
   external-url: ${SWAGGER_EXTERNAL_URL:}

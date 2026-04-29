@@ -3,11 +3,16 @@ package com.yellowleaf.coulson.application.usecase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yellowleaf.coulson.application.result.TranscriptionResult;
+import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase.TeamPresentationContext;
+import com.yellowleaf.coulson.domain.model.Team;
 import com.yellowleaf.coulson.domain.model.TranscriptionJob;
 import com.yellowleaf.coulson.domain.model.Video;
+import com.yellowleaf.coulson.domain.port.StoragePort;
+import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionJobRepositoryPort;
 import com.yellowleaf.coulson.domain.port.VideoStoragePort;
 import com.yellowleaf.coulson.infrastructure.config.VideoPersistProperties;
+import com.yellowleaf.coulson.infrastructure.config.VideoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -37,6 +43,10 @@ public class SubmitTranscriptionJobUseCase {
     private final VideoPersistProperties videoPersistProperties;
     private final ObjectMapper objectMapper;
     private final Executor jobExecutor;
+    private final TeamRepositoryPort teamRepository;
+    private final StoragePort presentationStoragePort;
+    private final String presentationAudioBucket;
+    private final String tempDir;
 
     public SubmitTranscriptionJobUseCase(
             VideoStoragePort storagePort,
@@ -45,7 +55,11 @@ public class SubmitTranscriptionJobUseCase {
             PersistVideoUseCase persistVideoUseCase,
             VideoPersistProperties videoPersistProperties,
             ObjectMapper objectMapper,
-            Executor jobExecutor) {
+            Executor jobExecutor,
+            TeamRepositoryPort teamRepository,
+            StoragePort presentationStoragePort,
+            String presentationAudioBucket,
+            String tempDir) {
         this.storagePort = storagePort;
         this.jobRepository = jobRepository;
         this.processVideoUseCase = processVideoUseCase;
@@ -53,6 +67,10 @@ public class SubmitTranscriptionJobUseCase {
         this.videoPersistProperties = videoPersistProperties;
         this.objectMapper = objectMapper;
         this.jobExecutor = jobExecutor;
+        this.teamRepository = teamRepository;
+        this.presentationStoragePort = presentationStoragePort;
+        this.presentationAudioBucket = presentationAudioBucket;
+        this.tempDir = tempDir;
     }
 
     public TranscriptionJob submit(MultipartFile file, UUID teamId, boolean force) {
@@ -99,8 +117,17 @@ public class SubmitTranscriptionJobUseCase {
     private void processAsync(UUID jobId, Video video, UUID teamId, Path persistCopy) {
         log.info("Async transcription started [jobId={}] videoId={}", jobId, video.getId());
         boolean transcriptionSucceeded = false;
+        Path presentationTempPath = null;
         try {
-            TranscriptionResult result = processVideoUseCase.process(video);
+            TeamPresentationContext teamPresentation = null;
+            if (teamId != null) {
+                teamPresentation = resolveTeamPresentation(teamId, video.getId());
+                if (teamPresentation != null) {
+                    presentationTempPath = teamPresentation.audioPath();
+                }
+            }
+
+            TranscriptionResult result = processVideoUseCase.process(video, teamPresentation);
             String resultJson = serialize(result);
             jobRepository.markDone(jobId, resultJson);
             transcriptionSucceeded = true;
@@ -111,6 +138,8 @@ public class SubmitTranscriptionJobUseCase {
         } catch (Exception e) {
             log.error("Async transcription failed [jobId={}]: {}", jobId, e.getMessage());
             jobRepository.markFailed(jobId, e.getMessage());
+        } finally {
+            deleteQuietly(presentationTempPath);
         }
 
         if (persistCopy != null) {
@@ -119,6 +148,39 @@ public class SubmitTranscriptionJobUseCase {
             } else {
                 deleteQuietly(persistCopy);
             }
+        }
+    }
+
+    private TeamPresentationContext resolveTeamPresentation(UUID teamId, String videoId) {
+        try {
+            Optional<Team> teamOpt = teamRepository.findTeamById(teamId);
+            if (teamOpt.isEmpty()) {
+                log.warn("Team not found for presentation audio [teamId={}] [videoId={}]", teamId, videoId);
+                return null;
+            }
+            Team team = teamOpt.get();
+            if (team.getPresentationAudioKey() == null) {
+                log.info("Team has no presentation audio [teamId={}] [videoId={}]", teamId, videoId);
+                return null;
+            }
+
+            log.info("Downloading team presentation audio [teamId={}] [videoId={}]", teamId, videoId);
+            byte[] audioBytes = presentationStoragePort.download(
+                    presentationAudioBucket, team.getPresentationAudioKey());
+
+            Path tempFile = Paths.get(tempDir).resolve("team-pres-" + teamId + "-" + videoId + ".mp3");
+            Files.createDirectories(tempFile.getParent());
+            Files.write(tempFile, audioBytes);
+
+            double duration = team.getPresentationAudioDurationSeconds() != null
+                    ? team.getPresentationAudioDurationSeconds()
+                    : 0.0;
+            log.info("Team presentation audio ready [teamId={}] duration={}s [videoId={}]", teamId, duration, videoId);
+            return new TeamPresentationContext(tempFile, duration);
+        } catch (Exception e) {
+            log.warn("Failed to resolve team presentation audio [teamId={}] [videoId={}]: {}",
+                    teamId, videoId, e.getMessage());
+            return null;
         }
     }
 
@@ -142,7 +204,7 @@ public class SubmitTranscriptionJobUseCase {
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
-            log.warn("Could not delete persist copy [{}]: {}", path, e.getMessage());
+            log.warn("Could not delete file [{}]: {}", path, e.getMessage());
         }
     }
 

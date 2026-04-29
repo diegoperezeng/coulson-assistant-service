@@ -22,10 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -50,6 +55,8 @@ public class ProcessVideoUseCase {
     private final ApplicationEventPublisher eventPublisher;
     private final ExecutorService executor;
     private final double maxAudioChunkSeconds;
+    private final String tempDir;
+    private final String ffmpegPath;
 
     public ProcessVideoUseCase(
             VideoStoragePort storagePort,
@@ -62,7 +69,9 @@ public class ProcessVideoUseCase {
             MeetingRepositoryPort meetingRepositoryPort,
             ApplicationEventPublisher eventPublisher,
             ExecutorService executor,
-            double maxAudioChunkSeconds) {
+            double maxAudioChunkSeconds,
+            String tempDir,
+            String ffmpegPath) {
         this.storagePort = storagePort;
         this.splitterPort = splitterPort;
         this.audioExtractorPort = audioExtractorPort;
@@ -74,19 +83,23 @@ public class ProcessVideoUseCase {
         this.eventPublisher = eventPublisher;
         this.executor = executor;
         this.maxAudioChunkSeconds = maxAudioChunkSeconds;
+        this.tempDir = tempDir;
+        this.ffmpegPath = ffmpegPath;
     }
+
+    public record TeamPresentationContext(Path audioPath, double durationSeconds) {}
 
     public TranscriptionResult execute(ProcessVideoCommand command) {
         log.info("Starting video processing for file: {}", command.getFile().getOriginalFilename());
         Video video = storagePort.store(command.getFile());
         log.info("Video stored [id={}] size={}MB", video.getId(), video.getSizeInBytes() / (1024 * 1024));
-        return process(video);
+        return process(video, null);
     }
 
-    public TranscriptionResult process(Video video) {
+    public TranscriptionResult process(Video video, TeamPresentationContext teamPresentation) {
         log.info("Processing video [id={}]", video.getId());
 
-        List<Path> filesToCleanup = new ArrayList<>();
+        List<Path> filesToCleanup = new java.util.concurrent.CopyOnWriteArrayList<>();
         filesToCleanup.add(video.getFilePath());
 
         try {
@@ -132,10 +145,6 @@ public class ProcessVideoUseCase {
                 throw new UncheckedIOException("Failed to read audio file size", e);
             }
             long audioSizeMb = audioSizeBytes / (1024 * 1024);
-            System.out.println("--------------------------------");
-            System.out.println("Audio final: " + mergedAudio.getFilePath().getFileName());
-            System.out.println("Size: " + audioSizeMb + "MB (" + audioSizeBytes + " bytes)");
-            System.out.println("--------------------------------");
             log.info("Final audio ready [videoId={}] size={}MB", video.getId(), audioSizeMb);
 
             Path compressedAudioPath = mergedAudio.getFilePath()
@@ -171,19 +180,45 @@ public class ProcessVideoUseCase {
                 audioChunksForTranscription.forEach(c -> filesToCleanup.add(c.getFilePath()));
             }
 
+            Path compressedPresentationPath = null;
+            if (teamPresentation != null) {
+                compressedPresentationPath = compressPresentationAudio(teamPresentation.audioPath(), video.getId());
+                filesToCleanup.add(compressedPresentationPath);
+                log.info("Team presentation audio compressed for diarization [videoId={}] duration={}s",
+                        video.getId(), teamPresentation.durationSeconds());
+            }
+
+            final Path finalPresentationPath = compressedPresentationPath;
+            final double presentationDuration = teamPresentation != null ? teamPresentation.durationSeconds() : 0.0;
+
             List<CompletableFuture<ChunkTranscription>> transcriptionFutures = audioChunksForTranscription.stream()
                     .map(chunk -> CompletableFuture.supplyAsync(
                             () -> {
+                                AudioChunk chunkToTranscribe = chunk;
+                                if (finalPresentationPath != null) {
+                                    Path prependedPath = prependAudioToChunk(
+                                            finalPresentationPath, chunk, video.getId());
+                                    filesToCleanup.add(prependedPath);
+                                    chunkToTranscribe = new AudioChunk(
+                                            chunk.getIndex(),
+                                            chunk.getVideoId(),
+                                            prependedPath,
+                                            chunk.getStartOffsetSeconds());
+                                }
+
                                 log.info("Transcribing chunk {} offset={}s [videoId={}]",
                                         chunk.getIndex(), chunk.getStartOffsetSeconds(), video.getId());
-                                Transcription transcription = transcriptionWebhookPort.transcribe(chunk);
+                                Transcription transcription = transcriptionWebhookPort.transcribe(chunkToTranscribe);
                                 log.info("Chunk {} transcribed segments={} [videoId={}]",
                                         chunk.getIndex(), transcription.getSegments().size(), video.getId());
 
                                 List<TranscriptionSegment> resolvedSegments = resolveSegmentSpeakers(
                                         transcription.getSegments(), video.getId(), chunk.getIndex());
 
-                                return new ChunkTranscription(chunk, transcription.getText(), resolvedSegments);
+                                List<TranscriptionSegment> filteredSegments = filterPresentationSegments(
+                                        resolvedSegments, presentationDuration);
+
+                                return new ChunkTranscription(chunk, transcription.getText(), filteredSegments);
                             },
                             executor
                     ))
@@ -229,6 +264,61 @@ public class ProcessVideoUseCase {
         }
     }
 
+    private Path compressPresentationAudio(Path presentationPath, String videoId) {
+        Path outputPath = Paths.get(tempDir).resolve("presentation-compressed-" + videoId + ".mp3");
+        compressForTranscription(presentationPath, outputPath, videoId + "-presentation");
+        return outputPath;
+    }
+
+    private Path prependAudioToChunk(Path presentationPath, AudioChunk chunk, String videoId) {
+        Path outputPath = Paths.get(tempDir).resolve(
+                "prepended-" + videoId + "-chunk-" + chunk.getIndex() + ".mp3");
+        Path concatList = Paths.get(tempDir).resolve(
+                "prepend-concat-" + videoId + "-" + chunk.getIndex() + ".txt");
+
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(concatList.toFile()))) {
+                writer.write("file '" + presentationPath.toAbsolutePath() + "'");
+                writer.newLine();
+                writer.write("file '" + chunk.getFilePath().toAbsolutePath() + "'");
+                writer.newLine();
+            }
+
+            List<String> command = List.of(
+                    ffmpegPath,
+                    "-f", "concat",
+                    "-safe", "0",
+                    "-i", concatList.toString(),
+                    "-c", "copy",
+                    "-y",
+                    outputPath.toString()
+            );
+
+            executeCommand(command, "prepend presentation to chunk " + chunk.getIndex() + " [videoId=" + videoId + "]");
+            return outputPath;
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to prepend presentation audio to chunk", e);
+        } finally {
+            deleteQuietly(concatList);
+        }
+    }
+
+    private List<TranscriptionSegment> filterPresentationSegments(
+            List<TranscriptionSegment> segments, double presentationDuration) {
+        if (presentationDuration <= 0) {
+            return segments;
+        }
+        return segments.stream()
+                .filter(s -> s.getEnd() > presentationDuration)
+                .map(s -> new TranscriptionSegment(
+                        s.getSpeaker(),
+                        Math.max(0, s.getStart() - presentationDuration),
+                        s.getEnd() - presentationDuration,
+                        s.getText()
+                ))
+                .toList();
+    }
+
     private void persistMeeting(Video video, String fullText, List<TranscriptionSegment> segments) {
         try {
             String title = video.getOriginalName();
@@ -260,10 +350,10 @@ public class ProcessVideoUseCase {
         return futures.stream().map(CompletableFuture::join).toList();
     }
 
-    private void compressForTranscription(Path input, Path output, String videoId) {
+    private void compressForTranscription(Path input, Path output, String context) {
         try {
             ProcessBuilder pb = new ProcessBuilder(
-                    "ffmpeg", "-y",
+                    ffmpegPath, "-y",
                     "-i", input.toAbsolutePath().toString(),
                     "-vn",
                     "-ac", "1",
@@ -277,17 +367,47 @@ public class ProcessVideoUseCase {
             boolean finished = process.waitFor(5, TimeUnit.MINUTES);
             if (!finished) {
                 process.destroyForcibly();
-                throw new IllegalStateException("Audio compression timed out [videoId=" + videoId + "]");
+                throw new IllegalStateException("Audio compression timed out [" + context + "]");
             }
             if (process.exitValue() != 0) {
                 throw new IllegalStateException(
-                        "FFmpeg audio compression failed with code " + process.exitValue() + " [videoId=" + videoId + "]");
+                        "FFmpeg audio compression failed with code " + process.exitValue() + " [" + context + "]");
             }
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to compress audio for transcription", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Audio compression interrupted [videoId=" + videoId + "]", e);
+            throw new IllegalStateException("Audio compression interrupted [" + context + "]", e);
+        }
+    }
+
+    private void executeCommand(List<String> command, String context) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+            }
+
+            boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            if (!finished) {
+                process.destroyForcibly();
+                throw new IllegalStateException("FFmpeg timed out: " + context);
+            }
+            if (process.exitValue() != 0) {
+                throw new IllegalStateException("FFmpeg failed [" + context + "]: " + output);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to execute FFmpeg: " + context, e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted: " + context, e);
         }
     }
 

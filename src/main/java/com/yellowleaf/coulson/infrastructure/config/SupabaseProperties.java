@@ -25,8 +25,12 @@ public class SupabaseProperties {
     public static class Storage {
 
         private String voiceSamplesBucket = "voice-samples";
+        private String presentationAudioBucket = "presentation-audio";
 
         public String getVoiceSamplesBucket() { return voiceSamplesBucket; }
         public void setVoiceSamplesBucket(String voiceSamplesBucket) { this.voiceSamplesBucket = voiceSamplesBucket; }
+
+        public String getPresentationAudioBucket() { return presentationAudioBucket; }
+        public void setPresentationAudioBucket(String presentationAudioBucket) { this.presentationAudioBucket = presentationAudioBucket; }
     }
 }

@@ -22,6 +22,12 @@ public class ParticipantResponse {
     @Schema(description = "Voice sample storage key (null if not provided)")
     private final String voiceSampleKey;
 
+    @Schema(description = "ElevenLabs voice ID (null if not generated)")
+    private final String voiceId;
+
+    @Schema(description = "Presentation audio storage key (null if not generated)")
+    private final String presentationAudioKey;
+
     @Schema(description = "Registration date")
     private final OffsetDateTime createdAt;
 
@@ -29,29 +35,36 @@ public class ParticipantResponse {
     private final List<TeamInfo> teams;
 
     public ParticipantResponse(UUID id, String name, String role, String voiceSampleKey,
+                               String voiceId, String presentationAudioKey,
                                OffsetDateTime createdAt, List<TeamInfo> teams) {
         this.id = id;
         this.name = name;
         this.role = role;
         this.voiceSampleKey = voiceSampleKey;
+        this.voiceId = voiceId;
+        this.presentationAudioKey = presentationAudioKey;
         this.createdAt = createdAt;
         this.teams = teams != null ? teams : List.of();
     }
 
     public static ParticipantResponse from(Participant p) {
         return new ParticipantResponse(p.getId(), p.getName(), p.getRole(),
-                p.getVoiceSampleKey(), p.getCreatedAt(), List.of());
+                p.getVoiceSampleKey(), p.getVoiceId(), p.getPresentationAudioKey(),
+                p.getCreatedAt(), List.of());
     }
 
     public static ParticipantResponse from(Participant p, List<TeamInfo> teams) {
         return new ParticipantResponse(p.getId(), p.getName(), p.getRole(),
-                p.getVoiceSampleKey(), p.getCreatedAt(), teams);
+                p.getVoiceSampleKey(), p.getVoiceId(), p.getPresentationAudioKey(),
+                p.getCreatedAt(), teams);
     }
 
     public UUID getId() { return id; }
     public String getName() { return name; }
     public String getRole() { return role; }
     public String getVoiceSampleKey() { return voiceSampleKey; }
+    public String getVoiceId() { return voiceId; }
+    public String getPresentationAudioKey() { return presentationAudioKey; }
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public List<TeamInfo> getTeams() { return teams; }
 

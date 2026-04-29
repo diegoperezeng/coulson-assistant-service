@@ -22,22 +22,34 @@ public class TeamResponse {
     @Schema(description = "List of members (only present on GET by ID)")
     private final List<TeamMemberResponse> members;
 
-    public TeamResponse(UUID id, String name, OffsetDateTime createdAt, List<TeamMemberResponse> members) {
+    @Schema(description = "Presentation audio storage key (null if not generated)")
+    private final String presentationAudioKey;
+
+    @Schema(description = "Duration in seconds of the team presentation audio")
+    private final Double presentationAudioDurationSeconds;
+
+    public TeamResponse(UUID id, String name, OffsetDateTime createdAt, List<TeamMemberResponse> members,
+                        String presentationAudioKey, Double presentationAudioDurationSeconds) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
         this.members = members;
+        this.presentationAudioKey = presentationAudioKey;
+        this.presentationAudioDurationSeconds = presentationAudioDurationSeconds;
     }
 
     public static TeamResponse from(Team team) {
         List<TeamMemberResponse> memberResponses = team.getMembers().stream()
                 .map(TeamMemberResponse::from)
                 .toList();
-        return new TeamResponse(team.getId(), team.getName(), team.getCreatedAt(), memberResponses);
+        return new TeamResponse(team.getId(), team.getName(), team.getCreatedAt(), memberResponses,
+                team.getPresentationAudioKey(), team.getPresentationAudioDurationSeconds());
     }
 
     public UUID getId() { return id; }
     public String getName() { return name; }
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public List<TeamMemberResponse> getMembers() { return members; }
+    public String getPresentationAudioKey() { return presentationAudioKey; }
+    public Double getPresentationAudioDurationSeconds() { return presentationAudioDurationSeconds; }
 }

@@ -1,11 +1,13 @@
 package com.yellowleaf.coulson.infrastructure.config;
 
 import com.yellowleaf.coulson.application.usecase.GetTranscriptionJobUseCase;
+import com.yellowleaf.coulson.application.usecase.ParticipantPresentationUseCase;
 import com.yellowleaf.coulson.application.usecase.ParticipantUseCase;
 import com.yellowleaf.coulson.application.usecase.PersistVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.SubmitTranscriptionJobUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
+import com.yellowleaf.coulson.application.usecase.TeamPresentationUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamUseCase;
 import com.yellowleaf.coulson.domain.port.AudioExtractorPort;
 import com.yellowleaf.coulson.domain.port.AudioMergerPort;
@@ -14,18 +16,14 @@ import com.yellowleaf.coulson.domain.port.EmbeddingPort;
 import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
 import com.yellowleaf.coulson.domain.port.ParticipantRepositoryPort;
 import com.yellowleaf.coulson.domain.port.StoragePort;
+import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
+import com.yellowleaf.coulson.domain.port.TextToSpeechPort;
 import com.yellowleaf.coulson.domain.port.TranscriptionJobRepositoryPort;
 import com.yellowleaf.coulson.domain.port.VideoAssetRepositoryPort;
 import com.yellowleaf.coulson.domain.port.VideoAssetStoragePort;
 import com.yellowleaf.coulson.domain.port.VideoTranscodePort;
-import org.springframework.ai.openai.OpenAiEmbeddingModel;
-import org.springframework.ai.openai.api.OpenAiApi;
-import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
-import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
-import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
-import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
-import com.yellowleaf.coulson.domain.port.VideoStoragePort;
-import com.yellowleaf.coulson.domain.service.VideoSplitPlanService;
+import com.yellowleaf.coulson.domain.port.VoiceCloningPort;
+import com.yellowleaf.coulson.infrastructure.adapter.ElevenLabsAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioExtractorAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioMergerAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioSplitterAdapter;
@@ -42,6 +40,7 @@ import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.SupabaseStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.SupabaseVideoAssetStorageAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.elevenlabs.ElevenLabsFeignClient;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetingJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringParticipantJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
@@ -50,7 +49,14 @@ import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTransc
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringVideoAssetJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yellowleaf.coulson.domain.port.SpeakerResolutionWebhookPort;
+import com.yellowleaf.coulson.domain.port.TranscriptionWebhookPort;
+import com.yellowleaf.coulson.domain.port.VideoSplitterPort;
+import com.yellowleaf.coulson.domain.port.VideoStoragePort;
+import com.yellowleaf.coulson.domain.service.VideoSplitPlanService;
 import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.openai.OpenAiEmbeddingModel;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -73,7 +79,8 @@ import java.util.concurrent.Executors;
         FfmpegProperties.class,
         SupabaseProperties.class,
         RequestLoggingProperties.class,
-        VideoPersistProperties.class
+        VideoPersistProperties.class,
+        ElevenLabsProperties.class
 })
 public class AppConfig {
 
@@ -223,6 +230,53 @@ public class AppConfig {
     }
 
     @Bean
+    public ElevenLabsAdapter elevenLabsAdapter(ElevenLabsFeignClient elevenLabsFeignClient,
+                                               ElevenLabsProperties elevenLabsProperties) {
+        return new ElevenLabsAdapter(elevenLabsFeignClient, elevenLabsProperties);
+    }
+
+    @Bean
+    public VoiceCloningPort voiceCloningPort(ElevenLabsAdapter elevenLabsAdapter) {
+        return elevenLabsAdapter;
+    }
+
+    @Bean
+    public TextToSpeechPort textToSpeechPort(ElevenLabsAdapter elevenLabsAdapter) {
+        return elevenLabsAdapter;
+    }
+
+    @Bean
+    public ParticipantPresentationUseCase participantPresentationUseCase(
+            ParticipantRepositoryPort participantRepositoryPort,
+            StoragePort storagePort,
+            VoiceCloningPort voiceCloningPort,
+            TextToSpeechPort textToSpeechPort,
+            SupabaseProperties supabaseProperties) {
+        return new ParticipantPresentationUseCase(
+                participantRepositoryPort,
+                storagePort,
+                voiceCloningPort,
+                textToSpeechPort,
+                supabaseProperties.getStorage().getVoiceSamplesBucket(),
+                supabaseProperties.getStorage().getPresentationAudioBucket());
+    }
+
+    @Bean
+    public TeamPresentationUseCase teamPresentationUseCase(
+            TeamRepositoryPort teamRepositoryPort,
+            StoragePort storagePort,
+            FfmpegProperties ffmpegProperties,
+            VideoProperties videoProperties,
+            SupabaseProperties supabaseProperties) {
+        return new TeamPresentationUseCase(
+                teamRepositoryPort,
+                storagePort,
+                ffmpegProperties,
+                videoProperties,
+                supabaseProperties.getStorage().getPresentationAudioBucket());
+    }
+
+    @Bean
     public ProcessVideoUseCase processVideoUseCase(
             VideoStoragePort videoStoragePort,
             VideoSplitterPort videoSplitterPort,
@@ -234,7 +288,8 @@ public class AppConfig {
             MeetingRepositoryPort meetingRepositoryPort,
             ApplicationEventPublisher eventPublisher,
             ExecutorService processingExecutor,
-            VideoProperties videoProperties) {
+            VideoProperties videoProperties,
+            FfmpegProperties ffmpegProperties) {
         return new ProcessVideoUseCase(
                 videoStoragePort,
                 videoSplitterPort,
@@ -246,7 +301,9 @@ public class AppConfig {
                 meetingRepositoryPort,
                 eventPublisher,
                 processingExecutor,
-                videoProperties.getMaxAudioChunkSeconds());
+                videoProperties.getMaxAudioChunkSeconds(),
+                videoProperties.getTempDir(),
+                ffmpegProperties.getPath());
     }
 
     @Bean
@@ -282,7 +339,11 @@ public class AppConfig {
             PersistVideoUseCase persistVideoUseCase,
             VideoPersistProperties videoPersistProperties,
             ObjectMapper objectMapper,
-            Executor jobExecutor) {
+            Executor jobExecutor,
+            TeamRepositoryPort teamRepositoryPort,
+            StoragePort storagePort,
+            SupabaseProperties supabaseProperties,
+            VideoProperties videoProperties) {
         return new SubmitTranscriptionJobUseCase(
                 videoStoragePort,
                 transcriptionJobRepositoryPort,
@@ -290,7 +351,11 @@ public class AppConfig {
                 persistVideoUseCase,
                 videoPersistProperties,
                 objectMapper,
-                jobExecutor);
+                jobExecutor,
+                teamRepositoryPort,
+                storagePort,
+                supabaseProperties.getStorage().getPresentationAudioBucket(),
+                videoProperties.getTempDir());
     }
 
     @Bean
