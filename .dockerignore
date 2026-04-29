@@ -1,0 +1,13 @@
+target/
+*.jar
+*.class
+.env
+*.log
+.DS_Store
+.idea/
+*.iml
+.mvn/
+.git/
+doc/
+infra/
+videos_for_test/

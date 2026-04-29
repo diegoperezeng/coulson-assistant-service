@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -137,12 +138,32 @@ public class ProcessVideoUseCase {
             System.out.println("--------------------------------");
             log.info("Final audio ready [videoId={}] size={}MB", video.getId(), audioSizeMb);
 
-            if (audioSizeBytes > 25L * 1024 * 1024) {
+            Path compressedAudioPath = mergedAudio.getFilePath()
+                    .resolveSibling("compressed_" + mergedAudio.getFilePath().getFileName());
+            compressForTranscription(mergedAudio.getFilePath(), compressedAudioPath, video.getId());
+            filesToCleanup.add(compressedAudioPath);
+
+            AudioChunk compressedAudio = new AudioChunk(
+                    mergedAudio.getIndex(),
+                    mergedAudio.getVideoId(),
+                    compressedAudioPath,
+                    mergedAudio.getStartOffsetSeconds());
+
+            long compressedSizeBytes;
+            try {
+                compressedSizeBytes = Files.size(compressedAudioPath);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read compressed audio size", e);
+            }
+            long compressedSizeMb = compressedSizeBytes / (1024 * 1024);
+            log.info("Audio compressed [videoId={}] {}MB -> {}MB", video.getId(), audioSizeMb, compressedSizeMb);
+
+            if (compressedSizeBytes > 25L * 1024 * 1024) {
                 throw new IllegalStateException(
-                        "File too large for transcription. Final audio size: " + audioSizeMb + "MB");
+                        "File too large for transcription even after compression. Size: " + compressedSizeMb + "MB");
             }
 
-            List<AudioChunk> audioChunksForTranscription = audioSplitterPort.split(mergedAudio, maxAudioChunkSeconds);
+            List<AudioChunk> audioChunksForTranscription = audioSplitterPort.split(compressedAudio, maxAudioChunkSeconds);
             log.info("Audio split into {} transcription chunk(s), dispatching in parallel [videoId={}]",
                     audioChunksForTranscription.size(), video.getId());
 
@@ -237,6 +258,37 @@ public class ProcessVideoUseCase {
             throw new IllegalStateException(errorMessage + ": " + cause.getMessage(), cause);
         }
         return futures.stream().map(CompletableFuture::join).toList();
+    }
+
+    private void compressForTranscription(Path input, Path output, String videoId) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    "ffmpeg", "-y",
+                    "-i", input.toAbsolutePath().toString(),
+                    "-vn",
+                    "-ac", "1",
+                    "-ar", "8000",
+                    "-b:a", "12k",
+                    "-map_metadata", "-1",
+                    output.toAbsolutePath().toString()
+            );
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            if (!finished) {
+                process.destroyForcibly();
+                throw new IllegalStateException("Audio compression timed out [videoId=" + videoId + "]");
+            }
+            if (process.exitValue() != 0) {
+                throw new IllegalStateException(
+                        "FFmpeg audio compression failed with code " + process.exitValue() + " [videoId=" + videoId + "]");
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to compress audio for transcription", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Audio compression interrupted [videoId=" + videoId + "]", e);
+        }
     }
 
     private void deleteQuietly(Path path) {

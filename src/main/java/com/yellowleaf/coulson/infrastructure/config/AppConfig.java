@@ -2,6 +2,7 @@ package com.yellowleaf.coulson.infrastructure.config;
 
 import com.yellowleaf.coulson.application.usecase.GetTranscriptionJobUseCase;
 import com.yellowleaf.coulson.application.usecase.ParticipantUseCase;
+import com.yellowleaf.coulson.application.usecase.PersistVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.ProcessVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.SubmitTranscriptionJobUseCase;
 import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
@@ -14,6 +15,9 @@ import com.yellowleaf.coulson.domain.port.MeetingRepositoryPort;
 import com.yellowleaf.coulson.domain.port.ParticipantRepositoryPort;
 import com.yellowleaf.coulson.domain.port.StoragePort;
 import com.yellowleaf.coulson.domain.port.TranscriptionJobRepositoryPort;
+import com.yellowleaf.coulson.domain.port.VideoAssetRepositoryPort;
+import com.yellowleaf.coulson.domain.port.VideoAssetStoragePort;
+import com.yellowleaf.coulson.domain.port.VideoTranscodePort;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.api.OpenAiApi;
 import com.yellowleaf.coulson.domain.port.TeamRepositoryPort;
@@ -26,20 +30,24 @@ import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioExtractorAdapter
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioMergerAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegAudioSplitterAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoSplitterAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.FfmpegVideoTranscodeAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpSpeakerResolutionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.HttpTranscriptionWebhookAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaMeetingRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaParticipantRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaTeamRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.JpaTranscriptionJobRepositoryAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.JpaVideoAssetRepositoryAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.LocalVideoStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.OpenAiEmbeddingAdapter;
 import com.yellowleaf.coulson.infrastructure.adapter.SupabaseStorageAdapter;
+import com.yellowleaf.coulson.infrastructure.adapter.SupabaseVideoAssetStorageAdapter;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringMeetingJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringParticipantJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTeamMemberJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringTranscriptionJobJpaRepository;
+import com.yellowleaf.coulson.infrastructure.persistence.repository.SpringVideoAssetJpaRepository;
 import com.yellowleaf.coulson.infrastructure.persistence.repository.VectorUpdateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -64,7 +72,8 @@ import java.util.concurrent.Executors;
         VideoProperties.class,
         FfmpegProperties.class,
         SupabaseProperties.class,
-        RequestLoggingProperties.class
+        RequestLoggingProperties.class,
+        VideoPersistProperties.class
 })
 public class AppConfig {
 
@@ -270,12 +279,16 @@ public class AppConfig {
             VideoStoragePort videoStoragePort,
             TranscriptionJobRepositoryPort transcriptionJobRepositoryPort,
             ProcessVideoUseCase processVideoUseCase,
+            PersistVideoUseCase persistVideoUseCase,
+            VideoPersistProperties videoPersistProperties,
             ObjectMapper objectMapper,
             Executor jobExecutor) {
         return new SubmitTranscriptionJobUseCase(
                 videoStoragePort,
                 transcriptionJobRepositoryPort,
                 processVideoUseCase,
+                persistVideoUseCase,
+                videoPersistProperties,
                 objectMapper,
                 jobExecutor);
     }
@@ -284,5 +297,61 @@ public class AppConfig {
     public GetTranscriptionJobUseCase getTranscriptionJobUseCase(
             TranscriptionJobRepositoryPort transcriptionJobRepositoryPort) {
         return new GetTranscriptionJobUseCase(transcriptionJobRepositoryPort);
+    }
+
+    @Bean
+    public RestTemplate videoAssetRestTemplate(VideoPersistProperties videoPersistProperties) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(30_000);
+        factory.setReadTimeout(videoPersistProperties.getProcess().getTimeoutSeconds() * 1000);
+        return new RestTemplate(factory);
+    }
+
+    @Bean
+    public VideoAssetStoragePort videoAssetStoragePort(RestTemplate videoAssetRestTemplate,
+                                                       SupabaseProperties supabaseProperties,
+                                                       ObjectMapper objectMapper) {
+        return new SupabaseVideoAssetStorageAdapter(videoAssetRestTemplate, supabaseProperties, objectMapper);
+    }
+
+    @Bean
+    public VideoTranscodePort videoTranscodePort(FfmpegProperties ffmpegProperties,
+                                                 ObjectMapper objectMapper,
+                                                 VideoPersistProperties videoPersistProperties) {
+        return new FfmpegVideoTranscodeAdapter(ffmpegProperties, objectMapper,
+                videoPersistProperties.getProcess().getTimeoutSeconds());
+    }
+
+    @Bean
+    public VideoAssetRepositoryPort videoAssetRepositoryPort(SpringVideoAssetJpaRepository repository,
+                                                              SpringTeamJpaRepository teamRepository) {
+        return new JpaVideoAssetRepositoryAdapter(repository, teamRepository);
+    }
+
+    @Bean
+    public Executor persistExecutor(VideoPersistProperties videoPersistProperties) {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(videoPersistProperties.getAsync().getPoolSize());
+        executor.setMaxPoolSize(videoPersistProperties.getAsync().getPoolSize());
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("video-persist-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean
+    public PersistVideoUseCase persistVideoUseCase(VideoPersistProperties videoPersistProperties,
+                                                   VideoAssetRepositoryPort videoAssetRepositoryPort,
+                                                   VideoTranscodePort videoTranscodePort,
+                                                   VideoAssetStoragePort videoAssetStoragePort,
+                                                   Executor persistExecutor,
+                                                   VideoProperties videoProperties) {
+        return new PersistVideoUseCase(
+                videoPersistProperties,
+                videoAssetRepositoryPort,
+                videoTranscodePort,
+                videoAssetStoragePort,
+                persistExecutor,
+                videoProperties.getTempDir());
     }
 }

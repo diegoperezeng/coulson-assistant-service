@@ -20,13 +20,19 @@ public class JpaTranscriptionJobRepositoryAdapter implements TranscriptionJobRep
     }
 
     @Override
-    public TranscriptionJob create(String videoName) {
+    public TranscriptionJob create(String videoName, String fileHash) {
         TranscriptionJobEntity entity = new TranscriptionJobEntity();
         entity.setStatus(TranscriptionJobStatus.PROCESSING);
         entity.setVideoName(videoName);
+        entity.setFileHash(fileHash);
         entity.setCreatedAt(OffsetDateTime.now());
         entity.setUpdatedAt(OffsetDateTime.now());
         return toJob(repository.save(entity));
+    }
+
+    @Override
+    public Optional<TranscriptionJob> findDoneByFileHash(String fileHash) {
+        return repository.findByFileHashAndStatus(fileHash, TranscriptionJobStatus.DONE).map(this::toJob);
     }
 
     @Override
@@ -51,6 +57,7 @@ public class JpaTranscriptionJobRepositoryAdapter implements TranscriptionJobRep
                 e.getId(),
                 e.getStatus(),
                 e.getVideoName(),
+                e.getFileHash(),
                 e.getError(),
                 e.getResult(),
                 e.getCreatedAt(),

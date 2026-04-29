@@ -34,6 +34,9 @@ public class TranscriptionJobEntity {
     @Column(columnDefinition = "TEXT")
     private String result;
 
+    @Column(name = "file_hash", length = 64)
+    private String fileHash;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
@@ -54,6 +57,9 @@ public class TranscriptionJobEntity {
 
     public String getResult() { return result; }
     public void setResult(String result) { this.result = result; }
+
+    public String getFileHash() { return fileHash; }
+    public void setFileHash(String fileHash) { this.fileHash = fileHash; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }

@@ -30,6 +30,9 @@ consumers:
       - key: supabase-demo
         algorithm: HS256
         secret: $JWT_SECRET
+  - username: coulson-app
+    keyauth_credentials:
+      - key: $COULSON_FRONTEND_API_KEY
 
 ###
 ### Access Control List
@@ -47,6 +50,9 @@ basicauth_credentials:
   - consumer: DASHBOARD
     username: '$DASHBOARD_USERNAME'
     password: '$DASHBOARD_PASSWORD'
+  - consumer: coulson-app
+    username: '$COULSON_APP_USERNAME'
+    password: '$COULSON_APP_PASSWORD'
 
 ###
 ### API Routes
@@ -362,6 +368,64 @@ services:
         config:
           status_code: 403
           message: "Access is forbidden."
+
+  ## Coulson Assistant Frontend App
+  - name: coulson-frontend
+    _comment: 'Coulson App: /coulson-app/* -> http://coulson-assistant-frontend:3000/ (basic-auth)'
+    url: http://coulson-assistant-frontend:3000/
+    routes:
+      - name: coulson-frontend-route
+        strip_path: false
+        paths:
+          - /coulson-app
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+          max_age: 3600
+      - name: basic-auth
+        config:
+          hide_credentials: true
+
+  ## Coulson API - open to frontend (key-auth token baked into build)
+  - name: coulson-frontend-api
+    _comment: 'Coulson API for frontend: /coulson-api/* -> http://coulson-assistant-service:8080/ (key-auth)'
+    url: http://coulson-assistant-service:8080/
+    routes:
+      - name: coulson-frontend-api-route
+        strip_path: true
+        paths:
+          - /coulson-api/
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - '*'
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+            - PATCH
+          headers:
+            - Authorization
+            - Content-Type
+            - X-App-Token
+          max_age: 3600
+      - name: key-auth
+        config:
+          key_names:
+            - X-App-Token
+          hide_credentials: true
 
   ## Protected Dashboard - catch all remaining routes
   - name: dashboard

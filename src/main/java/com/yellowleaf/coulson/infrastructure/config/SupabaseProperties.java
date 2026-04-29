@@ -6,11 +6,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SupabaseProperties {
 
     private String url;
+    private String externalUrl;
     private String serviceRoleKey;
     private Storage storage = new Storage();
 
     public String getUrl() { return url; }
     public void setUrl(String url) { this.url = url; }
+
+    public String getExternalUrl() { return externalUrl != null ? externalUrl : url; }
+    public void setExternalUrl(String externalUrl) { this.externalUrl = externalUrl; }
 
     public String getServiceRoleKey() { return serviceRoleKey; }
     public void setServiceRoleKey(String serviceRoleKey) { this.serviceRoleKey = serviceRoleKey; }

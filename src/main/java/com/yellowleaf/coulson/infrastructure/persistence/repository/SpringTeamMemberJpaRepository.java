@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface SpringTeamMemberJpaRepository extends JpaRepository<TeamMemberEntity, TeamMemberId> {
 
     List<TeamMemberEntity> findAllById_TeamId(UUID teamId);
+
+    List<TeamMemberEntity> findAllById_ParticipantId(UUID participantId);
 }
