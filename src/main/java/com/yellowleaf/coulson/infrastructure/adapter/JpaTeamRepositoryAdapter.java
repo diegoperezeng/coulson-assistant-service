@@ -50,8 +50,9 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Team> findAllTeams() {
-        return teamRepository.findAll().stream().map(this::toTeam).toList();
+        return teamRepository.findAll().stream().map(this::toTeamWithMembers).toList();
     }
 
     @Override
@@ -81,7 +82,7 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
         entity.setAddedAt(OffsetDateTime.now());
         memberRepository.save(entity);
 
-        return new TeamMember(teamId, toParticipant(participant), entity.getAddedAt());
+        return new TeamMember(teamId, team.getName(), toParticipant(participant), entity.getAddedAt());
     }
 
     @Override
@@ -106,6 +107,12 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<TeamMember> findMembersByParticipant(UUID participantId) {
+        return memberRepository.findAllById_ParticipantId(participantId).stream().map(this::toMember).toList();
+    }
+
+    @Override
     public void removeMember(UUID teamId, UUID participantId) {
         TeamMemberId pk = new TeamMemberId(teamId, participantId);
         if (!memberRepository.existsById(pk)) {
@@ -125,7 +132,7 @@ public class JpaTeamRepositoryAdapter implements TeamRepositoryPort {
     }
 
     private TeamMember toMember(TeamMemberEntity e) {
-        return new TeamMember(e.getId().getTeamId(), toParticipant(e.getParticipant()), e.getAddedAt());
+        return new TeamMember(e.getId().getTeamId(), e.getTeam().getName(), toParticipant(e.getParticipant()), e.getAddedAt());
     }
 
     private Participant toParticipant(ParticipantEntity e) {

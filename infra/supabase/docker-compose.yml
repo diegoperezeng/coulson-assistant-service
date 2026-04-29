@@ -261,7 +261,7 @@ services:
     environment:
       STORAGE_URL: http://storage:5000
       SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-      BUCKETS: "voice-samples meetings"
+      BUCKETS: "voice-samples meetings videos"
       BUCKET_PUBLIC: "false"
     volumes:
       - ./scripts/create-buckets.sh:/create-buckets.sh:ro

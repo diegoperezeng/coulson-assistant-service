@@ -32,6 +32,10 @@ public class TeamMemberUseCase {
         return teamRepositoryPort.findMembersByTeam(teamId);
     }
 
+    public List<TeamMember> findAllByParticipant(UUID participantId) {
+        return teamRepositoryPort.findMembersByParticipant(participantId);
+    }
+
     public void remove(UUID teamId, UUID participantId) {
         teamRepositoryPort.removeMember(teamId, participantId);
     }

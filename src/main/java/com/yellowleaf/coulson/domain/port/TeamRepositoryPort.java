@@ -25,5 +25,7 @@ public interface TeamRepositoryPort {
 
     List<TeamMember> findMembersByTeam(UUID teamId);
 
+    List<TeamMember> findMembersByParticipant(UUID participantId);
+
     void removeMember(UUID teamId, UUID participantId);
 }

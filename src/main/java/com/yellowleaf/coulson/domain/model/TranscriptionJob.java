@@ -8,6 +8,7 @@ public class TranscriptionJob {
     private final UUID id;
     private final TranscriptionJobStatus status;
     private final String videoName;
+    private final String fileHash;
     private final String error;
     private final String resultJson;
     private final OffsetDateTime createdAt;
@@ -17,6 +18,7 @@ public class TranscriptionJob {
             UUID id,
             TranscriptionJobStatus status,
             String videoName,
+            String fileHash,
             String error,
             String resultJson,
             OffsetDateTime createdAt,
@@ -24,6 +26,7 @@ public class TranscriptionJob {
         this.id = id;
         this.status = status;
         this.videoName = videoName;
+        this.fileHash = fileHash;
         this.error = error;
         this.resultJson = resultJson;
         this.createdAt = createdAt;
@@ -33,6 +36,7 @@ public class TranscriptionJob {
     public UUID getId() { return id; }
     public TranscriptionJobStatus getStatus() { return status; }
     public String getVideoName() { return videoName; }
+    public String getFileHash() { return fileHash; }
     public String getError() { return error; }
     public String getResultJson() { return resultJson; }
     public OffsetDateTime getCreatedAt() { return createdAt; }

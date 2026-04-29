@@ -1,8 +1,11 @@
 package com.yellowleaf.coulson.interfaces.rest;
 
 import com.yellowleaf.coulson.application.usecase.ParticipantUseCase;
+import com.yellowleaf.coulson.application.usecase.TeamMemberUseCase;
+import com.yellowleaf.coulson.domain.model.TeamMember;
 import com.yellowleaf.coulson.interfaces.rest.dto.ErrorResponse;
 import com.yellowleaf.coulson.interfaces.rest.dto.ParticipantResponse;
+import com.yellowleaf.coulson.interfaces.rest.dto.ParticipantResponse.TeamInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/participants")
@@ -33,9 +39,11 @@ import java.util.UUID;
 public class ParticipantController {
 
     private final ParticipantUseCase participantUseCase;
+    private final TeamMemberUseCase teamMemberUseCase;
 
-    public ParticipantController(ParticipantUseCase participantUseCase) {
+    public ParticipantController(ParticipantUseCase participantUseCase, TeamMemberUseCase teamMemberUseCase) {
         this.participantUseCase = participantUseCase;
+        this.teamMemberUseCase = teamMemberUseCase;
     }
 
     @Operation(summary = "Register a participant")
@@ -71,10 +79,25 @@ public class ParticipantController {
             @Parameter(description = "Participant ID (optional — omit to list all)")
             @RequestParam(required = false) UUID id) {
         if (id != null) {
-            return ResponseEntity.ok(ParticipantResponse.from(participantUseCase.findById(id)));
+            List<TeamInfo> teams = toTeamInfoList(teamMemberUseCase.findAllByParticipant(id));
+            return ResponseEntity.ok(ParticipantResponse.from(participantUseCase.findById(id), teams));
         }
+
+        Map<UUID, List<TeamInfo>> teamsByParticipant = teamMemberUseCase.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getParticipant().getId(),
+                        Collectors.mapping(m -> new TeamInfo(m.getTeamId(), m.getTeamName()), Collectors.toList())
+                ));
+
         return ResponseEntity.ok(participantUseCase.findAll().stream()
-                .map(ParticipantResponse::from).toList());
+                .map(p -> ParticipantResponse.from(p, teamsByParticipant.getOrDefault(p.getId(), List.of())))
+                .toList());
+    }
+
+    private List<TeamInfo> toTeamInfoList(List<TeamMember> members) {
+        return members.stream()
+                .map(m -> new TeamInfo(m.getTeamId(), m.getTeamName()))
+                .toList();
     }
 
     @Operation(summary = "Update a participant")

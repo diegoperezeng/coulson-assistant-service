@@ -52,6 +52,23 @@ video:
   max-chunk-size-mb: ${VIDEO_MAX_CHUNK_SIZE_MB:200}
   max-audio-chunk-seconds: ${VIDEO_MAX_AUDIO_CHUNK_SECONDS:400}
   temp-dir: ${VIDEO_TEMP_DIR:/tmp/coulson-videos}
+  persist:
+    enabled: ${VIDEO_PERSIST_ENABLED:false}
+    max-height: ${VIDEO_PERSIST_MAX_HEIGHT:540}
+    target-fps: ${VIDEO_PERSIST_TARGET_FPS:30}
+    crf: ${VIDEO_PERSIST_CRF:23}
+    preset: ${VIDEO_PERSIST_PRESET:veryfast}
+    audio-bitrate: ${VIDEO_PERSIST_AUDIO_BITRATE:96k}
+    bucket: ${VIDEO_PERSIST_BUCKET:videos}
+    public-bucket: ${VIDEO_PERSIST_PUBLIC_BUCKET:true}
+    signed-url-expire-seconds: ${VIDEO_PERSIST_SIGNED_URL_EXPIRE:3600}
+    hls:
+      enabled: ${VIDEO_PERSIST_HLS_ENABLED:false}
+      segment-seconds: ${VIDEO_PERSIST_HLS_SEGMENT_SECONDS:6}
+    async:
+      pool-size: ${VIDEO_PERSIST_ASYNC_POOL_SIZE:2}
+    process:
+      timeout-seconds: ${VIDEO_PERSIST_PROCESS_TIMEOUT:1800}
 
 ffmpeg:
   path: ${FFMPEG_PATH:/usr/bin/ffmpeg}

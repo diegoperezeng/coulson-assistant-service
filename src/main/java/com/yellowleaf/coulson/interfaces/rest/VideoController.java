@@ -1,10 +1,13 @@
 package com.yellowleaf.coulson.interfaces.rest;
 
 import com.yellowleaf.coulson.application.usecase.GetTranscriptionJobUseCase;
+import com.yellowleaf.coulson.application.usecase.PersistVideoUseCase;
 import com.yellowleaf.coulson.application.usecase.SubmitTranscriptionJobUseCase;
 import com.yellowleaf.coulson.domain.model.TranscriptionJob;
+import com.yellowleaf.coulson.domain.model.VideoAsset;
 import com.yellowleaf.coulson.interfaces.rest.dto.ErrorResponse;
 import com.yellowleaf.coulson.interfaces.rest.dto.TranscriptionJobResponse;
+import com.yellowleaf.coulson.interfaces.rest.dto.VideoAssetResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -35,12 +39,15 @@ public class VideoController {
 
     private final SubmitTranscriptionJobUseCase submitUseCase;
     private final GetTranscriptionJobUseCase getUseCase;
+    private final PersistVideoUseCase persistVideoUseCase;
 
     public VideoController(
             SubmitTranscriptionJobUseCase submitUseCase,
-            GetTranscriptionJobUseCase getUseCase) {
+            GetTranscriptionJobUseCase getUseCase,
+            PersistVideoUseCase persistVideoUseCase) {
         this.submitUseCase = submitUseCase;
         this.getUseCase = getUseCase;
+        this.persistVideoUseCase = persistVideoUseCase;
     }
 
     @Operation(
@@ -99,17 +106,22 @@ public class VideoController {
                     description = "Video file to be transcribed. Files larger than 200 MB are split automatically.",
                     required = true
             )
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @Parameter(description = "Team ID to associate the video asset after transcription (required for video persistence).")
+            @RequestParam(value = "teamId", required = false) UUID teamId,
+            @Parameter(description = "When true, bypasses duplicate detection and reprocesses even if a transcription for this file already exists.")
+            @RequestParam(value = "force", required = false, defaultValue = "false") boolean force) {
 
-        log.info("Received transcription request for file: {} size: {}MB",
+        log.info("Received transcription request for file: {} size: {}MB teamId={} force={}",
                 file.getOriginalFilename(),
-                file.getSize() / (1024 * 1024));
+                file.getSize() / (1024 * 1024),
+                teamId, force);
 
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        TranscriptionJob job = submitUseCase.submit(file);
+        TranscriptionJob job = submitUseCase.submit(file, teamId, force);
 
         return ResponseEntity.accepted().body(toResponse(job));
     }
@@ -149,6 +161,45 @@ public class VideoController {
 
         TranscriptionJob job = getUseCase.get(jobId);
         return ResponseEntity.ok(toResponse(job));
+    }
+
+    @Operation(
+            summary = "List all persisted videos",
+            description = """
+                    Returns all video assets stored in Supabase Storage.
+                    The `jobId` field corresponds to the transcription job that triggered the persistence.
+                    For manually submitted videos the `jobId` will follow the pattern `manual-{teamId}`.
+                    """
+    )
+    @ApiResponse(responseCode = "200", description = "Video assets returned",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = VideoAssetResponse.class)))
+    @GetMapping("/assets")
+    public ResponseEntity<List<VideoAssetResponse>> listAssets() {
+        List<VideoAssetResponse> response = persistVideoUseCase.findAll()
+                .stream()
+                .map(this::toAssetResponse)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
+    private VideoAssetResponse toAssetResponse(VideoAsset asset) {
+        VideoAssetResponse resp = new VideoAssetResponse();
+        resp.setId(asset.getId());
+        resp.setRefId(asset.getRefId());
+        resp.setTeamId(asset.getTeamId());
+        resp.setTeamName(asset.getTeamName());
+        resp.setStatus(asset.getStatus());
+        resp.setDurationMs(asset.getDurationMs());
+        resp.setWidth(asset.getWidth());
+        resp.setHeight(asset.getHeight());
+        resp.setFps(asset.getFps());
+        resp.setPlaybackSizeBytes(asset.getPlaybackSizeBytes());
+        resp.setErrorMessage(asset.getErrorMessage());
+        resp.setCreatedAt(asset.getCreatedAt());
+        resp.setUpdatedAt(asset.getUpdatedAt());
+        resp.setPlaybackUrl(persistVideoUseCase.resolveUrl(asset));
+        return resp;
     }
 
     private TranscriptionJobResponse toResponse(TranscriptionJob job) {
