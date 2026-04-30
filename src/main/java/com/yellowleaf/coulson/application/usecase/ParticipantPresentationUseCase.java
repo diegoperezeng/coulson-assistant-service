@@ -53,7 +53,7 @@ public class ParticipantPresentationUseCase {
 
         String voiceId = voiceCloningPort.createVoiceClone(participant.getName(), sampleBytes, sampleFileName);
 
-        String presentationText = "Eu sou " + participant.getName();
+        String presentationText = "Eu sou " + participant.getName() + " e eu sou um participante.";
         byte[] audioBytes = textToSpeechPort.generateSpeech(voiceId, presentationText);
 
         String audioKey = "participants/" + participantId + "/presentation.mp3";

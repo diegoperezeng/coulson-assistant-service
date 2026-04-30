@@ -1,7 +1,7 @@
 package com.yellowleaf.coulson.infrastructure.adapter.elevenlabs;
 
+import feign.form.FormData;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ public interface ElevenLabsFeignClient {
     ElevenLabsVoiceResponse addVoice(
             @RequestHeader("xi-api-key") String apiKey,
             @RequestPart("name") String name,
-            @RequestPart("files") Resource audioFile
+            @RequestPart("files") FormData audioFile
     );
 
     @PostMapping(

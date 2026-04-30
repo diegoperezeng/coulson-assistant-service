@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -38,14 +39,18 @@ public class TeamPresentationController {
 
     @Operation(summary = "Download team presentation audio",
             description = "Downloads the generated team presentation mp3.")
-    @GetMapping(produces = "audio/mpeg")
+    @GetMapping
     public ResponseEntity<byte[]> download(
             @Parameter(description = "Team ID", required = true) @PathVariable UUID id) {
-        byte[] audio = useCase.download(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("audio/mpeg"));
-        headers.setContentDispositionFormData("attachment", "team-presentation-" + id + ".mp3");
-        return ResponseEntity.ok().headers(headers).body(audio);
+        try {
+            byte[] audio = useCase.download(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("audio/mpeg"));
+            headers.setContentDispositionFormData("attachment", "team-presentation-" + id + ".mp3");
+            return ResponseEntity.ok().headers(headers).body(audio);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Operation(summary = "Delete team presentation audio",

@@ -2,6 +2,7 @@ package com.yellowleaf.coulson.infrastructure.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,19 @@ public class OpenApiConfig {
     public OpenAPI openAPI() {
         List<Server> servers = new ArrayList<>();
         if (externalUrl != null && !externalUrl.isBlank()) {
-            servers.add(new Server().url(externalUrl).description("Production (via Kong)"));
+            String url = externalUrl.trim();
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "http://" + url;
+            }
+            try {
+                URI uri = URI.create(url);
+                String path = uri.getPath();
+                if (path != null && !path.isBlank() && !"/".equals(path)) {
+                    servers.add(new Server().url(path).description("Same origin (proxy path)"));
+                }
+            } catch (Exception ignored) { }
+
+            servers.add(new Server().url(url).description("Production (via Kong)"));
         }
         servers.add(new Server().url("http://localhost:" + serverPort).description("Direct (local)"));
 

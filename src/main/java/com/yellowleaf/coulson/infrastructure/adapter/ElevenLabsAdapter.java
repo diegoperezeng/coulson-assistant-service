@@ -6,10 +6,9 @@ import com.yellowleaf.coulson.infrastructure.adapter.elevenlabs.ElevenLabsFeignC
 import com.yellowleaf.coulson.infrastructure.adapter.elevenlabs.ElevenLabsTtsRequest;
 import com.yellowleaf.coulson.infrastructure.adapter.elevenlabs.ElevenLabsVoiceSettings;
 import com.yellowleaf.coulson.infrastructure.config.ElevenLabsProperties;
+import feign.form.FormData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 
 public class ElevenLabsAdapter implements VoiceCloningPort, TextToSpeechPort {
 
@@ -26,13 +25,8 @@ public class ElevenLabsAdapter implements VoiceCloningPort, TextToSpeechPort {
     @Override
     public String createVoiceClone(String name, byte[] audioBytes, String audioFileName) {
         log.info("Creating voice clone for: {}", name);
-        Resource audioResource = new ByteArrayResource(audioBytes) {
-            @Override
-            public String getFilename() {
-                return audioFileName;
-            }
-        };
-        String voiceId = feignClient.addVoice(properties.getApiKey(), name, audioResource).getVoiceId();
+        FormData audioFile = new FormData("audio/mpeg", audioFileName, audioBytes);
+        String voiceId = feignClient.addVoice(properties.getApiKey(), name, audioFile).getVoiceId();
         log.info("Voice clone created [voiceId={}] for: {}", voiceId, name);
         return voiceId;
     }

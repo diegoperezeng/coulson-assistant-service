@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -29,7 +30,7 @@ public class ParticipantPresentationController {
     }
 
     @Operation(summary = "Generate presentation voice",
-            description = "Clones the participant voice via ElevenLabs and generates a presentation audio with 'Eu sou {name}'.")
+            description = "Clones the participant voice via ElevenLabs and generates a presentation audio with 'Eu sou {name} e eu sou um participante.'.")
     @PostMapping
     public ResponseEntity<ParticipantResponse> generate(
             @Parameter(description = "Participant ID", required = true) @PathVariable UUID id) {
@@ -38,14 +39,18 @@ public class ParticipantPresentationController {
 
     @Operation(summary = "Download presentation audio",
             description = "Downloads the generated presentation mp3 for the participant.")
-    @GetMapping(produces = "audio/mpeg")
+    @GetMapping
     public ResponseEntity<byte[]> download(
             @Parameter(description = "Participant ID", required = true) @PathVariable UUID id) {
-        byte[] audio = useCase.download(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("audio/mpeg"));
-        headers.setContentDispositionFormData("attachment", "presentation-" + id + ".mp3");
-        return ResponseEntity.ok().headers(headers).body(audio);
+        try {
+            byte[] audio = useCase.download(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("audio/mpeg"));
+            headers.setContentDispositionFormData("attachment", "presentation-" + id + ".mp3");
+            return ResponseEntity.ok().headers(headers).body(audio);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Operation(summary = "Delete presentation audio",
