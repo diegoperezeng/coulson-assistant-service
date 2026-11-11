@@ -265,3 +265,9 @@ src/main/java/com/yellowleaf/coulson/
 └── interfaces/
     └── rest/           # Controllers, DTOs, exception handler
 ```
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
