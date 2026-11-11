@@ -1,279 +1,203 @@
 # Coulson Assistant
 
-Backend de um assistente de trabalho baseado em RAG (Retrieval-Augmented Generation). Recebe gravações de reuniões em vídeo, transcreve o áudio com identificação de locutores e armazena as transcrições com suporte a busca semântica por vetores.
+Backend for a RAG-based workplace assistant. It receives meeting video recordings, transcribes audio with speaker identification, and stores transcriptions with optional vector semantic search.
 
 ---
 
-## Visão geral
+## Overview
 
-O sistema processa vídeos de reuniões de forma paralela e armazena os resultados em um banco PostgreSQL com extensão `pgvector`, possibilitando que um agente de IA consulte o conteúdo das reuniões por linguagem natural.
+The system processes meeting videos in parallel and stores results in PostgreSQL with the `pgvector` extension, so an AI agent can query meeting content in natural language.
 
-**Fluxo principal:**
+**Main pipeline:**
 
 ```
-Video upload (até 4GB)
-  → Divisão em chunks de até 200MB (FFmpeg)
-  → Extração de áudio em paralelo (FFmpeg, mono 16kHz 32k)
-  → Merge do áudio em um único MP3
-  → Divisão do áudio em chunks de até 400s
-  → Transcrição em paralelo via webhook
-  → Resolução de nomes dos locutores via webhook
-  → Persistência no PostgreSQL (meetings + segments)
-  → Geração de embeddings vetoriais (opcional, OpenAI)
+Video upload (up to 4 GB)
+  → Split into chunks of up to 200 MB (FFmpeg)
+  → Parallel audio extraction (FFmpeg, mono 16 kHz 32k)
+  → Merge audio into a single MP3
+  → Split audio into chunks of up to 400 s
+  → Parallel transcription via webhook
+  → Speaker name resolution via webhook
+  → Persist to PostgreSQL (meetings + segments)
+  → Optional video persistence to Supabase Storage
+  → Optional vector embeddings (OpenAI)
 ```
+
+Transcription is asynchronous: `POST /api/v1/videos/transcribe` returns `202 Accepted` with a `jobId`. Poll `GET /api/v1/videos/transcribe/{jobId}` until status is `DONE` or `FAILED`.
 
 ---
 
 ## Stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |---|---|
-| Linguagem | Java 21 |
+| Language | Java 21 |
 | Framework | Spring Boot 3.3.5 |
 | Build | Maven 3.9 |
-| Banco de dados | PostgreSQL 15 (Supabase) |
-| Busca semântica | pgvector (extensão PostgreSQL) |
+| Database | PostgreSQL 15 (Supabase) |
+| Semantic search | pgvector (PostgreSQL extension) |
 | Migrations | Flyway |
-| Processamento de mídia | FFmpeg |
-| Embeddings | Spring AI + OpenAI `text-embedding-3-small` (opcional) |
-| Documentação da API | Springdoc OpenAPI (Swagger UI) |
-| Containerização | Docker + Docker Compose |
+| Media processing | FFmpeg |
+| Embeddings | Spring AI + OpenAI `text-embedding-3-small` (optional) |
+| API docs | Springdoc OpenAPI (Swagger UI) |
+| Containers | Docker + Docker Compose |
 
 ---
 
-## Pré-requisitos
+## Prerequisites
 
-- Docker e Docker Compose instalados
-- Rede Docker externa `yellowleaf-net` criada:
-  ```bash
-  docker network create yellowleaf-net
-  ```
-- Instância do n8n rodando na mesma rede, com os webhooks configurados (ver abaixo)
-
----
-
-## Subindo o ambiente local
-
-### 1. Supabase (banco de dados)
+- Docker and Docker Compose installed
+- External Docker network `yellowleaf-net` created:
 
 ```bash
-cd supabase
+docker network create yellowleaf-net
+```
+
+- An n8n instance on the same network, with the webhooks configured (see below)
+
+---
+
+## Local environment
+
+### 1. Supabase (database)
+
+```bash
+cd infra/supabase
 docker compose up -d
 ```
 
-Serviços disponíveis após inicialização:
+Services after startup:
 
-| Serviço | URL |
+| Service | URL |
 |---|---|
 | API Gateway (Kong) | http://localhost:8000 |
-| Supabase Studio | http://localhost:8000 (HTTP Basic Auth: `DASHBOARD_USERNAME` e `DASHBOARD_PASSWORD` em `infra/supabase/.env`) |
-| PostgreSQL direto | localhost:5432 |
+| Supabase Studio | http://localhost:8000 (HTTP Basic Auth: `DASHBOARD_USERNAME` / `DASHBOARD_PASSWORD` in `infra/supabase/.env`) |
+| PostgreSQL | localhost:5432 |
 
-> As credenciais padrão estão no arquivo `supabase/.env`.
+Default credentials live in `infra/supabase/.env`.
 
 ### 2. Coulson Assistant
 
-Copie e ajuste as variáveis de ambiente:
+Copy and adjust environment variables:
 
 ```bash
 cp .env.example .env
-# edite .env com seus valores
 ```
 
-Build e inicialização:
+Build and start:
 
 ```bash
 docker compose build
 docker compose up -d
 ```
 
-API disponível em: `http://localhost:8080`
+| Resource | URL |
+|---|---|
+| API | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger-ui |
+| OpenAPI | http://localhost:8080/api-docs |
+| Health | http://localhost:8080/actuator/health |
 
-Swagger UI: `http://localhost:8080/swagger-ui`
+Full endpoint reference for agents: [`doc/COULSON_API-INFO_FOR_AGENTS.md`](doc/COULSON_API-INFO_FOR_AGENTS.md).
 
 ---
 
-## Variáveis de ambiente
+## Environment variables
 
-| Variável | Padrão | Descrição |
+| Variable | Default | Description |
 |---|---|---|
-| `WEBHOOK_BASE_URL` | `http://n8n:5678` | URL base do n8n |
-| `WEBHOOK_TRANSCRIBE_PATH` | `/webhook/transcribe` | Rota de transcrição |
-| `WEBHOOK_SPEAKERS_PATH` | `/webhook/speakers` | Rota de resolução de locutores |
-| `WEBHOOK_TOKEN` | — | Token de autenticação dos webhooks |
-| `WEBHOOK_CONNECT_TIMEOUT` | `30` | Timeout de conexão (segundos) |
-| `WEBHOOK_READ_TIMEOUT` | `300` | Timeout de leitura (segundos) |
-| `WEBHOOK_TRANSCRIPTION_PARALLELISM` | `4` | Chunks de áudio processados em paralelo |
-| `VIDEO_MAX_CHUNK_SIZE_MB` | `200` | Tamanho máximo de chunk de vídeo (MB) |
-| `VIDEO_MAX_AUDIO_CHUNK_SECONDS` | `400` | Duração máxima de chunk de áudio (segundos) |
-| `FFMPEG_AUDIO_SAMPLE_RATE` | `16000` | Sample rate do áudio extraído |
-| `FFMPEG_AUDIO_CHANNELS` | `1` | Canais de áudio (mono) |
-| `FFMPEG_AUDIO_BITRATE` | `32k` | Bitrate do áudio comprimido |
-| `SUPABASE_DB_URL` | — | JDBC URL do PostgreSQL |
-| `SUPABASE_DB_USER` | `postgres` | Usuário do banco |
-| `SUPABASE_DB_PASSWORD` | — | Senha do banco |
-| `OPENAI_API_KEY` | — | Chave da API OpenAI (opcional) |
-| `OPENAI_EMBEDDING_ENABLED` | `false` | Habilita geração de embeddings |
+| `WEBHOOK_BASE_URL` | `http://n8n:5678` | n8n base URL |
+| `WEBHOOK_TRANSCRIBE_PATH` | `/webhook/transcribe` | Transcription webhook path |
+| `WEBHOOK_SPEAKERS_PATH` | `/webhook/speakers` | Speaker resolution webhook path |
+| `WEBHOOK_TOKEN` | — | Webhook auth token |
+| `WEBHOOK_CONNECT_TIMEOUT` | `30` | Connect timeout (seconds) |
+| `WEBHOOK_READ_TIMEOUT` | `300` | Read timeout (seconds) |
+| `WEBHOOK_TRANSCRIPTION_PARALLELISM` | `8` | Audio chunks processed in parallel |
+| `VIDEO_MAX_CHUNK_SIZE_MB` | `200` | Max video chunk size (MB) |
+| `VIDEO_MAX_AUDIO_CHUNK_SECONDS` | `400` | Max audio chunk duration (seconds) |
+| `FFMPEG_AUDIO_SAMPLE_RATE` | `16000` | Extracted audio sample rate |
+| `FFMPEG_AUDIO_CHANNELS` | `1` | Audio channels (mono) |
+| `FFMPEG_AUDIO_BITRATE` | `32k` | Compressed audio bitrate |
+| `SUPABASE_DB_URL` | — | PostgreSQL JDBC URL |
+| `SUPABASE_DB_USER` | `postgres` | Database user |
+| `SUPABASE_DB_PASSWORD` | — | Database password |
+| `SUPABASE_URL` | — | Supabase API base URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | — | Supabase service role key |
+| `SUPABASE_STORAGE_BUCKET` | `meetings` | Storage bucket for meeting assets |
+| `SUPABASE_VOICE_SAMPLES_BUCKET` | `voice-samples` | Bucket for participant voice samples |
+| `SUPABASE_PRESENTATION_AUDIO_BUCKET` | `presentation-audio` | Bucket for presentation audio |
+| `VIDEO_PERSIST_ENABLED` | `false` | Enable video transcoding and storage |
+| `VIDEO_PERSIST_BUCKET` | `videos` | Bucket for persisted videos |
+| `OPENAI_API_KEY` | — | OpenAI API key (optional) |
+| `OPENAI_EMBEDDING_ENABLED` | `false` | Enable embedding generation |
+| `ELEVENLABS_API_KEY` | — | ElevenLabs API key (optional) |
 
 ---
 
-## API
+## API (summary)
 
-### Transcrição
+Base path: `/api/v1`
 
-#### `POST /api/v1/videos/transcribe`
+### Videos
 
-Recebe um arquivo de vídeo e retorna a transcrição completa com segmentos por locutor.
-
-**Request:** `multipart/form-data`
-
-| Campo | Tipo | Descrição |
+| Method | Path | Description |
 |---|---|---|
-| `file` | Binary | Arquivo de vídeo (mp4, mov, mkv, avi, webm, etc.) |
+| `POST` | `/videos/transcribe` | Submit video for async transcription (`multipart/form-data`, optional `teamId`, `force`) |
+| `GET` | `/videos/transcribe/{jobId}` | Poll transcription job status/result |
+| `GET` | `/videos/assets` | List all persisted video assets |
+| `POST` | `/videos/by-team/{teamId}/persist` | Persist/transcode a video for a team (requires `VIDEO_PERSIST_ENABLED=true`) |
+| `GET` | `/videos/by-team/{teamId}` | List video assets for a team |
 
-**Response `200`:**
+**Transcription job statuses:** `PROCESSING`, `DONE`, `FAILED`
 
-```json
-{
-  "videoId": "d07c147c-a4b0-4a9e-96dc-6a7c58b65a82",
-  "transcription": "Texto completo da reunião...",
-  "totalChunks": 4,
-  "segments": [
-    {
-      "speaker": "Matheus",
-      "start": 0.596,
-      "end": 3.45,
-      "text": "Bom dia, pessoal."
-    }
-  ]
-}
-```
+### Participants
 
----
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/participants` | Create participant (optional voice sample) |
+| `GET` | `/participants` | List or get by `id` |
+| `PUT` | `/participants?id={id}` | Update participant |
+| `PATCH` | `/participants?id={id}` | Partial update |
+| `DELETE` | `/participants?id={id}` | Delete participant |
+| `GET` | `/participants/voice-sample?id={id}` | Download voice sample |
+| `POST` | `/participants/{id}/presentation-voice` | Upload presentation voice |
+| `GET` | `/participants/{id}/presentation-voice` | Download presentation voice |
+| `DELETE` | `/participants/{id}/presentation-voice` | Delete presentation voice |
 
-### Equipes
+### Teams
 
-#### `POST /api/v1/teams`
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/teams` | Create team |
+| `GET` | `/teams` | List or get by `id` |
+| `DELETE` | `/teams?id={id}` | Delete team and memberships |
+| `POST` | `/teams/{id}/presentation-audio` | Upload team presentation audio |
+| `GET` | `/teams/{id}/presentation-audio` | Download presentation audio |
+| `DELETE` | `/teams/{id}/presentation-audio` | Delete presentation audio |
 
-Cria uma equipe.
+### Team members
 
-```json
-{ "name": "Time de Produto" }
-```
-
-#### `GET /api/v1/teams`
-
-Lista todas as equipes.
-
-#### `GET /api/v1/teams?id={id}`
-
-Busca equipe pelo ID, incluindo seus membros.
-
-#### `DELETE /api/v1/teams?id={id}`
-
-Remove equipe e todos os seus membros.
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/team-members?teamId={teamId}` | Add participant to team |
+| `GET` | `/team-members` | List by `teamId` (optional `participantId`) |
+| `DELETE` | `/team-members?teamId={teamId}&participantId={participantId}` | Remove membership |
 
 ---
 
-### Membros de equipe
-
-#### `POST /api/v1/team-members?teamId={teamId}`
-
-Adiciona um membro à equipe.
-
-```json
-{ "name": "Matheus" }
-```
-
-#### `GET /api/v1/team-members?teamId={teamId}`
-
-Lista todos os membros de uma equipe.
-
-#### `GET /api/v1/team-members?teamId={teamId}&memberId={memberId}`
-
-Busca um membro específico.
-
-#### `PUT /api/v1/team-members?memberId={memberId}`
-
-Atualiza o nome de um membro.
-
-```json
-{ "name": "Matheus Costa" }
-```
-
-#### `DELETE /api/v1/team-members?memberId={memberId}`
-
-Remove um membro.
-
----
-
-## Schema do banco de dados
-
-```sql
--- Reuniões transcritas
-CREATE TABLE meetings (
-    id                UUID          PRIMARY KEY,
-    title             VARCHAR(500)  NOT NULL,
-    recorded_at       TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    duration_sec      NUMERIC(10,2),
-    video_storage_key VARCHAR(1000),
-    full_text         TEXT          NOT NULL,
-    embedded_at       TIMESTAMPTZ
-);
-
--- Segmentos com timestamps e locutor resolvido
-CREATE TABLE transcription_segments (
-    id          UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-    meeting_id  UUID          NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
-    speaker     VARCHAR(255)  NOT NULL,
-    start_sec   NUMERIC(10,3) NOT NULL,
-    end_sec     NUMERIC(10,3) NOT NULL,
-    text        TEXT          NOT NULL,
-    embedding   vector(1536)               -- preenchido quando OPENAI_EMBEDDING_ENABLED=true
-);
-
--- Equipes de reunião
-CREATE TABLE teams (
-    id         UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-    name       VARCHAR(255)  NOT NULL UNIQUE,
-    created_at TIMESTAMPTZ   NOT NULL DEFAULT NOW()
-);
-
--- Membros das equipes
-CREATE TABLE team_members (
-    id         UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-    team_id    UUID          NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
-    name       VARCHAR(255)  NOT NULL,
-    created_at TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-    CONSTRAINT uq_team_member_name UNIQUE (team_id, name)
-);
-```
-
-O índice HNSW no campo `embedding` habilita busca por similaridade semântica (cosine):
-
-```sql
-CREATE INDEX idx_segments_embedding
-    ON transcription_segments USING hnsw (embedding vector_cosine_ops)
-    WHERE embedding IS NOT NULL;
-```
-
----
-
-## Webhooks esperados (n8n)
-
-O serviço depende de dois endpoints externos (tipicamente configurados no n8n):
+## Expected webhooks (n8n)
 
 ### `POST /webhook/transcribe`
 
-Recebe um chunk de áudio MP3 e retorna a transcrição com timestamps.
+Receives an MP3 audio chunk and returns transcription with timestamps.
 
-**Request:** `multipart/form-data` com o arquivo MP3 e header `webhook-token`.
+**Request:** `multipart/form-data` with the MP3 file and `webhook-token` header.
 
-**Response esperado:**
+**Expected response:**
 
 ```json
 {
-  "text": "Texto do trecho...",
+  "text": "Chunk text...",
   "segments": [
     { "speaker": "speaker_0", "start": 0.12, "end": 3.45, "text": "..." }
   ]
@@ -282,7 +206,7 @@ Recebe um chunk de áudio MP3 e retorna a transcrição com timestamps.
 
 ### `POST /webhook/speakers`
 
-Recebe os segmentos de um chunk e retorna o mapeamento de códigos para nomes reais.
+Receives segment speaker codes and returns real-name mapping.
 
 **Request body:**
 
@@ -294,7 +218,7 @@ Recebe os segmentos de um chunk e retorna o mapeamento de códigos para nomes re
 }
 ```
 
-**Response esperado:**
+**Expected response:**
 
 ```json
 [
@@ -305,13 +229,11 @@ Recebe os segmentos de um chunk e retorna o mapeamento de códigos para nomes re
 
 ---
 
-## Embeddings e busca semântica (opcional)
+## Embeddings and semantic search (optional)
 
-Quando `OPENAI_EMBEDDING_ENABLED=true` e `OPENAI_API_KEY` estão configurados, o serviço gera automaticamente embeddings para cada segmento transcrito usando o modelo `text-embedding-3-small` da OpenAI (1536 dimensões).
+When `OPENAI_EMBEDDING_ENABLED=true` and `OPENAI_API_KEY` are set, the service generates embeddings for each transcribed segment using OpenAI `text-embedding-3-small` (1536 dimensions).
 
-Os vetores ficam armazenados na coluna `embedding` da tabela `transcription_segments` e podem ser consultados por similaridade semântica, habilitando a base de conhecimento do assistente conversacional.
-
-**Para habilitar no `.env`:**
+Vectors are stored in `transcription_segments.embedding` and can be queried by cosine similarity for the conversational assistant knowledge base.
 
 ```env
 OPENAI_API_KEY=sk-...
@@ -320,26 +242,26 @@ OPENAI_EMBEDDING_ENABLED=true
 
 ---
 
-## Arquitetura
+## Architecture
 
-O projeto segue DDD com separação clara de camadas:
+The project follows DDD with clear layer boundaries:
 
 ```
 src/main/java/com/yellowleaf/coulson/
 ├── domain/
-│   ├── model/          # Entidades de domínio puras
-│   ├── port/           # Interfaces (contratos)
-│   ├── event/          # Eventos de domínio
-│   └── service/        # Lógica de domínio sem dependências externas
+│   ├── model/          # Pure domain entities
+│   ├── port/           # Interfaces (contracts)
+│   ├── event/          # Domain events
+│   └── service/        # Domain logic without external deps
 ├── application/
-│   ├── usecase/        # Casos de uso (orquestração)
-│   ├── command/        # Objetos de entrada dos use cases
-│   ├── result/         # Objetos de saída dos use cases
-│   └── event/          # Listeners de eventos assíncronos
+│   ├── usecase/        # Use cases (orchestration)
+│   ├── command/        # Use case input objects
+│   ├── result/         # Use case output objects
+│   └── event/          # Async event listeners
 ├── infrastructure/
-│   ├── adapter/        # Implementações das portas
-│   ├── config/         # Configuração Spring (beans, properties)
-│   └── persistence/    # JPA entities e repositories
+│   ├── adapter/        # Port implementations
+│   ├── config/         # Spring config (beans, properties)
+│   └── persistence/    # JPA entities and repositories
 └── interfaces/
     └── rest/           # Controllers, DTOs, exception handler
 ```
